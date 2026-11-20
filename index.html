@@ -33,6 +33,9 @@
       --brand-baby: #38bdf8;
       --brand-baby-light: #60a5fa;
       --brand-glow: rgba(56, 189, 248, 0.25);
+      --accent-pastel-blue: #bae6fd;
+      --accent-pastel-pink: #fbcfe8;
+      --accent-rose: #f472b6;
 
       --border-color: #cbd8ec;
       --shadow-sm: 0 2px 8px rgba(10, 22, 40, 0.06);
@@ -66,6 +69,9 @@
       --brand-baby: #38bdf8;
       --brand-baby-light: #60a5fa;
       --brand-glow: rgba(56, 189, 248, 0.24);
+      --accent-pastel-blue: #7dd3fc;
+      --accent-pastel-pink: #f9a8d4;
+      --accent-rose: #ec4899;
 
       --border-color: #233f6e;
       --shadow-sm: 0 4px 12px rgba(2, 8, 20, 0.35);
@@ -105,9 +111,29 @@
       inset: 0;
       background:
         radial-gradient(circle at 12% 14%, var(--brand-glow) 0%, transparent 45%),
-        radial-gradient(circle at 88% 86%, rgba(100, 181, 246, 0.14) 0%, transparent 45%);
+        radial-gradient(circle at 88% 86%, rgba(244, 114, 182, 0.12) 0%, transparent 45%);
       pointer-events: none;
       z-index: 0;
+    }
+
+    .navbar, main, .modal-backdrop, .toast-stack {
+      position: relative;
+      pointer-events: auto;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      z-index: 1000;
+    }
+
+    .toast-stack {
+      position: fixed;
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      pointer-events: auto;
     }
 
     /* ==========================================================================
@@ -217,27 +243,6 @@
     .status-pill.setup-needed {
       color: var(--warning);
       border-color: rgba(245, 158, 11, 0.5);
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background-color: var(--warning);
-    }
-
-    .status-pill.connected .status-dot {
-      background-color: var(--success);
-      box-shadow: 0 0 8px var(--success);
-    }
-
-    .status-pill.connected {
-      color: var(--success);
-      border-color: rgba(16, 185, 129, 0.35);
-    }
-
-    .status-pill.offline .status-dot {
-      background-color: var(--brand-baby);
     }
 
     .container {
@@ -365,11 +370,12 @@
       font-weight: 700;
       background-color: var(--bg-elevated);
       color: var(--brand-baby);
-      border: 1px solid var(--border-color);
+      border: 1px solid rgba(249, 168, 212, 0.45);
     }
 
     [data-theme="light"] .badge {
       color: var(--brand-blue);
+      border-color: rgba(244, 114, 182, 0.5);
     }
 
     .form-group {
@@ -2700,6 +2706,24 @@
       grid.innerHTML = '';
       document.getElementById('studentFeedbackCard').style.display = 'none';
       document.getElementById('studentLiveRankBadge').style.display = 'none';
+
+      const alreadyAnswered = isStudent && Boolean(appState.studentChosenOpt);
+      const isReveal = appState.roomData?.status === 'reveal';
+
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `choice-btn opt-${letter}`;
+        btn.id = `mpChoice-${letter}`;
+        btn.innerHTML = `<span class="choice-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
+
+        if (!isStudent || alreadyAnswered || isReveal) {
+          btn.disabled = true;
+          if (isStudent && appState.studentChosenOpt === letter) {
+            btn.classList.add('chosen');
+          } else if (isStudent && appState.studentChosenOpt) {
+            btn.classList.add('faded');
+          }
         } else {
           btn.onclick = () => submitStudentChoice(letter);
         }
@@ -2985,12 +3009,20 @@
        8. BOOTSTRAP
        ------------------------------------------------------------------------ */
     window.addEventListener('DOMContentLoaded', async () => {
-      await initRealtimeBackend();
+      try {
+        await initRealtimeBackend();
+      } catch (err) {
+        console.warn('Inisialisasi cloud tertunda:', err);
+      }
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const roomCodeParam = urlParams.get('room');
-      if (roomCodeParam) {
-        openStudentJoinView(roomCodeParam);
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomCodeParam = urlParams.get('room');
+        if (roomCodeParam) {
+          openStudentJoinView(roomCodeParam);
+        }
+      } catch (err) {
+        console.warn('Gagal membaca parameter URL:', err);
       }
     });
   </script>
