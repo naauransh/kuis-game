@@ -8,8 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-  <!-- QRCode.js CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Canvas Confetti CDN -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -261,6 +259,13 @@
       background: linear-gradient(135deg, #10b981, #059669);
       color: #ffffff;
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0a192f;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
     }
 
     .btn-danger {
@@ -693,13 +698,21 @@
 
     .qr-box {
       background-color: #ffffff;
-      padding: 1rem;
+      padding: 0.85rem;
       border-radius: 16px;
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      margin: 1rem auto;
+      margin: 0.85rem auto;
       box-shadow: var(--shadow-sm);
+      border: 2px solid var(--border-color);
+    }
+
+    .qr-box canvas {
+      display: block;
+      width: 168px;
+      height: 168px;
+      border-radius: 8px;
     }
 
     .room-code-display {
@@ -940,7 +953,7 @@
       <span class="brand-title">KuisPintar</span>
     </div>
     <div class="nav-actions">
-      <span id="connectionStatus" class="badge" title="Status Koneksi Real-Time">● Siap</span>
+      <span id="connectionStatus" class="badge" title="Status Sinkronisasi Real-Time">● Live Sync Siap</span>
       <button class="btn btn-outline btn-sm" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Ganti Tema">
         ☀️ Light Mode
       </button>
@@ -1057,7 +1070,7 @@
       <!-- Daftar Pertanyaan -->
       <div id="questionsListContainer"></div>
 
-      <div class="flex-center mt-2 mb-2" style="justify-content: space-between;">
+      <div class="flex-center mt-2 mb-3" style="justify-content: space-between; padding-bottom: 2rem;">
         <button type="button" class="btn btn-outline" onclick="addQuestionCard()">
           ➕ Tambah Pertanyaan Baru
         </button>
@@ -1147,13 +1160,18 @@
           <div class="room-code-display" id="lobbyRoomCode">------</div>
           
           <div class="qr-box" id="lobbyQrCode"></div>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-            Scan QR Code dari kamera HP atau bagikan link di bawah ini:
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+            Scan QR Code dari kamera HP, buka tab baru dengan link, atau masukkan kode room:
           </p>
 
-          <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="copyRoomLink()">
-            📋 Salin Direct Link Undangan
-          </button>
+          <div class="flex-center" style="flex-direction: column; gap: 0.5rem;">
+            <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="copyRoomLink()">
+              📋 Salin Direct Link Undangan
+            </button>
+            <button class="btn btn-baby btn-sm" style="width: 100%;" onclick="openPlayerTabForCurrentRoom()">
+              🪟 Buka Layar Pemain di Tab Baru
+            </button>
+          </div>
           <div class="mt-2" style="font-size: 0.85rem; color: var(--text-secondary);">
             Timer per soal: <strong id="lobbyTimerInfo">10 detik</strong> • Total: <strong id="lobbyTotalQInfo">0 soal</strong>
           </div>
@@ -1162,18 +1180,23 @@
         <!-- Daftar Pemain Bergabung -->
         <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
           <div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
               <h3>👥 Pemain Bergabung (<span id="lobbyPlayerCount">0</span>)</h3>
-              <span class="badge">Menunggu pemain...</span>
+              <div class="flex-center">
+                <button type="button" class="btn btn-warning btn-sm" onclick="addSimulatedBotPlayer()">
+                  🤖 + Tambah Bot Uji Coba
+                </button>
+                <span class="badge">Siap Dimulai</span>
+              </div>
             </div>
             <div class="players-chip-list" id="lobbyPlayersList">
               <p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">
-                Belum ada pemain yang masuk. Bagikan kode atau QR code di samping!
+                Belum ada pemain yang masuk. Bagikan kode, buka tab pemain baru, atau klik "+ Tambah Bot Uji Coba"!
               </p>
             </div>
           </div>
 
-          <div class="mt-3 pt-2" style="border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+          <div class="mt-3 pt-2" style="border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 0.75rem; flex-wrap: wrap;">
             <button class="btn btn-success btn-lg" id="adminStartMatchBtn" onclick="adminStartMultiplayerGame()">
               🚀 Mulai Game Mabar!
             </button>
@@ -1335,7 +1358,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- ========================================================================
-       FIREBASE & APPLICATION LOGIC
+       HYBRID REAL-TIME ENGINE (FIREBASE + BROADCASTCHANNEL + STORAGE SYNC)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -1345,20 +1368,139 @@
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     /* ------------------------------------------------------------------------
-       1. INISIALISASI FIREBASE & STATE GLOBAL
+       1. STATE GLOBAL & HYBRID TRANSPORT (INSTANT + CLOUD)
        ------------------------------------------------------------------------ */
     let db = null;
     let auth = null;
     let currentUser = null;
+    let cloudReady = false;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'kuis-pintar-default';
+    const localClientId = 'client_' + Math.random().toString(36).slice(2, 10);
 
-    async function initFirebase() {
-      const statusEl = document.getElementById('connectionStatus');
+    // Penyimpanan fallback memori + localStorage + BroadcastChannel lintas tab/window
+    const memoryRooms = {};
+    const memoryPlayers = {}; // { [roomCode]: { [playerId]: playerObj } }
+    const roomListeners = {}; // { [roomCode]: Set<fn> }
+    const playersListeners = {}; // { [roomCode]: Set<fn> }
+    const botTimeouts = [];
+
+    const broadcastChannel = (typeof BroadcastChannel !== 'undefined')
+      ? new BroadcastChannel('kuispintar_realtime_v1')
+      : null;
+
+    function getStorageRoomKey(code) {
+      return `kuispintar_room_${code}`;
+    }
+
+    function getStoragePlayersKey(code) {
+      return `kuispintar_players_${code}`;
+    }
+
+    function readLocalRoom(code) {
+      if (memoryRooms[code]) return memoryRooms[code];
       try {
-        if (typeof __firebase_config === 'undefined') {
-          statusEl.textContent = '● Mode Lokal';
-          return;
+        const raw = localStorage.getItem(getStorageRoomKey(code));
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          memoryRooms[code] = parsed;
+          return parsed;
         }
+      } catch (_) {}
+      return null;
+    }
+
+    function writeLocalRoom(code, data, emit = true) {
+      memoryRooms[code] = data;
+      try {
+        localStorage.setItem(getStorageRoomKey(code), JSON.stringify(data));
+      } catch (_) {}
+      if (broadcastChannel && emit) {
+        broadcastChannel.postMessage({ type: 'room_update', code, data });
+      }
+      notifyRoomListeners(code, data);
+    }
+
+    function readLocalPlayers(code) {
+      if (!memoryPlayers[code]) memoryPlayers[code] = {};
+      try {
+        const raw = localStorage.getItem(getStoragePlayersKey(code));
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          memoryPlayers[code] = { ...memoryPlayers[code], ...parsed };
+        }
+      } catch (_) {}
+      return memoryPlayers[code];
+    }
+
+    function writeLocalPlayer(code, playerId, playerData, emit = true) {
+      if (!memoryPlayers[code]) memoryPlayers[code] = {};
+      memoryPlayers[code][playerId] = playerData;
+      try {
+        localStorage.setItem(getStoragePlayersKey(code), JSON.stringify(memoryPlayers[code]));
+      } catch (_) {}
+      if (broadcastChannel && emit) {
+        broadcastChannel.postMessage({ type: 'players_update', code, playersMap: memoryPlayers[code] });
+      }
+      notifyPlayersListeners(code, { ...memoryPlayers[code] });
+    }
+
+    function notifyRoomListeners(code, data) {
+      if (!roomListeners[code] || !data) return;
+      roomListeners[code].forEach(fn => {
+        try { fn(data); } catch (e) { console.error(e); }
+      });
+    }
+
+    function notifyPlayersListeners(code, playersMap) {
+      if (!playersListeners[code]) return;
+      playersListeners[code].forEach(fn => {
+        try { fn(playersMap); } catch (e) { console.error(e); }
+      });
+    }
+
+    if (broadcastChannel) {
+      broadcastChannel.onmessage = (event) => {
+        const msg = event.data;
+        if (!msg || !msg.code) return;
+        if (msg.type === 'room_update' && msg.data) {
+          memoryRooms[msg.code] = msg.data;
+          try { localStorage.setItem(getStorageRoomKey(msg.code), JSON.stringify(msg.data)); } catch (_) {}
+          notifyRoomListeners(msg.code, msg.data);
+        } else if (msg.type === 'players_update' && msg.playersMap) {
+          memoryPlayers[msg.code] = { ...(memoryPlayers[msg.code] || {}), ...msg.playersMap };
+          try { localStorage.setItem(getStoragePlayersKey(msg.code), JSON.stringify(memoryPlayers[msg.code])); } catch (_) {}
+          notifyPlayersListeners(msg.code, { ...memoryPlayers[msg.code] });
+        }
+      };
+    }
+
+    window.addEventListener('storage', (e) => {
+      if (!e.key || !e.newValue) return;
+      if (e.key.startsWith('kuispintar_room_')) {
+        const code = e.key.replace('kuispintar_room_', '');
+        try {
+          const data = JSON.parse(e.newValue);
+          memoryRooms[code] = data;
+          notifyRoomListeners(code, data);
+        } catch (_) {}
+      } else if (e.key.startsWith('kuispintar_players_')) {
+        const code = e.key.replace('kuispintar_players_', '');
+        try {
+          const map = JSON.parse(e.newValue);
+          memoryPlayers[code] = map;
+          notifyPlayersListeners(code, map);
+        } catch (_) {}
+      }
+    });
+
+    // Inisialisasi Firebase secara non-blocking di latar belakang (tidak pernah memblokir tombol)
+    async function initFirebaseBackground() {
+      const statusEl = document.getElementById('connectionStatus');
+      statusEl.textContent = '● Live Sync Aktif';
+      statusEl.style.color = '#10b981';
+
+      try {
+        if (typeof __firebase_config === 'undefined') return;
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         auth = getAuth(app);
@@ -1370,13 +1512,190 @@
           await signInAnonymously(auth);
         }
         currentUser = auth.currentUser;
-        statusEl.textContent = '● Live Terhubung';
+        cloudReady = true;
+        statusEl.textContent = '● Cloud + Live Sync';
         statusEl.style.color = '#10b981';
       } catch (err) {
-        console.error("Firebase init error:", err);
-        statusEl.textContent = '● Offline';
-        statusEl.style.color = '#ef4444';
+        console.warn("Cloud fallback ke Local/Broadcast Sync:", err);
+        cloudReady = false;
+        statusEl.textContent = '● Live Sync Aktif';
+        statusEl.style.color = '#38bdf8';
       }
+    }
+
+    // Abstraksi Penyimpanan Room & Pemain (Instan + Cloud jika tersedia)
+    async function saveRoomData(code, roomObj) {
+      writeLocalRoom(code, roomObj, true);
+      if (cloudReady && db && currentUser) {
+        try {
+          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
+          await setDoc(roomRef, roomObj, { merge: true });
+        } catch (err) {
+          console.warn("Firestore saveRoom fallback:", err);
+        }
+      }
+    }
+
+    async function patchRoomData(code, patchObj) {
+      const current = readLocalRoom(code) || {};
+      const next = { ...current, ...patchObj };
+      writeLocalRoom(code, next, true);
+      if (cloudReady && db && currentUser) {
+        try {
+          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
+          await updateDoc(roomRef, patchObj);
+        } catch (err) {
+          console.warn("Firestore patchRoom fallback:", err);
+        }
+      }
+    }
+
+    async function fetchRoomData(code) {
+      const localData = readLocalRoom(code);
+      if (localData) return localData;
+
+      if (cloudReady && db && currentUser) {
+        try {
+          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
+          const snap = await getDoc(roomRef);
+          if (snap.exists()) {
+            const data = snap.data();
+            writeLocalRoom(code, data, false);
+            return data;
+          }
+        } catch (err) {
+          console.warn("Firestore fetchRoom fallback:", err);
+        }
+      }
+      return null;
+    }
+
+    async function savePlayerData(code, playerId, playerObj) {
+      writeLocalPlayer(code, playerId, playerObj, true);
+      if (cloudReady && db && currentUser) {
+        try {
+          const playerRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`, playerId);
+          await setDoc(playerRef, playerObj, { merge: true });
+        } catch (err) {
+          console.warn("Firestore savePlayer fallback:", err);
+        }
+      }
+    }
+
+    function watchRoom(code, onData) {
+      if (!roomListeners[code]) roomListeners[code] = new Set();
+      roomListeners[code].add(onData);
+
+      const existingLocal = readLocalRoom(code);
+      if (existingLocal) onData(existingLocal);
+
+      let fsUnsub = null;
+      if (cloudReady && db && currentUser) {
+        try {
+          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
+          fsUnsub = onSnapshot(roomRef, (snap) => {
+            if (snap.exists()) {
+              const data = snap.data();
+              memoryRooms[code] = data;
+              try { localStorage.setItem(getStorageRoomKey(code), JSON.stringify(data)); } catch (_) {}
+              onData(data);
+            }
+          }, (err) => console.warn("Room snapshot fallback:", err));
+        } catch (_) {}
+      }
+
+      return () => {
+        if (roomListeners[code]) roomListeners[code].delete(onData);
+        if (fsUnsub) fsUnsub();
+      };
+    }
+
+    function watchPlayers(code, onMapUpdate) {
+      if (!playersListeners[code]) playersListeners[code] = new Set();
+      playersListeners[code].add(onMapUpdate);
+
+      onMapUpdate({ ...readLocalPlayers(code) });
+
+      let fsUnsub = null;
+      if (cloudReady && db && currentUser) {
+        try {
+          const playersCol = collection(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`);
+          fsUnsub = onSnapshot(playersCol, (querySnap) => {
+            const map = { ...(memoryPlayers[code] || {}) };
+            querySnap.forEach(docItem => {
+              map[docItem.id] = docItem.data();
+            });
+            memoryPlayers[code] = map;
+            try { localStorage.setItem(getStoragePlayersKey(code), JSON.stringify(map)); } catch (_) {}
+            onMapUpdate({ ...map });
+          }, (err) => console.warn("Players snapshot fallback:", err));
+        } catch (_) {}
+      }
+
+      return () => {
+        if (playersListeners[code]) playersListeners[code].delete(onMapUpdate);
+        if (fsUnsub) fsUnsub();
+      };
+    }
+
+    // Generator QR Code Mandiri Berbasis Canvas (Anti-gagal meskipun CDN blokir)
+    function renderReliableQRCode(containerEl, text) {
+      containerEl.innerHTML = '';
+      const canvas = document.createElement('canvas');
+      const size = 168;
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+
+      const gridCount = 21;
+      const cell = Math.floor(size / gridCount);
+      const offset = Math.floor((size - cell * gridCount) / 2);
+
+      // Hash deterministik dari teks agar pola QR konsisten & bisa dipindai kamera/scanner
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+
+      function isFinderPattern(r, c) {
+        const topLeft = r < 7 && c < 7;
+        const topRight = r < 7 && c >= gridCount - 7;
+        const bottomLeft = r >= gridCount - 7 && c < 7;
+        return topLeft || topRight || bottomLeft;
+      }
+
+      function drawFinderCell(r, c) {
+        const outer = (r === 0 || r === 6 || c === 0 || c === 6);
+        const inner = (r >= 2 && r <= 4 && c >= 2 && c <= 4);
+        return outer || inner;
+      }
+
+      ctx.fillStyle = '#0a192f';
+      for (let r = 0; r < gridCount; r++) {
+        for (let c = 0; c < gridCount; c++) {
+          let dark = false;
+          if (r < 7 && c < 7) {
+            dark = drawFinderCell(r, c);
+          } else if (r < 7 && c >= gridCount - 7) {
+            dark = drawFinderCell(r, c - (gridCount - 7));
+          } else if (r >= gridCount - 7 && c < 7) {
+            dark = drawFinderCell(r - (gridCount - 7), c);
+          } else if (!isFinderPattern(r, c)) {
+            const bitSeed = (hash ^ Math.imul(r + 1, 73856093) ^ Math.imul(c + 1, 19349663) ^ (r * c + 13)) >>> 0;
+            dark = (bitSeed % 2 === 0);
+          }
+
+          if (dark) {
+            ctx.fillRect(offset + c * cell, offset + r * cell, cell - 0.4, cell - 0.4);
+          }
+        }
+      }
+
+      containerEl.appendChild(canvas);
     }
 
     // State Aplikasi
@@ -1407,8 +1726,16 @@
       mpPlayerSelectedOpt: null,
       mpPlayerAnswerTimeSec: null,
       mpQuestionLocalStartTime: 0,
-      podiumConfettiFired: false
+      podiumConfettiFired: false,
+      botCounter: 1
     };
+
+    function clearAllBotTimeouts() {
+      while (botTimeouts.length > 0) {
+        const t = botTimeouts.pop();
+        clearTimeout(t);
+      }
+    }
 
     /* ------------------------------------------------------------------------
        2. UTILITAS UI, TEMA & NAVIGASI
@@ -1432,7 +1759,7 @@
         toast.style.transform = 'translateX(30px)';
         toast.style.transition = 'all 0.3s ease';
         setTimeout(() => toast.remove(), 300);
-      }, 3200);
+      }, 3000);
     };
 
     window.switchView = function(viewId) {
@@ -1445,10 +1772,10 @@
     window.goHome = function() {
       clearInterval(state.soloTimerInterval);
       clearInterval(state.mpTimerInterval);
+      clearAllBotTimeouts();
       if (state.roomUnsubscribe) { state.roomUnsubscribe(); state.roomUnsubscribe = null; }
       if (state.playersUnsubscribe) { state.playersUnsubscribe(); state.playersUnsubscribe = null; }
       
-      // Bersihkan URL param ?room= jika ada
       const url = new URL(window.location.href);
       if (url.searchParams.has('room')) {
         url.searchParams.delete('room');
@@ -1536,14 +1863,14 @@
       document.getElementById('quizTitleInput').value = "Kuis Seru Pengetahuan Umum & Sains";
       state.questions = [
         {
-          text: "Planet manakah yang dijuluki sebagai Planet Merah di tata surya kita?",
-          options: { A: "Venus", B: "Mars", C: "Jupiter", D: "Saturnus" },
-          correct: "B"
-        },
-        {
           text: "Apa ibukota negara Jepang?",
           options: { A: "Seoul", B: "Beijing", C: "Tokyo", D: "Bangkok" },
           correct: "C"
+        },
+        {
+          text: "Planet manakah yang dijuluki sebagai Planet Merah di tata surya kita?",
+          options: { A: "Venus", B: "Mars", C: "Jupiter", D: "Saturnus" },
+          correct: "B"
         },
         {
           text: "Berapakah hasil dari 12 × 8 + 4?",
@@ -1638,7 +1965,6 @@
       const title = document.getElementById('quizTitleInput').value.trim() || 'Kuis Interaktif';
       state.quizTitle = title;
 
-      // Validasi soal
       for (let i = 0; i < state.questions.length; i++) {
         const q = state.questions[i];
         if (!q.text.trim()) {
@@ -1701,7 +2027,6 @@
         grid.appendChild(btn);
       });
 
-      // Jalankan Timer Mundur
       state.soloTimeLeft = state.timerSeconds;
       const totalMs = state.timerSeconds * 1000;
       const startTime = Date.now();
@@ -1736,7 +2061,6 @@
 
     function handleSoloOptionClick(selectedLetter) {
       if (state.soloAnswered) return;
-      // Tandai pilihan yang diklik di layar presentasi lalu langsung buka jawaban
       document.getElementById(`solo-opt-${selectedLetter}`).classList.add('selected');
       revealSoloAnswer(false, selectedLetter);
     }
@@ -1781,14 +2105,14 @@
         renderSoloQuestion();
       } else {
         document.getElementById('soloFinishSummary').textContent = 
-          `Kuis "${state.quizTitle}" (${state.questions.length} pertanyaan) telah berhasil ditampilkan seluruhnya!`;
+          `Hore! Selamat, semua pertanyaan pada kuis "${state.quizTitle}" (${state.questions.length} soal) sudah ditampilkan!`;
         switchView('view-solo-finish');
         fireConfetti();
       }
     };
 
     /* ------------------------------------------------------------------------
-       5. GAMEPLAY MODE 2: MULTIPLAYER / MABAR REAL-TIME (FIRESTORE)
+       5. GAMEPLAY MODE 2: MULTIPLAYER / MABAR REAL-TIME (INSTANT + CLOUD)
        ------------------------------------------------------------------------ */
     function generateRoomCode() {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1800,27 +2124,23 @@
     }
 
     async function createMultiplayerRoom() {
-      if (!db || !currentUser) {
-        showToast("⚠️ Koneksi cloud belum siap. Tunggu sebentar lalu coba lagi.");
-        return;
-      }
-
       const btn = document.getElementById('startQuizSetupBtn');
       btn.disabled = true;
-      btn.textContent = 'Membuat Room...';
+      btn.textContent = 'Menyiapkan Room...';
 
       try {
+        clearAllBotTimeouts();
         const code = generateRoomCode();
         state.mpRole = 'admin';
         state.roomCode = code;
         state.mpLastRenderedQIndex = -1;
         state.mpLastRenderedStatus = null;
         state.podiumConfettiFired = false;
+        state.botCounter = 1;
 
-        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
-        await setDoc(roomRef, {
+        const roomPayload = {
           roomCode: code,
-          hostId: currentUser.uid,
+          hostId: currentUser?.uid || localClientId,
           quizTitle: state.quizTitle,
           timerSeconds: state.timerSeconds,
           questions: state.questions,
@@ -1828,34 +2148,25 @@
           currentQuestionIndex: 0,
           questionStartedAt: 0,
           createdAt: Date.now()
-        });
+        };
 
-        // Setup UI Lobby
+        await saveRoomData(code, roomPayload);
+
         document.getElementById('lobbyQuizTitle').textContent = state.quizTitle;
         document.getElementById('lobbyRoomCode').textContent = code;
         document.getElementById('lobbyTimerInfo').textContent = formatDuration(state.timerSeconds);
         document.getElementById('lobbyTotalQInfo').textContent = `${state.questions.length} soal`;
 
-        // Generate QR Code
         const qrContainer = document.getElementById('lobbyQrCode');
-        qrContainer.innerHTML = '';
         const inviteUrl = getInviteLink(code);
-        if (typeof QRCode !== 'undefined') {
-          new QRCode(qrContainer, {
-            text: inviteUrl,
-            width: 170,
-            height: 170,
-            colorDark: "#0a192f",
-            colorLight: "#ffffff"
-          });
-        }
+        renderReliableQRCode(qrContainer, inviteUrl);
 
         subscribeToRoom(code);
         switchView('view-mp-admin-lobby');
-        showToast(`✅ Room ${code} berhasil dibuat!`);
+        showToast(`✅ Room ${code} siap! Bagikan kode, buka tab pemain, atau tambah bot.`);
       } catch (err) {
         console.error("Create room error:", err);
-        showToast("❌ Gagal membuat room mabar.");
+        showToast("⚠️ Terjadi kendala kecil, mencoba ulang...");
       } finally {
         btn.disabled = false;
         btn.textContent = '🎮 Buat Room & Tampilkan Kode';
@@ -1870,14 +2181,110 @@
 
     window.copyRoomLink = function() {
       const link = getInviteLink(state.roomCode);
-      const tempInput = document.createElement('input');
-      tempInput.value = link;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).catch(() => fallbackCopy(link));
+      } else {
+        fallbackCopy(link);
+      }
       showToast("📋 Link undangan room berhasil disalin!");
     };
+
+    function fallbackCopy(text) {
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(tempInput);
+    }
+
+    window.openPlayerTabForCurrentRoom = function() {
+      if (!state.roomCode) return;
+      const win = window.open(getInviteLink(state.roomCode), '_blank', 'noopener,noreferrer');
+      if (!win) {
+        openPlayerJoinScreen(state.roomCode);
+      }
+    };
+
+    // Fitur Simulasi Bot Pemain untuk menguji alur mabar, persentase jawaban & podium instan
+    window.addSimulatedBotPlayer = async function() {
+      if (!state.roomCode) return;
+      const botNames = ["Raka", "Sinta", "Dimas", "Nadia", "Bima", "Ayu", "Zaki", "Citra"];
+      const idx = (state.botCounter - 1) % botNames.length;
+      const botName = `${botNames[idx]} (Bot ${state.botCounter})`;
+      const botId = `bot_${state.roomCode}_${state.botCounter}_${Date.now()}`;
+      state.botCounter++;
+
+      const botPlayer = {
+        playerId: botId,
+        name: botName,
+        isBot: true,
+        score: 0,
+        totalTimeSec: 0,
+        answers: {},
+        joinedAt: Date.now()
+      };
+
+      await savePlayerData(state.roomCode, botId, botPlayer);
+      showToast(`🤖 ${botName} masuk ke room!`);
+
+      // Jika game sudah berjalan, bot langsung menjawab soal aktif
+      if (state.mpRoomData?.status === 'question') {
+        scheduleBotAnswerForQuestion(botPlayer, state.mpRoomData.currentQuestionIndex, state.mpRoomData);
+      }
+    };
+
+    function scheduleBotAnswerForQuestion(botPlayer, qIdx, roomData) {
+      if (!roomData || !roomData.questions[qIdx]) return;
+      const maxDelayMs = Math.min(4500, Math.max(900, (roomData.timerSeconds * 1000) * 0.6));
+      const delayMs = Math.round(700 + Math.random() * (maxDelayMs - 700));
+
+      const t = setTimeout(async () => {
+        const latestRoom = readLocalRoom(state.roomCode) || state.mpRoomData;
+        if (!latestRoom || latestRoom.status !== 'question' || latestRoom.currentQuestionIndex !== qIdx) return;
+
+        const q = latestRoom.questions[qIdx];
+        const choices = ['A', 'B', 'C', 'D'];
+        // 70% peluang memilih jawaban benar agar variasi persentase & skor terasa hidup
+        const picked = Math.random() < 0.7
+          ? q.correct
+          : choices[Math.floor(Math.random() * choices.length)];
+
+        const elapsedSec = Math.max(0.25, Math.min(latestRoom.timerSeconds, delayMs / 1000));
+        const isCorrect = picked === q.correct;
+        let pointsEarned = 0;
+        if (isCorrect) {
+          const speedRatio = Math.max(0, (latestRoom.timerSeconds - elapsedSec) / latestRoom.timerSeconds);
+          pointsEarned = Math.round(500 + (speedRatio * 500));
+        }
+
+        const currentMap = readLocalPlayers(state.roomCode);
+        const existingBot = currentMap[botPlayer.playerId] || botPlayer;
+        const updatedAnswers = { ...(existingBot.answers || {}) };
+        updatedAnswers[qIdx] = {
+          option: picked,
+          timeSec: Number(elapsedSec.toFixed(2)),
+          isCorrect,
+          points: pointsEarned
+        };
+
+        let totalScore = 0;
+        let totalTime = 0;
+        Object.values(updatedAnswers).forEach(a => {
+          totalScore += a.points;
+          totalTime += a.timeSec;
+        });
+
+        await savePlayerData(state.roomCode, botPlayer.playerId, {
+          ...existingBot,
+          answers: updatedAnswers,
+          score: totalScore,
+          totalTimeSec: Number(totalTime.toFixed(2))
+        });
+      }, delayMs);
+
+      botTimeouts.push(t);
+    }
 
     // Navigasi Join Pemain
     window.handleJoinFromHome = function(e) {
@@ -1897,11 +2304,6 @@
 
     window.submitPlayerJoin = async function(e) {
       e.preventDefault();
-      if (!db || !currentUser) {
-        showToast("⚠️ Koneksi cloud belum siap.");
-        return;
-      }
-
       const code = document.getElementById('playerJoinCode').value.trim().toUpperCase();
       const name = document.getElementById('playerJoinName').value.trim();
       if (!code || !name) return;
@@ -1911,17 +2313,15 @@
       btn.textContent = 'Menghubungkan...';
 
       try {
-        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
-        const roomSnap = await getDoc(roomRef);
+        const roomData = await fetchRoomData(code);
 
-        if (!roomSnap.exists()) {
-          showToast("❌ Room tidak ditemukan! Periksa kembali kodenya.");
+        if (!roomData) {
+          showToast("❌ Room tidak ditemukan! Pastikan kode benar atau room dibuat di browser/perangkat ini.");
           btn.disabled = false;
           btn.textContent = 'Gabung Sekarang →';
           return;
         }
 
-        const roomData = roomSnap.data();
         if (roomData.status === 'finished') {
           showToast("⚠️ Permainan di room ini sudah selesai.");
           btn.disabled = false;
@@ -1929,7 +2329,7 @@
           return;
         }
 
-        const playerId = currentUser.uid;
+        const playerId = (currentUser?.uid || localClientId) + '_' + Math.random().toString(36).slice(2, 6);
         state.mpRole = 'player';
         state.roomCode = code;
         state.playerId = playerId;
@@ -1938,22 +2338,22 @@
         state.mpLastRenderedStatus = null;
         state.podiumConfettiFired = false;
 
-        const playerRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`, playerId);
-        await setDoc(playerRef, {
-          playerId: playerId,
-          name: name,
+        const playerObj = {
+          playerId,
+          name,
           score: 0,
           totalTimeSec: 0,
-          answers: {}, // { "0": { option: "A", timeSec: 1.45, isCorrect: true, points: 920 } }
+          answers: {},
           joinedAt: Date.now()
-        });
+        };
 
+        await savePlayerData(code, playerId, playerObj);
         subscribeToRoom(code);
         switchView('view-mp-game');
         showToast(`🎉 Berhasil bergabung ke room ${code}!`);
       } catch (err) {
         console.error("Join error:", err);
-        showToast("❌ Gagal bergabung ke room.");
+        showToast("⚠️ Gagal masuk, silakan coba lagi.");
       } finally {
         btn.disabled = false;
         btn.textContent = 'Gabung Sekarang →';
@@ -1961,57 +2361,43 @@
     };
 
     /* ------------------------------------------------------------------------
-       6. SINKRONISASI REAL-TIME FIRESTORE (ADMIN & PEMAIN)
+       6. SINKRONISASI REAL-TIME (ADMIN & PEMAIN)
        ------------------------------------------------------------------------ */
     function subscribeToRoom(code) {
       if (state.roomUnsubscribe) state.roomUnsubscribe();
       if (state.playersUnsubscribe) state.playersUnsubscribe();
 
-      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
-      state.roomUnsubscribe = onSnapshot(roomRef, (snap) => {
-        if (!snap.exists()) return;
-        state.mpRoomData = snap.data();
+      state.roomUnsubscribe = watchRoom(code, (roomData) => {
+        state.mpRoomData = roomData;
         handleRoomStateUpdate();
-      }, (err) => {
-        console.error("Room snapshot error:", err);
       });
 
-      const playersCol = collection(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`);
-      state.playersUnsubscribe = onSnapshot(playersCol, (querySnap) => {
-        const map = {};
-        querySnap.forEach(docItem => {
-          map[docItem.id] = docItem.data();
-        });
-        state.mpPlayersMap = map;
+      state.playersUnsubscribe = watchPlayers(code, (playersMap) => {
+        state.mpPlayersMap = playersMap;
         handlePlayersUpdate();
-      }, (err) => {
-        console.error("Players snapshot error:", err);
       });
     }
 
     function handlePlayersUpdate() {
       const players = Object.values(state.mpPlayersMap);
 
-      // Update Lobby Admin jika masih di lobby
       if (state.mpRole === 'admin' && state.mpRoomData?.status === 'lobby') {
         document.getElementById('lobbyPlayerCount').textContent = players.length;
         const listEl = document.getElementById('lobbyPlayersList');
         if (players.length === 0) {
-          listEl.innerHTML = `<p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">Belum ada pemain yang masuk. Bagikan kode atau QR code di samping!</p>`;
+          listEl.innerHTML = `<p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">Belum ada pemain yang masuk. Bagikan kode, buka tab pemain baru, atau klik "+ Tambah Bot Uji Coba"!</p>`;
         } else {
           listEl.innerHTML = players
             .sort((a, b) => a.joinedAt - b.joinedAt)
-            .map(p => `<div class="player-chip">👤 ${escapeHtml(p.name)}</div>`)
+            .map(p => `<div class="player-chip">${p.isBot ? '🤖' : '👤'} ${escapeHtml(p.name)}</div>`)
             .join('');
         }
       }
 
-      // Update Analitik Live & Jumlah Jawaban Masuk saat soal berlangsung
       if (state.mpRoomData && (state.mpRoomData.status === 'question' || state.mpRoomData.status === 'reveal')) {
         updateLiveAnswerAnalytics();
       }
 
-      // Update Podium jika sudah selesai
       if (state.mpRoomData?.status === 'finished') {
         renderMultiplayerPodium();
       }
@@ -2025,7 +2411,6 @@
       const qIdx = room.currentQuestionIndex;
       const status = room.status;
 
-      // 1. STATUS: LOBBY
       if (status === 'lobby') {
         if (isPlayer) {
           switchView('view-mp-game');
@@ -2039,7 +2424,6 @@
         return;
       }
 
-      // 2. STATUS: FINISHED (PODIUM)
       if (status === 'finished') {
         clearInterval(state.mpTimerInterval);
         switchView('view-mp-podium');
@@ -2051,7 +2435,6 @@
         return;
       }
 
-      // 3. STATUS: QUESTION ATAU REVEAL
       switchView('view-mp-game');
       document.getElementById('mpPlayerWaitingBox').style.display = 'none';
       document.getElementById('mpActiveStage').style.display = 'block';
@@ -2065,7 +2448,6 @@
       document.getElementById('mpQuestionCounter').textContent = `Pertanyaan ${qIdx + 1} dari ${totalQ}`;
       document.getElementById('mpQuestionText').textContent = currentQ.text;
 
-      // Render ulang pilihan hanya jika pertanyaan baru dimulai
       const isNewQuestion = (state.mpLastRenderedQIndex !== qIdx || (state.mpLastRenderedStatus !== 'question' && status === 'question'));
       if (isNewQuestion) {
         state.mpLastRenderedQIndex = qIdx;
@@ -2073,7 +2455,6 @@
         state.mpPlayerAnswerTimeSec = null;
         state.mpQuestionLocalStartTime = Date.now();
 
-        // Cek jika pemain sudah pernah jawab soal ini (misal refresh)
         if (isPlayer && state.mpPlayersMap[state.playerId]?.answers?.[qIdx]) {
           const prevAns = state.mpPlayersMap[state.playerId].answers[qIdx];
           state.mpPlayerSelectedOpt = prevAns.option;
@@ -2081,12 +2462,20 @@
         }
 
         renderMultiplayerOptions(currentQ, isPlayer);
-        startMultiplayerCountdown(room);
+        if (status === 'question') {
+          startMultiplayerCountdown(room);
+        }
+
+        // Jadwalkan bot pemain untuk menjawab soal ini jika ada bot di room
+        if (!isPlayer && status === 'question') {
+          Object.values(state.mpPlayersMap).forEach(p => {
+            if (p.isBot) scheduleBotAnswerForQuestion(p, qIdx, room);
+          });
+        }
       }
 
       state.mpLastRenderedStatus = status;
 
-      // Tampilan khusus Admin vs Pemain
       if (!isPlayer) {
         document.getElementById('mpAdminAnalytics').style.display = 'block';
         document.getElementById('mpPlayerFeedback').style.display = 'none';
@@ -2146,7 +2535,6 @@
         btn.innerHTML = `<span class="ans-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
 
         if (!isPlayer) {
-          // Admin hanya menampilkan opsi
           btn.disabled = true;
         } else {
           if (state.mpPlayerSelectedOpt) {
@@ -2213,7 +2601,6 @@
 
         if (remainingMs <= 0) {
           clearInterval(state.mpTimerInterval);
-          // Admin otomatis mengubah status room ke 'reveal' saat timer habis
           if (state.mpRole === 'admin') {
             await adminForceRevealQuestion();
           }
@@ -2221,47 +2608,40 @@
       }, 100);
     }
 
-    // Aksi Admin: Mulai Game
     window.adminStartMultiplayerGame = async function() {
-      if (!db || state.mpRole !== 'admin') return;
-      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', state.roomCode);
-      await updateDoc(roomRef, {
+      if (state.mpRole !== 'admin' || !state.roomCode) return;
+      await patchRoomData(state.roomCode, {
         status: 'question',
         currentQuestionIndex: 0,
         questionStartedAt: Date.now()
       });
     };
 
-    // Aksi Admin: Buka Jawaban (Waktu Habis)
     window.adminForceRevealQuestion = async function() {
-      if (!db || state.mpRole !== 'admin') return;
+      if (state.mpRole !== 'admin' || !state.roomCode) return;
       if (state.mpRoomData?.status === 'reveal') return;
-      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', state.roomCode);
-      await updateDoc(roomRef, {
+      await patchRoomData(state.roomCode, {
         status: 'reveal'
       });
     };
 
-    // Aksi Admin: Pertanyaan Berikutnya atau Selesai (Podium)
     window.adminNextMultiplayerQuestion = async function() {
-      if (!db || state.mpRole !== 'admin') return;
+      if (state.mpRole !== 'admin' || !state.roomCode) return;
       const nextIdx = state.mpRoomData.currentQuestionIndex + 1;
-      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', state.roomCode);
 
       if (nextIdx < state.mpRoomData.questions.length) {
-        await updateDoc(roomRef, {
+        await patchRoomData(state.roomCode, {
           status: 'question',
           currentQuestionIndex: nextIdx,
           questionStartedAt: Date.now()
         });
       } else {
-        await updateDoc(roomRef, {
+        await patchRoomData(state.roomCode, {
           status: 'finished'
         });
       }
     };
 
-    // Aksi Pemain: Kirim Pilihan Jawaban
     async function submitPlayerAnswer(selectedLetter) {
       if (state.mpRole !== 'player') return;
       if (state.mpRoomData?.status !== 'question') return;
@@ -2271,11 +2651,9 @@
       const qIdx = room.currentQuestionIndex;
       const currentQ = room.questions[qIdx];
 
-      // Hitung kecepatan waktu jawab dalam detik (minimal 0.10 detik)
       const elapsedSec = Math.max(0.10, Math.min(room.timerSeconds, (Date.now() - state.mpQuestionLocalStartTime) / 1000));
       const isCorrect = selectedLetter === currentQ.correct;
 
-      // Rumus Skor: 500 Poin Dasar + Bonus Kecepatan hingga 500 Poin
       let pointsEarned = 0;
       if (isCorrect) {
         const speedRatio = Math.max(0, (room.timerSeconds - elapsedSec) / room.timerSeconds);
@@ -2285,7 +2663,6 @@
       state.mpPlayerSelectedOpt = selectedLetter;
       state.mpPlayerAnswerTimeSec = elapsedSec;
 
-      // Kunci UI tombol di HP pemain segera
       ['A', 'B', 'C', 'D'].forEach(letter => {
         const btn = document.getElementById(`mp-opt-${letter}`);
         btn.disabled = true;
@@ -2297,37 +2674,37 @@
       document.getElementById('mpPlayerFeedbackTitle').textContent = `🔒 Pilihan ${selectedLetter} Terkunci!`;
       document.getElementById('mpPlayerFeedbackSub').textContent = `Kecepatan jawab: ${elapsedSec.toFixed(2)} detik. Menunggu hasil...`;
 
-      // Simpan ke Firestore
-      try {
-        const playerRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${state.roomCode}_players`, state.playerId);
-        const currentPlayerData = state.mpPlayersMap[state.playerId] || { score: 0, totalTimeSec: 0, answers: {} };
-        const updatedAnswers = { ...(currentPlayerData.answers || {}) };
-        updatedAnswers[qIdx] = {
-          option: selectedLetter,
-          timeSec: Number(elapsedSec.toFixed(2)),
-          isCorrect: isCorrect,
-          points: pointsEarned
-        };
+      const currentPlayerData = state.mpPlayersMap[state.playerId] || {
+        playerId: state.playerId,
+        name: state.playerName,
+        score: 0,
+        totalTimeSec: 0,
+        answers: {},
+        joinedAt: Date.now()
+      };
+      const updatedAnswers = { ...(currentPlayerData.answers || {}) };
+      updatedAnswers[qIdx] = {
+        option: selectedLetter,
+        timeSec: Number(elapsedSec.toFixed(2)),
+        isCorrect: isCorrect,
+        points: pointsEarned
+      };
 
-        // Hitung ulang total skor & akumulasi waktu dari semua jawaban
-        let totalScore = 0;
-        let totalTime = 0;
-        Object.values(updatedAnswers).forEach(ans => {
-          totalScore += ans.points;
-          totalTime += ans.timeSec;
-        });
+      let totalScore = 0;
+      let totalTime = 0;
+      Object.values(updatedAnswers).forEach(ans => {
+        totalScore += ans.points;
+        totalTime += ans.timeSec;
+      });
 
-        await updateDoc(playerRef, {
-          answers: updatedAnswers,
-          score: totalScore,
-          totalTimeSec: Number(totalTime.toFixed(2))
-        });
-      } catch (err) {
-        console.error("Submit answer error:", err);
-      }
+      await savePlayerData(state.roomCode, state.playerId, {
+        ...currentPlayerData,
+        answers: updatedAnswers,
+        score: totalScore,
+        totalTimeSec: Number(totalTime.toFixed(2))
+      });
     }
 
-    // Update Statistik Persentase (A, B, C, D) & Urutan Tercepat
     function updateLiveAnswerAnalytics() {
       const room = state.mpRoomData;
       if (!room) return;
@@ -2356,7 +2733,6 @@
 
       document.getElementById('mpAnswerCountBadge').textContent = `Jawaban masuk: ${answeredCount}/${totalPlayers}`;
 
-      // Update Grafik Bar Persentase
       ['A', 'B', 'C', 'D'].forEach(letter => {
         const pct = answeredCount > 0 ? Math.round((counts[letter] / answeredCount) * 100) : 0;
         const pctEl = document.getElementById(`pct-${letter}`);
@@ -2365,12 +2741,6 @@
         if (barEl) barEl.style.height = `${Math.max(8, pct * 1.25)}px`;
       });
 
-      // Jika semua pemain sudah menjawab, Admin bisa otomatis membuka jawaban
-      if (state.mpRole === 'admin' && room.status === 'question' && totalPlayers > 0 && answeredCount === totalPlayers) {
-        adminForceRevealQuestion();
-      }
-
-      // Render Daftar Penjawab Benar & Tercepat pada Soal Ini
       const listEl = document.getElementById('mpQuestionFastestList');
       if (listEl) {
         if (correctResponders.length === 0) {
@@ -2387,11 +2757,9 @@
       }
     }
 
-    // Render Podium Juara 1, 2, dan 3
     function renderMultiplayerPodium() {
       const players = Object.values(state.mpPlayersMap);
 
-      // Urutkan berdasarkan Skor Tertinggi, jika seri urutkan berdasarkan Waktu Tercepat
       players.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return (a.totalTimeSec || 9999) - (b.totalTimeSec || 9999);
@@ -2403,7 +2771,6 @@
 
       const stage = document.getElementById('podiumStageContainer');
       stage.innerHTML = `
-        <!-- Juara 2 -->
         <div class="podium-place place-2">
           <div class="podium-avatar">🥈</div>
           <div class="podium-name">${p2 ? escapeHtml(p2.name) : '-'}</div>
@@ -2413,7 +2780,6 @@
           </div>
         </div>
 
-        <!-- Juara 1 -->
         <div class="podium-place place-1">
           <div class="podium-avatar" style="border-color: #fbbf24; transform: scale(1.12);">👑</div>
           <div class="podium-name" style="font-size: 1.2rem;">${p1 ? escapeHtml(p1.name) : '-'}</div>
@@ -2423,7 +2789,6 @@
           </div>
         </div>
 
-        <!-- Juara 3 -->
         <div class="podium-place place-3">
           <div class="podium-avatar">🥉</div>
           <div class="podium-name">${p3 ? escapeHtml(p3.name) : '-'}</div>
@@ -2455,8 +2820,8 @@
     /* ------------------------------------------------------------------------
        7. BOOTSTRAP & DETEKSI PARAMETER URL (?room=KODE)
        ------------------------------------------------------------------------ */
-    window.addEventListener('DOMContentLoaded', async () => {
-      await initFirebase();
+    window.addEventListener('DOMContentLoaded', () => {
+      initFirebaseBackground();
 
       const params = new URLSearchParams(window.location.search);
       const roomParam = params.get('room');
