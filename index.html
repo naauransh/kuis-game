@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KuisPintar - Kuis Interaktif & Mabar Real-Time</title>
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <!-- QRCode.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & PURE CSS THEME SYSTEM (DEEP BLUE, BABY BLUE, NAVY)
+       ========================================================================== */
+    :root {
+      /* Light Mode Tokens */
+      --bg-primary: #f0f6ff;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-elevated: #e1eeff;
+      --text-primary: #0a192f;
+      --text-secondary: #334e68;
+      --text-muted: #627d98;
+      
+      --brand-navy: #0a192f;
+      --brand-deep: #1d4ed8;
+      --brand-baby: #60a5fa;
+      --brand-accent: #2563eb;
+      --brand-glow: rgba(37, 99, 235, 0.25);
+
+      --border-color: #cbd5e1;
+      --shadow-sm: 0 2px 8px rgba(10, 25, 47, 0.06);
+      --shadow-md: 0 8px 24px rgba(10, 25, 47, 0.1);
+      --shadow-lg: 0 16px 40px rgba(29, 78, 216, 0.15);
+
+      /* Option Colors (Accessible & Vibrant) */
+      --opt-a: #e11d48;
+      --opt-a-hover: #be123c;
+      --opt-b: #1d4ed8;
+      --opt-b-hover: #1e40af;
+      --opt-c: #d97706;
+      --opt-c-hover: #b45309;
+      --opt-d: #059669;
+      --opt-d-hover: #047857;
+
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    [data-theme="dark"] {
+      /* Dark Mode Tokens (Deep Navy & Electric Baby Blue) */
+      --bg-primary: #060d1f;
+      --bg-secondary: #0b162c;
+      --bg-card: #10203e;
+      --bg-elevated: #172c54;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+
+      --brand-navy: #060d1f;
+      --brand-deep: #2563eb;
+      --brand-baby: #7dd3fc;
+      --brand-accent: #38bdf8;
+      --brand-glow: rgba(56, 189, 248, 0.25);
+
+      --border-color: #1e3a6e;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 20px 50px rgba(2, 6, 23, 0.7);
+    }
+
+    /* ==========================================================================
+       2. RESET & BASE STYLES
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    /* Background Decorative Grid */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 15% 15%, var(--brand-glow) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(29, 78, 216, 0.15) 0%, transparent 45%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ==========================================================================
+       3. LAYOUT & NAVBAR
+       ========================================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand-deep), var(--brand-baby));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 12px var(--brand-glow);
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--brand-deep), var(--brand-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Views management */
+    .view {
+      display: none;
+      animation: fadeIn 0.35s ease forwards;
+      width: 100%;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       4. COMPONENTS (CARDS, BUTTONS, INPUTS, BADGES)
+       ========================================================================== */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.4rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand-deep), #1e40af);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--brand-glow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+    }
+
+    .btn-baby {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #060d1f;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-baby:hover:not(:disabled) {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #ffffff;
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1.5px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      border-color: var(--brand-accent);
+      background-color: var(--bg-elevated);
+    }
+
+    .btn-sm {
+      padding: 0.5rem 0.9rem;
+      font-size: 0.85rem;
+      border-radius: 10px;
+    }
+
+    .btn-lg {
+      padding: 1rem 1.8rem;
+      font-size: 1.1rem;
+      border-radius: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--brand-accent);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background-color: var(--bg-elevated);
+      color: var(--brand-accent);
+      border: 1px solid var(--border-color);
+    }
+
+    /* ==========================================================================
+       5. HOME MENU & MODE CARDS
+       ========================================================================== */
+    .hero-section {
+      text-align: center;
+      max-width: 760px;
+      margin: 1rem auto 2.5rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.1rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .mode-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--brand-accent);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .mode-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1.25rem;
+      background-color: var(--bg-elevated);
+      color: var(--brand-accent);
+    }
+
+    .join-box {
+      background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+      border: 2px solid var(--brand-accent);
+    }
+
+    .join-input-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .join-input-row input {
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-align: center;
+      font-size: 1.15rem;
+    }
+
+    /* ==========================================================================
+       6. QUIZ BUILDER (PEMBUAT SOAL)
+       ========================================================================== */
+    .builder-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .timer-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .preset-chip {
+      padding: 0.45rem 0.9rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-chip.active, .preset-chip:hover {
+      background-color: var(--brand-deep);
+      color: #ffffff;
+      border-color: var(--brand-deep);
+    }
+
+    .custom-timer-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      max-width: 340px;
+    }
+
+    .question-item-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.35rem;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .q-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .options-editor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.75rem;
+    }
+
+    .opt-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--bg-card);
+      padding: 0.45rem 0.75rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      transition: border-color 0.2s;
+    }
+
+    .opt-input-wrap.is-correct {
+      border-color: var(--success);
+      background-color: rgba(16, 185, 129, 0.08);
+    }
+
+    .opt-badge {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .opt-badge.A { background-color: var(--opt-a); }
+    .opt-badge.B { background-color: var(--opt-b); }
+    .opt-badge.C { background-color: var(--opt-c); }
+    .opt-badge.D { background-color: var(--opt-d); }
+
+    .opt-input-wrap input[type="text"] {
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      width: 100%;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .radio-correct {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--success);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       7. GAMEPLAY SCREEN (SOLO & MULTIPLAYER)
+       ========================================================================== */
+    .game-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .timer-wrapper {
+      width: 100%;
+      height: 12px;
+      background-color: var(--bg-elevated);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--brand-baby), var(--brand-deep));
+      transition: width 0.1s linear, background 0.3s ease;
+    }
+
+    .timer-bar.danger {
+      background: linear-gradient(90deg, #f87171, #dc2626);
+    }
+
+    .timer-circle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 68px;
+      height: 44px;
+      padding: 0 1rem;
+      border-radius: 12px;
+      background-color: var(--brand-deep);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 12px var(--brand-glow);
+    }
+
+    .timer-circle.danger {
+      background-color: var(--danger);
+      animation: pulse 0.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    .question-stage {
+      text-align: center;
+      padding: 2.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+    }
+
+    .question-text {
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .answers-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .answer-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.4rem;
+      border-radius: 16px;
+      border: 3px solid transparent;
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .answer-btn.opt-A { background-color: var(--opt-a); }
+    .answer-btn.opt-B { background-color: var(--opt-b); }
+    .answer-btn.opt-C { background-color: var(--opt-c); }
+    .answer-btn.opt-D { background-color: var(--opt-d); }
+
+    .answer-btn:hover:not(:disabled) {
+      transform: translateY(-3px);
+      filter: brightness(1.08);
+      box-shadow: var(--shadow-md);
+    }
+
+    .answer-btn:disabled {
+      cursor: default;
+    }
+
+    .answer-btn.selected {
+      border-color: #ffffff;
+      box-shadow: 0 0 0 4px var(--brand-accent);
+      transform: scale(1.02);
+    }
+
+    .answer-btn.dimmed {
+      opacity: 0.32;
+      filter: grayscale(40%);
+      transform: scale(0.98);
+    }
+
+    .answer-btn.correct-reveal {
+      opacity: 1 !important;
+      filter: none !important;
+      background-color: #10b981 !important;
+      border-color: #ffffff !important;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.7) !important;
+      transform: scale(1.02);
+    }
+
+    .ans-letter {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       8. MULTIPLAYER LOBBY & REALTIME CHARTS
+       ========================================================================== */
+    .lobby-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 820px) {
+      .lobby-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .qr-box {
+      background-color: #ffffff;
+      padding: 1rem;
+      border-radius: 16px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin: 1rem auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .room-code-display {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: var(--brand-accent);
+      background-color: var(--bg-elevated);
+      padding: 0.6rem 1.2rem;
+      border-radius: 14px;
+      border: 2px dashed var(--brand-accent);
+      margin: 0.5rem 0;
+      display: inline-block;
+    }
+
+    .players-chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .player-chip {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--brand-accent);
+      color: var(--text-primary);
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Percentage Distribution Bars */
+    .stats-bars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      align-items: end;
+      height: 190px;
+      padding: 1.25rem 1rem 0.5rem;
+      background-color: var(--bg-secondary);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      margin-top: 1.25rem;
+    }
+
+    .bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      gap: 0.4rem;
+    }
+
+    .bar-pct {
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .bar-fill {
+      width: 100%;
+      max-width: 64px;
+      min-height: 8px;
+      border-radius: 10px 10px 4px 4px;
+      transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .bar-fill.A { background-color: var(--opt-a); }
+    .bar-fill.B { background-color: var(--opt-b); }
+    .bar-fill.C { background-color: var(--opt-c); }
+    .bar-fill.D { background-color: var(--opt-d); }
+
+    .bar-label {
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 6px;
+      color: #fff;
+    }
+
+    /* Fast Correct List & Leaderboard */
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1.15rem;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      font-weight: 600;
+    }
+
+    .lb-row.top-1 {
+      border-color: #fbbf24;
+      background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), var(--bg-secondary));
+    }
+
+    /* ==========================================================================
+       9. PODIUM & CELEBRATION
+       ========================================================================== */
+    .podium-stage {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 1rem;
+      margin: 2.5rem auto 2rem;
+      max-width: 680px;
+      padding: 0 0.5rem;
+    }
+
+    .podium-place {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .podium-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.6rem;
+      background-color: var(--bg-elevated);
+      border: 3px solid var(--brand-accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .podium-name {
+      font-weight: 800;
+      font-size: 1.05rem;
+      margin-bottom: 0.2rem;
+      word-break: break-word;
+    }
+
+    .podium-meta {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.65rem;
+    }
+
+    .podium-block {
+      width: 100%;
+      border-radius: 16px 16px 6px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #0a192f;
+      font-weight: 800;
+      padding: 1rem 0.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .place-1 .podium-block {
+      height: 175px;
+      background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
+    }
+
+    .place-2 .podium-block {
+      height: 135px;
+      background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
+    }
+
+    .place-3 .podium-block {
+      height: 105px;
+      background: linear-gradient(180deg, #fdba74 0%, #d97706 100%);
+    }
+
+    /* ==========================================================================
+       10. TOAST NOTIFICATION
+       ========================================================================== */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .toast {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      border-left: 5px solid var(--brand-accent);
+      padding: 0.9rem 1.25rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      font-weight: 600;
+      font-size: 0.92rem;
+      animation: slideInRight 0.3s ease;
+      max-width: 340px;
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .text-center { text-align: center; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .flex-center { display: flex; justify-content: center; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="brand" onclick="goHome()">
+      <div class="brand-icon">Q</div>
+      <span class="brand-title">KuisPintar</span>
+    </div>
+    <div class="nav-actions">
+      <span id="connectionStatus" class="badge" title="Status Koneksi Real-Time">● Siap</span>
+      <button class="btn btn-outline btn-sm" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Ganti Tema">
+        ☀️ Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="container">
+
+    <!-- ======================================================================
+         VIEW 1: MENU UTAMA (HOME)
+         ====================================================================== -->
+    <section id="view-home" class="view active">
+      <div class="hero-section">
+        <span class="badge mb-1">⚡ Kuis Interaktif & Mabar Real-Time</span>
+        <h1 class="hero-title">Belajar & Adu Cepat Jadi Lebih Seru!</h1>
+        <p class="hero-subtitle">
+          Buat pertanyaan pilihan ganda dengan timer custom. Tampilkan langsung di layar kelas atau main bareng (mabar) lewat HP & laptop dengan skor kecepatan real-time.
+        </p>
+      </div>
+
+      <div class="mode-grid">
+        <!-- Mode 1: Solo / Presentasi Kelas -->
+        <div class="card mode-card">
+          <div>
+            <div class="mode-icon">🖥️</div>
+            <h2 class="mb-1">Mode 1: Solo / Presentasi Kelas</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+              Cocok untuk ditampilkan di proyektor kelas (1 Layar). Pertanyaan muncul satu per satu dengan hitung mundur custom dan kunci jawaban otomatis saat waktu habis.
+            </p>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="openBuilder('solo')">
+            ✨ Buat Kuis Solo / Kelas
+          </button>
+        </div>
+
+        <!-- Mode 2: Mabar / Multiplayer Room -->
+        <div class="card mode-card">
+          <div>
+            <div class="mode-icon">🚀</div>
+            <h2 class="mb-1">Mode 2: Mabar / Live Room</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+              Jadi Host/Admin! Buat room dengan Kode, Link & QR Code. Pantau persentase jawaban (A/B/C/D) secara live dan lihat Podium Juara 1, 2, 3 tercepat.
+            </p>
+          </div>
+          <button class="btn btn-baby btn-lg" onclick="openBuilder('multiplayer')">
+            🎮 Buat Room Mabar (Admin)
+          </button>
+        </div>
+
+        <!-- Gabung Room Sebagai Pemain -->
+        <div class="card mode-card join-box">
+          <div>
+            <div class="mode-icon" style="background: var(--brand-deep); color: #fff;">📱</div>
+            <h2 class="mb-1">Gabung Room Mabar</h2>
+            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+              Punya kode room dari guru atau teman? Masukkan 6 digit kodenya di bawah ini untuk ikut menjawab langsung dari perangkatmu!
+            </p>
+          </div>
+          <form onsubmit="handleJoinFromHome(event)" class="join-input-row">
+            <input type="text" id="homeRoomCodeInput" class="form-control" placeholder="KODE" maxlength="6" required>
+            <button type="submit" class="btn btn-primary">Gabung</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 2: PEMBUAT SOAL & PENGATURAN KUIS (ADMIN/GURU)
+         ====================================================================== -->
+    <section id="view-builder" class="view">
+      <div class="builder-header">
+        <div>
+          <span class="badge mb-1" id="builderModeBadge">Mode: Solo / Presentasi</span>
+          <h2>Susun Pertanyaan & Pengaturan Waktu</h2>
+        </div>
+        <div class="flex-center">
+          <button class="btn btn-outline btn-sm" onclick="fillSampleQuestions()">
+            🪄 Isi Contoh Soal Otomatis
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="goHome()">← Kembali</button>
+        </div>
+      </div>
+
+      <div class="card mb-2">
+        <div class="form-group">
+          <label class="form-label" for="quizTitleInput">Judul Kuis</label>
+          <input type="text" id="quizTitleInput" class="form-control" placeholder="Contoh: Kuis Pengetahuan Umum & Sains" value="Kuis Cerdas Cermat Seru">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">⏱️ Pengaturan Timer per Pertanyaan (Sebelum Mulai)</label>
+          <div class="timer-presets" id="timerPresets">
+            <button type="button" class="preset-chip" data-sec="3" onclick="selectTimerPreset(3)">3 Detik</button>
+            <button type="button" class="preset-chip" data-sec="5" onclick="selectTimerPreset(5)">5 Detik</button>
+            <button type="button" class="preset-chip active" data-sec="10" onclick="selectTimerPreset(10)">10 Detik</button>
+            <button type="button" class="preset-chip" data-sec="30" onclick="selectTimerPreset(30)">30 Detik</button>
+            <button type="button" class="preset-chip" data-sec="60" onclick="selectTimerPreset(60)">1 Menit</button>
+            <button type="button" class="preset-chip" data-sec="300" onclick="selectTimerPreset(300)">5 Menit</button>
+          </div>
+          <div class="custom-timer-row mt-1">
+            <input type="number" id="customTimerValue" class="form-control" min="1" max="3600" value="10" oninput="syncCustomTimer()">
+            <select id="customTimerUnit" class="form-control" style="width: 130px;" onchange="syncCustomTimer()">
+              <option value="sec" selected>Detik</option>
+              <option value="min">Menit</option>
+            </select>
+          </div>
+          <small style="color: var(--text-muted); display: block; margin-top: 0.4rem;">
+            Durasi aktif per soal: <strong id="timerSummaryText" style="color: var(--brand-accent);">10 detik</strong>
+          </small>
+        </div>
+      </div>
+
+      <!-- Daftar Pertanyaan -->
+      <div id="questionsListContainer"></div>
+
+      <div class="flex-center mt-2 mb-2" style="justify-content: space-between;">
+        <button type="button" class="btn btn-outline" onclick="addQuestionCard()">
+          ➕ Tambah Pertanyaan Baru
+        </button>
+        <button type="button" class="btn btn-success btn-lg" id="startQuizSetupBtn" onclick="launchQuiz()">
+          🚀 Mulai Kuis Sekarang
+        </button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 3: GAMEPLAY MODE SOLO / PRESENTASI KELAS
+         ====================================================================== -->
+    <section id="view-solo-game" class="view">
+      <div class="game-topbar">
+        <div>
+          <span class="badge" id="soloQuizTitleBadge">Judul Kuis</span>
+          <h3 class="mt-1" id="soloProgressText">Pertanyaan 1 dari 5</h3>
+        </div>
+        <div class="flex-center">
+          <div class="timer-circle" id="soloTimerDisplay">10s</div>
+          <button class="btn btn-outline btn-sm" onclick="goHome()">Keluar</button>
+        </div>
+      </div>
+
+      <div class="timer-wrapper">
+        <div class="timer-bar" id="soloTimerBar"></div>
+      </div>
+
+      <div class="card question-stage">
+        <div class="question-text" id="soloQuestionText">Memuat pertanyaan...</div>
+      </div>
+
+      <div class="answers-grid" id="soloAnswersGrid">
+        <!-- Diisi oleh JS -->
+      </div>
+
+      <div class="card mt-2 text-center" id="soloControlPanel">
+        <p id="soloStatusMsg" style="color: var(--text-secondary); font-weight: 600;">
+          Pilih jawaban atau tunggu waktu habis untuk melihat kunci jawaban...
+        </p>
+        <div class="flex-center mt-1">
+          <button class="btn btn-outline" id="soloRevealBtn" onclick="revealSoloAnswer()">
+            👁️ Lihat Jawaban Sekarang
+          </button>
+          <button class="btn btn-primary btn-lg" id="soloNextBtn" style="display: none;" onclick="nextSoloQuestion()">
+            Pertanyaan Berikutnya →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 4: SELEBRASI AKHIR MODE SOLO
+         ====================================================================== -->
+    <section id="view-solo-finish" class="view">
+      <div class="card text-center" style="padding: 3rem 1.5rem; max-width: 680px; margin: 1.5rem auto;">
+        <div style="font-size: 4.5rem; margin-bottom: 1rem;">🎉🏆🎊</div>
+        <h1 class="mb-1" style="font-size: clamp(1.8rem, 4vw, 2.5rem);">
+          Hore! Selamat, semua pertanyaan telah selesai!
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1.5rem;" id="soloFinishSummary">
+          Semua soal dalam sesi presentasi ini telah berhasil ditampilkan.
+        </p>
+        <div class="flex-center">
+          <button class="btn btn-primary btn-lg" onclick="restartSolo()">🔄 Ulangi Kuis Ini</button>
+          <button class="btn btn-outline btn-lg" onclick="goHome()">🏠 Kembali ke Menu</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 5: LOBBY MULTIPLAYER (ADMIN / GURU)
+         ====================================================================== -->
+    <section id="view-mp-admin-lobby" class="view">
+      <div class="builder-header">
+        <div>
+          <span class="badge mb-1">📡 Live Room Admin</span>
+          <h2 id="lobbyQuizTitle">Judul Kuis Mabar</h2>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="goHome()">Tutup Room</button>
+      </div>
+
+      <div class="lobby-grid">
+        <!-- Info Kode, Link & QR Code -->
+        <div class="card text-center">
+          <p style="font-weight: 700; color: var(--text-secondary);">KODE ROOM MABAR</p>
+          <div class="room-code-display" id="lobbyRoomCode">------</div>
+          
+          <div class="qr-box" id="lobbyQrCode"></div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Scan QR Code dari kamera HP atau bagikan link di bawah ini:
+          </p>
+
+          <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="copyRoomLink()">
+            📋 Salin Direct Link Undangan
+          </button>
+          <div class="mt-2" style="font-size: 0.85rem; color: var(--text-secondary);">
+            Timer per soal: <strong id="lobbyTimerInfo">10 detik</strong> • Total: <strong id="lobbyTotalQInfo">0 soal</strong>
+          </div>
+        </div>
+
+        <!-- Daftar Pemain Bergabung -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3>👥 Pemain Bergabung (<span id="lobbyPlayerCount">0</span>)</h3>
+              <span class="badge">Menunggu pemain...</span>
+            </div>
+            <div class="players-chip-list" id="lobbyPlayersList">
+              <p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">
+                Belum ada pemain yang masuk. Bagikan kode atau QR code di samping!
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-3 pt-2" style="border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+            <button class="btn btn-success btn-lg" id="adminStartMatchBtn" onclick="adminStartMultiplayerGame()">
+              🚀 Mulai Game Mabar!
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 6: LAYAR JOIN PEMAIN (HP / LAPTOP)
+         ====================================================================== -->
+    <section id="view-mp-player-join" class="view">
+      <div class="card" style="max-width: 460px; margin: 2rem auto; text-align: center;">
+        <div class="mode-icon" style="margin: 0 auto 1rem;">🎮</div>
+        <h2 class="mb-1">Masuk ke Room Mabar</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+          Masukkan kode room dan nama panggilanmu untuk ikut bermain!
+        </p>
+
+        <form onsubmit="submitPlayerJoin(event)">
+          <div class="form-group text-left">
+            <label class="form-label" style="text-align: left;">Kode Room (6 Karakter)</label>
+            <input type="text" id="playerJoinCode" class="form-control" style="text-transform: uppercase; font-weight: 800; letter-spacing: 0.15em; text-align: center; font-size: 1.25rem;" maxlength="6" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="text-align: left;">Nama Panggilan Kamu</label>
+            <input type="text" id="playerJoinName" class="form-control" placeholder="Contoh: Budi Juara" maxlength="18" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="btnConfirmJoin">
+            Gabung Sekarang →
+          </button>
+        </form>
+        <button class="btn btn-outline btn-sm mt-2" onclick="goHome()">← Batal</button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 7: LAYAR GAMEPLAY MULTIPLAYER (ADMIN & PEMAIN)
+         ====================================================================== -->
+    <section id="view-mp-game" class="view">
+      <!-- Top Bar -->
+      <div class="game-topbar">
+        <div>
+          <span class="badge" id="mpRoleBadge">Role</span>
+          <h3 class="mt-1" id="mpQuestionCounter">Pertanyaan 1 / 5</h3>
+        </div>
+        <div class="flex-center">
+          <div class="badge" id="mpAnswerCountBadge" style="font-size: 0.95rem;">Jawaban masuk: 0/0</div>
+          <div class="timer-circle" id="mpTimerDisplay">10s</div>
+        </div>
+      </div>
+
+      <div class="timer-wrapper">
+        <div class="timer-bar" id="mpTimerBar"></div>
+      </div>
+
+      <!-- Waiting Room State for Player before Q1 starts -->
+      <div id="mpPlayerWaitingBox" class="card text-center" style="display: none; padding: 3rem 1.5rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">⏳</div>
+        <h2>Kamu Sudah Terhubung!</h2>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; margin-top: 0.5rem;">
+          Halo <strong id="mpPlayerWelcomeName" style="color: var(--brand-accent);">Pemain</strong>, tunggu Admin/Guru menekan tombol <strong>Mulai</strong> ya!
+        </p>
+      </div>
+
+      <!-- Active Question Stage -->
+      <div id="mpActiveStage">
+        <div class="card question-stage">
+          <div class="question-text" id="mpQuestionText">Menunggu soal...</div>
+        </div>
+
+        <!-- 4 Tombol Pilihan (Untuk Pemain memilih, untuk Admin menampilkan opsi & kunci saat selesai) -->
+        <div class="answers-grid" id="mpAnswersGrid"></div>
+
+        <!-- Status Feedback untuk Pemain setelah memilih -->
+        <div id="mpPlayerFeedback" class="card mt-2 text-center" style="display: none;">
+          <h3 id="mpPlayerFeedbackTitle">Jawaban Terkirim!</h3>
+          <p id="mpPlayerFeedbackSub" style="color: var(--text-secondary);">Menunggu waktu habis...</p>
+        </div>
+
+        <!-- Panel Khusus Admin: Grafik Persentase Live & Hasil Waktu Habis -->
+        <div id="mpAdminAnalytics" class="card mt-2" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <h3>📊 Statistik Jawaban Real-Time</h3>
+            <div class="flex-center">
+              <button class="btn btn-outline btn-sm" id="mpAdminForceEndBtn" onclick="adminForceRevealQuestion()">
+                ⏹️ Akhiri Waktu & Buka Jawaban
+              </button>
+              <button class="btn btn-primary" id="mpAdminNextQBtn" style="display: none;" onclick="adminNextMultiplayerQuestion()">
+                Pertanyaan Berikutnya →
+              </button>
+            </div>
+          </div>
+
+          <!-- Bar Chart Persentase A, B, C, D -->
+          <div class="stats-bars-grid">
+            <div class="bar-col">
+              <span class="bar-pct" id="pct-A">0%</span>
+              <div class="bar-fill A" id="bar-A" style="height: 8px;"></div>
+              <span class="bar-label" style="background: var(--opt-a);">A</span>
+            </div>
+            <div class="bar-col">
+              <span class="bar-pct" id="pct-B">0%</span>
+              <div class="bar-fill B" id="bar-B" style="height: 8px;"></div>
+              <span class="bar-label" style="background: var(--opt-b);">B</span>
+            </div>
+            <div class="bar-col">
+              <span class="bar-pct" id="pct-C">0%</span>
+              <div class="bar-fill C" id="bar-C" style="height: 8px;"></div>
+              <span class="bar-label" style="background: var(--opt-c);">C</span>
+            </div>
+            <div class="bar-col">
+              <span class="bar-pct" id="pct-D">0%</span>
+              <div class="bar-fill D" id="bar-D" style="height: 8px;"></div>
+              <span class="bar-label" style="background: var(--opt-d);">D</span>
+            </div>
+          </div>
+
+          <!-- Daftar Penjawab Benar Tercepat pada Soal Ini (Muncul saat waktu habis) -->
+          <div id="mpQuestionWinnersBox" style="display: none; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <h4 class="mb-1">⚡ Urutan Penjawab Benar & Tercepat (Soal Ini):</h4>
+            <div class="leaderboard-list" id="mpQuestionFastestList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 8: PODIUM AKHIR MULTIPLAYER (JUARA 1, 2, 3)
+         ====================================================================== -->
+    <section id="view-mp-podium" class="view">
+      <div class="card text-center">
+        <span class="badge mb-1">🏆 HASIL AKHIR MABAR</span>
+        <h1 style="font-size: clamp(1.8rem, 4vw, 2.6rem);">Podium Pemenang Kuis!</h1>
+        <p style="color: var(--text-secondary);">
+          Berdasarkan ketepatan jawaban & akumulasi kecepatan menjawab (detik)
+        </p>
+
+        <!-- Podium Juara 2 - Juara 1 - Juara 3 -->
+        <div class="podium-stage" id="podiumStageContainer">
+          <!-- Diisi oleh JS -->
+        </div>
+
+        <!-- Klasemen Lengkap -->
+        <div style="max-width: 640px; margin: 1.5rem auto; text-align: left;">
+          <h3 class="mb-1">📋 Klasemen Lengkap Pemain</h3>
+          <div class="leaderboard-list" id="fullLeaderboardList"></div>
+        </div>
+
+        <div class="flex-center mt-3">
+          <button class="btn btn-primary btn-lg" onclick="goHome()">🏠 Kembali ke Menu Utama</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       FIREBASE & APPLICATION LOGIC
+       ======================================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    /* ------------------------------------------------------------------------
+       1. INISIALISASI FIREBASE & STATE GLOBAL
+       ------------------------------------------------------------------------ */
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'kuis-pintar-default';
+
+    async function initFirebase() {
+      const statusEl = document.getElementById('connectionStatus');
+      try {
+        if (typeof __firebase_config === 'undefined') {
+          statusEl.textContent = '● Mode Lokal';
+          return;
+        }
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+        currentUser = auth.currentUser;
+        statusEl.textContent = '● Live Terhubung';
+        statusEl.style.color = '#10b981';
+      } catch (err) {
+        console.error("Firebase init error:", err);
+        statusEl.textContent = '● Offline';
+        statusEl.style.color = '#ef4444';
+      }
+    }
+
+    // State Aplikasi
+    const state = {
+      mode: 'solo', // 'solo' | 'multiplayer'
+      quizTitle: 'Kuis Cerdas Cermat Seru',
+      timerSeconds: 10,
+      questions: [],
+      
+      // Solo Game State
+      soloIndex: 0,
+      soloAnswered: false,
+      soloTimerInterval: null,
+      soloTimeLeft: 0,
+
+      // Multiplayer State
+      mpRole: null, // 'admin' | 'player'
+      roomCode: null,
+      playerId: null,
+      playerName: null,
+      roomUnsubscribe: null,
+      playersUnsubscribe: null,
+      mpRoomData: null,
+      mpPlayersMap: {},
+      mpTimerInterval: null,
+      mpLastRenderedQIndex: -1,
+      mpLastRenderedStatus: null,
+      mpPlayerSelectedOpt: null,
+      mpPlayerAnswerTimeSec: null,
+      mpQuestionLocalStartTime: 0,
+      podiumConfettiFired: false
+    };
+
+    /* ------------------------------------------------------------------------
+       2. UTILITAS UI, TEMA & NAVIGASI
+       ------------------------------------------------------------------------ */
+    window.toggleTheme = function() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      document.getElementById('themeToggleBtn').textContent = next === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+    };
+
+    window.showToast = function(msg) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(30px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    };
+
+    window.switchView = function(viewId) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.goHome = function() {
+      clearInterval(state.soloTimerInterval);
+      clearInterval(state.mpTimerInterval);
+      if (state.roomUnsubscribe) { state.roomUnsubscribe(); state.roomUnsubscribe = null; }
+      if (state.playersUnsubscribe) { state.playersUnsubscribe(); state.playersUnsubscribe = null; }
+      
+      // Bersihkan URL param ?room= jika ada
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('room')) {
+        url.searchParams.delete('room');
+        window.history.replaceState({}, '', url.toString());
+      }
+      switchView('view-home');
+    };
+
+    function fireConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+        setTimeout(() => {
+          confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0 } });
+          confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1 } });
+        }, 350);
+      }
+    }
+
+    function formatDuration(sec) {
+      if (sec < 60) return `${sec} detik`;
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return s === 0 ? `${m} menit` : `${m} menit ${s} detik`;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /* ------------------------------------------------------------------------
+       3. PEMBUAT SOAL (QUIZ BUILDER)
+       ------------------------------------------------------------------------ */
+    window.openBuilder = function(mode) {
+      state.mode = mode;
+      const badge = document.getElementById('builderModeBadge');
+      const startBtn = document.getElementById('startQuizSetupBtn');
+
+      if (mode === 'solo') {
+        badge.textContent = '🖥️ Mode 1: Solo / Presentasi Kelas';
+        startBtn.textContent = '🚀 Mulai Presentasi Kuis';
+      } else {
+        badge.textContent = '📡 Mode 2: Mabar / Live Room (Admin)';
+        startBtn.textContent = '🎮 Buat Room & Tampilkan Kode';
+      }
+
+      if (state.questions.length === 0) {
+        fillSampleQuestions(true);
+      } else {
+        renderQuestionsBuilder();
+      }
+      switchView('view-builder');
+    };
+
+    window.selectTimerPreset = function(seconds) {
+      state.timerSeconds = seconds;
+      document.querySelectorAll('.preset-chip').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.sec) === seconds);
+      });
+
+      if (seconds >= 60 && seconds % 60 === 0) {
+        document.getElementById('customTimerValue').value = seconds / 60;
+        document.getElementById('customTimerUnit').value = 'min';
+      } else {
+        document.getElementById('customTimerValue').value = seconds;
+        document.getElementById('customTimerUnit').value = 'sec';
+      }
+      document.getElementById('timerSummaryText').textContent = formatDuration(seconds);
+    };
+
+    window.syncCustomTimer = function() {
+      const val = Math.max(1, parseInt(document.getElementById('customTimerValue').value) || 1);
+      const unit = document.getElementById('customTimerUnit').value;
+      const totalSec = unit === 'min' ? val * 60 : val;
+      state.timerSeconds = totalSec;
+
+      document.querySelectorAll('.preset-chip').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.sec) === totalSec);
+      });
+      document.getElementById('timerSummaryText').textContent = formatDuration(totalSec);
+    };
+
+    window.fillSampleQuestions = function(silent = false) {
+      document.getElementById('quizTitleInput').value = "Kuis Seru Pengetahuan Umum & Sains";
+      state.questions = [
+        {
+          text: "Planet manakah yang dijuluki sebagai Planet Merah di tata surya kita?",
+          options: { A: "Venus", B: "Mars", C: "Jupiter", D: "Saturnus" },
+          correct: "B"
+        },
+        {
+          text: "Apa ibukota negara Jepang?",
+          options: { A: "Seoul", B: "Beijing", C: "Tokyo", D: "Bangkok" },
+          correct: "C"
+        },
+        {
+          text: "Berapakah hasil dari 12 × 8 + 4?",
+          options: { A: "100", B: "96", C: "104", D: "92" },
+          correct: "A"
+        },
+        {
+          text: "Gas apakah yang paling banyak menyusun atmosfer Bumi?",
+          options: { A: "Oksigen", B: "Karbon Dioksida", C: "Hidrogen", D: "Nitrogen" },
+          correct: "D"
+        }
+      ];
+      renderQuestionsBuilder();
+      if (!silent) showToast("✨ 4 contoh soal berhasil diisi otomatis!");
+    };
+
+    window.addQuestionCard = function() {
+      syncQuestionsFromDOM();
+      state.questions.push({
+        text: "",
+        options: { A: "", B: "", C: "", D: "" },
+        correct: "A"
+      });
+      renderQuestionsBuilder();
+      showToast("➕ Pertanyaan baru ditambahkan");
+    };
+
+    window.removeQuestionCard = function(index) {
+      if (state.questions.length <= 1) {
+        showToast("⚠️ Minimal harus ada 1 pertanyaan!");
+        return;
+      }
+      syncQuestionsFromDOM();
+      state.questions.splice(index, 1);
+      renderQuestionsBuilder();
+    };
+
+    window.setCorrectOption = function(qIdx, letter) {
+      syncQuestionsFromDOM();
+      state.questions[qIdx].correct = letter;
+      renderQuestionsBuilder();
+    };
+
+    function syncQuestionsFromDOM() {
+      const cards = document.querySelectorAll('.question-item-card');
+      cards.forEach((card, idx) => {
+        if (!state.questions[idx]) return;
+        state.questions[idx].text = card.querySelector('.q-text-input').value;
+        ['A', 'B', 'C', 'D'].forEach(letKey => {
+          state.questions[idx].options[letKey] = card.querySelector(`.opt-val-${letKey}`).value;
+        });
+        const checkedRadio = card.querySelector(`input[name="correct_${idx}"]:checked`);
+        if (checkedRadio) {
+          state.questions[idx].correct = checkedRadio.value;
+        }
+      });
+    }
+
+    function renderQuestionsBuilder() {
+      const container = document.getElementById('questionsListContainer');
+      container.innerHTML = '';
+
+      state.questions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'question-item-card';
+        card.innerHTML = `
+          <div class="q-item-header">
+            <span class="badge">Pertanyaan #${idx + 1}</span>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestionCard(${idx})">🗑️ Hapus</button>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control q-text-input" placeholder="Tulis pertanyaan di sini..." value="${escapeHtml(q.text)}">
+          </div>
+          <small style="color: var(--text-muted); font-weight: 600;">Isi pilihan ganda & centang lingkaran jawaban yang benar:</small>
+          <div class="options-editor-grid">
+            ${['A', 'B', 'C', 'D'].map(letter => `
+              <div class="opt-input-wrap ${q.correct === letter ? 'is-correct' : ''}">
+                <span class="opt-badge ${letter}">${letter}</span>
+                <input type="text" class="opt-val-${letter}" placeholder="Pilihan ${letter}" value="${escapeHtml(q.options[letter])}">
+                <input type="radio" name="correct_${idx}" value="${letter}" class="radio-correct" 
+                  ${q.correct === letter ? 'checked' : ''} onchange="setCorrectOption(${idx}, '${letter}')" title="Tandai sebagai jawaban benar">
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.launchQuiz = async function() {
+      syncQuestionsFromDOM();
+      const title = document.getElementById('quizTitleInput').value.trim() || 'Kuis Interaktif';
+      state.quizTitle = title;
+
+      // Validasi soal
+      for (let i = 0; i < state.questions.length; i++) {
+        const q = state.questions[i];
+        if (!q.text.trim()) {
+          showToast(`⚠️ Pertanyaan #${i + 1} masih kosong!`);
+          return;
+        }
+        for (const opt of ['A', 'B', 'C', 'D']) {
+          if (!q.options[opt].trim()) {
+            showToast(`⚠️ Pilihan ${opt} pada Pertanyaan #${i + 1} masih kosong!`);
+            return;
+          }
+        }
+      }
+
+      if (state.mode === 'solo') {
+        startSoloGame();
+      } else {
+        await createMultiplayerRoom();
+      }
+    };
+
+    /* ------------------------------------------------------------------------
+       4. GAMEPLAY MODE 1: SOLO / PRESENTASI KELAS
+       ------------------------------------------------------------------------ */
+    function startSoloGame() {
+      state.soloIndex = 0;
+      switchView('view-solo-game');
+      renderSoloQuestion();
+    }
+
+    window.restartSolo = function() {
+      startSoloGame();
+    };
+
+    function renderSoloQuestion() {
+      clearInterval(state.soloTimerInterval);
+      state.soloAnswered = false;
+
+      const q = state.questions[state.soloIndex];
+      const total = state.questions.length;
+
+      document.getElementById('soloQuizTitleBadge').textContent = state.quizTitle;
+      document.getElementById('soloProgressText').textContent = `Pertanyaan ${state.soloIndex + 1} dari ${total}`;
+      document.getElementById('soloQuestionText').textContent = q.text;
+
+      document.getElementById('soloStatusMsg').textContent = '⏳ Waktu berjalan! Silakan pilih jawaban atau tunggu waktu habis...';
+      document.getElementById('soloRevealBtn').style.display = 'inline-flex';
+      document.getElementById('soloNextBtn').style.display = 'none';
+      document.getElementById('soloNextBtn').textContent = 
+        (state.soloIndex + 1 === total) ? '🎉 Selesai & Lihat Selebrasi →' : 'Pertanyaan Berikutnya →';
+
+      const grid = document.getElementById('soloAnswersGrid');
+      grid.innerHTML = '';
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = `answer-btn opt-${letter}`;
+        btn.id = `solo-opt-${letter}`;
+        btn.innerHTML = `<span class="ans-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
+        btn.onclick = () => handleSoloOptionClick(letter);
+        grid.appendChild(btn);
+      });
+
+      // Jalankan Timer Mundur
+      state.soloTimeLeft = state.timerSeconds;
+      const totalMs = state.timerSeconds * 1000;
+      const startTime = Date.now();
+      const timerDisplay = document.getElementById('soloTimerDisplay');
+      const timerBar = document.getElementById('soloTimerBar');
+
+      timerDisplay.classList.remove('danger');
+      timerBar.classList.remove('danger');
+      timerDisplay.textContent = `${state.timerSeconds}s`;
+      timerBar.style.width = '100%';
+
+      state.soloTimerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remainingMs = Math.max(0, totalMs - elapsed);
+        const remainingSec = Math.ceil(remainingMs / 1000);
+        const pct = (remainingMs / totalMs) * 100;
+
+        timerDisplay.textContent = `${remainingSec}s`;
+        timerBar.style.width = `${pct}%`;
+
+        if (remainingSec <= 3 && remainingMs > 0) {
+          timerDisplay.classList.add('danger');
+          timerBar.classList.add('danger');
+        }
+
+        if (remainingMs <= 0) {
+          clearInterval(state.soloTimerInterval);
+          revealSoloAnswer(true);
+        }
+      }, 100);
+    }
+
+    function handleSoloOptionClick(selectedLetter) {
+      if (state.soloAnswered) return;
+      // Tandai pilihan yang diklik di layar presentasi lalu langsung buka jawaban
+      document.getElementById(`solo-opt-${selectedLetter}`).classList.add('selected');
+      revealSoloAnswer(false, selectedLetter);
+    }
+
+    window.revealSoloAnswer = function(isTimeUp = false, chosenLetter = null) {
+      if (state.soloAnswered) return;
+      state.soloAnswered = true;
+      clearInterval(state.soloTimerInterval);
+
+      const q = state.questions[state.soloIndex];
+      const correct = q.correct;
+
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.getElementById(`solo-opt-${letter}`);
+        btn.disabled = true;
+        if (letter === correct) {
+          btn.classList.add('correct-reveal');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      });
+
+      const statusMsg = document.getElementById('soloStatusMsg');
+      if (isTimeUp) {
+        statusMsg.innerHTML = `⏰ <strong>Waktu Habis!</strong> Jawaban yang benar adalah <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
+      } else if (chosenLetter) {
+        const isRight = chosenLetter === correct;
+        statusMsg.innerHTML = isRight
+          ? `✅ <strong>Benar Sekali!</strong> Jawabannya adalah <strong>${correct}. ${escapeHtml(q.options[correct])}</strong>`
+          : `❌ Kurang tepat! Jawaban yang benar adalah <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
+      } else {
+        statusMsg.innerHTML = `💡 Jawaban yang benar adalah <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
+      }
+
+      document.getElementById('soloRevealBtn').style.display = 'none';
+      document.getElementById('soloNextBtn').style.display = 'inline-flex';
+    };
+
+    window.nextSoloQuestion = function() {
+      if (state.soloIndex + 1 < state.questions.length) {
+        state.soloIndex++;
+        renderSoloQuestion();
+      } else {
+        document.getElementById('soloFinishSummary').textContent = 
+          `Kuis "${state.quizTitle}" (${state.questions.length} pertanyaan) telah berhasil ditampilkan seluruhnya!`;
+        switchView('view-solo-finish');
+        fireConfetti();
+      }
+    };
+
+    /* ------------------------------------------------------------------------
+       5. GAMEPLAY MODE 2: MULTIPLAYER / MABAR REAL-TIME (FIRESTORE)
+       ------------------------------------------------------------------------ */
+    function generateRoomCode() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
+
+    async function createMultiplayerRoom() {
+      if (!db || !currentUser) {
+        showToast("⚠️ Koneksi cloud belum siap. Tunggu sebentar lalu coba lagi.");
+        return;
+      }
+
+      const btn = document.getElementById('startQuizSetupBtn');
+      btn.disabled = true;
+      btn.textContent = 'Membuat Room...';
+
+      try {
+        const code = generateRoomCode();
+        state.mpRole = 'admin';
+        state.roomCode = code;
+        state.mpLastRenderedQIndex = -1;
+        state.mpLastRenderedStatus = null;
+        state.podiumConfettiFired = false;
+
+        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
+        await setDoc(roomRef, {
+          roomCode: code,
+          hostId: currentUser.uid,
+          quizTitle: state.quizTitle,
+          timerSeconds: state.timerSeconds,
+          questions: state.questions,
+          status: 'lobby', // 'lobby' | 'question' | 'reveal' | 'finished'
+          currentQuestionIndex: 0,
+          questionStartedAt: 0,
+          createdAt: Date.now()
+        });
+
+        // Setup UI Lobby
+        document.getElementById('lobbyQuizTitle').textContent = state.quizTitle;
+        document.getElementById('lobbyRoomCode').textContent = code;
+        document.getElementById('lobbyTimerInfo').textContent = formatDuration(state.timerSeconds);
+        document.getElementById('lobbyTotalQInfo').textContent = `${state.questions.length} soal`;
+
+        // Generate QR Code
+        const qrContainer = document.getElementById('lobbyQrCode');
+        qrContainer.innerHTML = '';
+        const inviteUrl = getInviteLink(code);
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(qrContainer, {
+            text: inviteUrl,
+            width: 170,
+            height: 170,
+            colorDark: "#0a192f",
+            colorLight: "#ffffff"
+          });
+        }
+
+        subscribeToRoom(code);
+        switchView('view-mp-admin-lobby');
+        showToast(`✅ Room ${code} berhasil dibuat!`);
+      } catch (err) {
+        console.error("Create room error:", err);
+        showToast("❌ Gagal membuat room mabar.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🎮 Buat Room & Tampilkan Kode';
+      }
+    }
+
+    function getInviteLink(code) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('room', code);
+      return url.toString();
+    }
+
+    window.copyRoomLink = function() {
+      const link = getInviteLink(state.roomCode);
+      const tempInput = document.createElement('input');
+      tempInput.value = link;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast("📋 Link undangan room berhasil disalin!");
+    };
+
+    // Navigasi Join Pemain
+    window.handleJoinFromHome = function(e) {
+      e.preventDefault();
+      const code = document.getElementById('homeRoomCodeInput').value.trim().toUpperCase();
+      if (code.length < 4) {
+        showToast("⚠️ Masukkan kode room yang valid!");
+        return;
+      }
+      openPlayerJoinScreen(code);
+    };
+
+    function openPlayerJoinScreen(prefillCode = '') {
+      document.getElementById('playerJoinCode').value = prefillCode.toUpperCase();
+      switchView('view-mp-player-join');
+    }
+
+    window.submitPlayerJoin = async function(e) {
+      e.preventDefault();
+      if (!db || !currentUser) {
+        showToast("⚠️ Koneksi cloud belum siap.");
+        return;
+      }
+
+      const code = document.getElementById('playerJoinCode').value.trim().toUpperCase();
+      const name = document.getElementById('playerJoinName').value.trim();
+      if (!code || !name) return;
+
+      const btn = document.getElementById('btnConfirmJoin');
+      btn.disabled = true;
+      btn.textContent = 'Menghubungkan...';
+
+      try {
+        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
+        const roomSnap = await getDoc(roomRef);
+
+        if (!roomSnap.exists()) {
+          showToast("❌ Room tidak ditemukan! Periksa kembali kodenya.");
+          btn.disabled = false;
+          btn.textContent = 'Gabung Sekarang →';
+          return;
+        }
+
+        const roomData = roomSnap.data();
+        if (roomData.status === 'finished') {
+          showToast("⚠️ Permainan di room ini sudah selesai.");
+          btn.disabled = false;
+          btn.textContent = 'Gabung Sekarang →';
+          return;
+        }
+
+        const playerId = currentUser.uid;
+        state.mpRole = 'player';
+        state.roomCode = code;
+        state.playerId = playerId;
+        state.playerName = name;
+        state.mpLastRenderedQIndex = -1;
+        state.mpLastRenderedStatus = null;
+        state.podiumConfettiFired = false;
+
+        const playerRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`, playerId);
+        await setDoc(playerRef, {
+          playerId: playerId,
+          name: name,
+          score: 0,
+          totalTimeSec: 0,
+          answers: {}, // { "0": { option: "A", timeSec: 1.45, isCorrect: true, points: 920 } }
+          joinedAt: Date.now()
+        });
+
+        subscribeToRoom(code);
+        switchView('view-mp-game');
+        showToast(`🎉 Berhasil bergabung ke room ${code}!`);
+      } catch (err) {
+        console.error("Join error:", err);
+        showToast("❌ Gagal bergabung ke room.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Gabung Sekarang →';
+      }
+    };
+
+    /* ------------------------------------------------------------------------
+       6. SINKRONISASI REAL-TIME FIRESTORE (ADMIN & PEMAIN)
+       ------------------------------------------------------------------------ */
+    function subscribeToRoom(code) {
+      if (state.roomUnsubscribe) state.roomUnsubscribe();
+      if (state.playersUnsubscribe) state.playersUnsubscribe();
+
+      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
+      state.roomUnsubscribe = onSnapshot(roomRef, (snap) => {
+        if (!snap.exists()) return;
+        state.mpRoomData = snap.data();
+        handleRoomStateUpdate();
+      }, (err) => {
+        console.error("Room snapshot error:", err);
+      });
+
+      const playersCol = collection(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`);
+      state.playersUnsubscribe = onSnapshot(playersCol, (querySnap) => {
+        const map = {};
+        querySnap.forEach(docItem => {
+          map[docItem.id] = docItem.data();
+        });
+        state.mpPlayersMap = map;
+        handlePlayersUpdate();
+      }, (err) => {
+        console.error("Players snapshot error:", err);
+      });
+    }
+
+    function handlePlayersUpdate() {
+      const players = Object.values(state.mpPlayersMap);
+
+      // Update Lobby Admin jika masih di lobby
+      if (state.mpRole === 'admin' && state.mpRoomData?.status === 'lobby') {
+        document.getElementById('lobbyPlayerCount').textContent = players.length;
+        const listEl = document.getElementById('lobbyPlayersList');
+        if (players.length === 0) {
+          listEl.innerHTML = `<p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">Belum ada pemain yang masuk. Bagikan kode atau QR code di samping!</p>`;
+        } else {
+          listEl.innerHTML = players
+            .sort((a, b) => a.joinedAt - b.joinedAt)
+            .map(p => `<div class="player-chip">👤 ${escapeHtml(p.name)}</div>`)
+            .join('');
+        }
+      }
+
+      // Update Analitik Live & Jumlah Jawaban Masuk saat soal berlangsung
+      if (state.mpRoomData && (state.mpRoomData.status === 'question' || state.mpRoomData.status === 'reveal')) {
+        updateLiveAnswerAnalytics();
+      }
+
+      // Update Podium jika sudah selesai
+      if (state.mpRoomData?.status === 'finished') {
+        renderMultiplayerPodium();
+      }
+    }
+
+    function handleRoomStateUpdate() {
+      const room = state.mpRoomData;
+      if (!room) return;
+
+      const isPlayer = state.mpRole === 'player';
+      const qIdx = room.currentQuestionIndex;
+      const status = room.status;
+
+      // 1. STATUS: LOBBY
+      if (status === 'lobby') {
+        if (isPlayer) {
+          switchView('view-mp-game');
+          document.getElementById('mpRoleBadge').textContent = `👤 Pemain: ${state.playerName}`;
+          document.getElementById('mpQuestionCounter').textContent = room.quizTitle;
+          document.getElementById('mpTimerDisplay').textContent = '⏳';
+          document.getElementById('mpPlayerWaitingBox').style.display = 'block';
+          document.getElementById('mpPlayerWelcomeName').textContent = state.playerName;
+          document.getElementById('mpActiveStage').style.display = 'none';
+        }
+        return;
+      }
+
+      // 2. STATUS: FINISHED (PODIUM)
+      if (status === 'finished') {
+        clearInterval(state.mpTimerInterval);
+        switchView('view-mp-podium');
+        renderMultiplayerPodium();
+        if (!state.podiumConfettiFired) {
+          state.podiumConfettiFired = true;
+          fireConfetti();
+        }
+        return;
+      }
+
+      // 3. STATUS: QUESTION ATAU REVEAL
+      switchView('view-mp-game');
+      document.getElementById('mpPlayerWaitingBox').style.display = 'none';
+      document.getElementById('mpActiveStage').style.display = 'block';
+
+      const currentQ = room.questions[qIdx];
+      const totalQ = room.questions.length;
+
+      document.getElementById('mpRoleBadge').textContent = isPlayer
+        ? `👤 Pemain: ${state.playerName}`
+        : `📡 Admin Room: ${room.roomCode}`;
+      document.getElementById('mpQuestionCounter').textContent = `Pertanyaan ${qIdx + 1} dari ${totalQ}`;
+      document.getElementById('mpQuestionText').textContent = currentQ.text;
+
+      // Render ulang pilihan hanya jika pertanyaan baru dimulai
+      const isNewQuestion = (state.mpLastRenderedQIndex !== qIdx || (state.mpLastRenderedStatus !== 'question' && status === 'question'));
+      if (isNewQuestion) {
+        state.mpLastRenderedQIndex = qIdx;
+        state.mpPlayerSelectedOpt = null;
+        state.mpPlayerAnswerTimeSec = null;
+        state.mpQuestionLocalStartTime = Date.now();
+
+        // Cek jika pemain sudah pernah jawab soal ini (misal refresh)
+        if (isPlayer && state.mpPlayersMap[state.playerId]?.answers?.[qIdx]) {
+          const prevAns = state.mpPlayersMap[state.playerId].answers[qIdx];
+          state.mpPlayerSelectedOpt = prevAns.option;
+          state.mpPlayerAnswerTimeSec = prevAns.timeSec;
+        }
+
+        renderMultiplayerOptions(currentQ, isPlayer);
+        startMultiplayerCountdown(room);
+      }
+
+      state.mpLastRenderedStatus = status;
+
+      // Tampilan khusus Admin vs Pemain
+      if (!isPlayer) {
+        document.getElementById('mpAdminAnalytics').style.display = 'block';
+        document.getElementById('mpPlayerFeedback').style.display = 'none';
+
+        if (status === 'question') {
+          document.getElementById('mpAdminForceEndBtn').style.display = 'inline-flex';
+          document.getElementById('mpAdminNextQBtn').style.display = 'none';
+          document.getElementById('mpQuestionWinnersBox').style.display = 'none';
+        } else if (status === 'reveal') {
+          clearInterval(state.mpTimerInterval);
+          document.getElementById('mpTimerDisplay').textContent = '0s';
+          document.getElementById('mpTimerBar').style.width = '0%';
+          document.getElementById('mpAdminForceEndBtn').style.display = 'none';
+          document.getElementById('mpAdminNextQBtn').style.display = 'inline-flex';
+          document.getElementById('mpAdminNextQBtn').textContent = 
+            (qIdx + 1 === totalQ) ? '🏆 Tampilkan Podium Juara →' : 'Pertanyaan Berikutnya →';
+          
+          revealMultiplayerOptionColors(currentQ.correct);
+          document.getElementById('mpQuestionWinnersBox').style.display = 'block';
+        }
+      } else {
+        document.getElementById('mpAdminAnalytics').style.display = 'none';
+        if (status === 'reveal') {
+          clearInterval(state.mpTimerInterval);
+          document.getElementById('mpTimerDisplay').textContent = '0s';
+          document.getElementById('mpTimerBar').style.width = '0%';
+          revealMultiplayerOptionColors(currentQ.correct);
+
+          const fbBox = document.getElementById('mpPlayerFeedback');
+          fbBox.style.display = 'block';
+          const myAns = state.mpPlayersMap[state.playerId]?.answers?.[qIdx];
+          if (myAns && myAns.isCorrect) {
+            document.getElementById('mpPlayerFeedbackTitle').innerHTML = `✅ Jawaban Benar! (+${myAns.points} Poin)`;
+            document.getElementById('mpPlayerFeedbackSub').textContent = `Kecepatan jawabmu: ${myAns.timeSec.toFixed(2)} detik`;
+          } else if (myAns) {
+            document.getElementById('mpPlayerFeedbackTitle').innerHTML = `❌ Jawaban Kurang Tepat`;
+            document.getElementById('mpPlayerFeedbackSub').textContent = `Jawaban yang benar adalah ${currentQ.correct}. ${currentQ.options[currentQ.correct]}`;
+          } else {
+            document.getElementById('mpPlayerFeedbackTitle').innerHTML = `⏰ Waktu Habis!`;
+            document.getElementById('mpPlayerFeedbackSub').textContent = `Kamu belum sempat memilih. Jawaban benar: ${currentQ.correct}. ${currentQ.options[currentQ.correct]}`;
+          }
+        }
+      }
+
+      updateLiveAnswerAnalytics();
+    }
+
+    function renderMultiplayerOptions(q, isPlayer) {
+      const grid = document.getElementById('mpAnswersGrid');
+      grid.innerHTML = '';
+      document.getElementById('mpPlayerFeedback').style.display = 'none';
+
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = `answer-btn opt-${letter}`;
+        btn.id = `mp-opt-${letter}`;
+        btn.innerHTML = `<span class="ans-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
+
+        if (!isPlayer) {
+          // Admin hanya menampilkan opsi
+          btn.disabled = true;
+        } else {
+          if (state.mpPlayerSelectedOpt) {
+            btn.disabled = true;
+            if (state.mpPlayerSelectedOpt === letter) btn.classList.add('selected');
+            else btn.classList.add('dimmed');
+          } else {
+            btn.onclick = () => submitPlayerAnswer(letter);
+          }
+        }
+        grid.appendChild(btn);
+      });
+
+      if (isPlayer && state.mpPlayerSelectedOpt) {
+        document.getElementById('mpPlayerFeedback').style.display = 'block';
+        document.getElementById('mpPlayerFeedbackTitle').textContent = `🔒 Pilihan ${state.mpPlayerSelectedOpt} Terkunci!`;
+        document.getElementById('mpPlayerFeedbackSub').textContent = `Waktu jawab: ${state.mpPlayerAnswerTimeSec.toFixed(2)} detik. Menunggu waktu habis...`;
+      }
+    }
+
+    function revealMultiplayerOptionColors(correctLetter) {
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.getElementById(`mp-opt-${letter}`);
+        if (!btn) return;
+        btn.disabled = true;
+        if (letter === correctLetter) {
+          btn.classList.remove('dimmed');
+          btn.classList.add('correct-reveal');
+        } else {
+          btn.classList.add('dimmed');
+        }
+      });
+    }
+
+    function startMultiplayerCountdown(room) {
+      clearInterval(state.mpTimerInterval);
+      const durationSec = room.timerSeconds;
+      const totalMs = durationSec * 1000;
+      const startTime = Date.now();
+
+      const timerDisplay = document.getElementById('mpTimerDisplay');
+      const timerBar = document.getElementById('mpTimerBar');
+      timerDisplay.classList.remove('danger');
+      timerBar.classList.remove('danger');
+
+      state.mpTimerInterval = setInterval(async () => {
+        if (!state.mpRoomData || state.mpRoomData.status !== 'question') {
+          clearInterval(state.mpTimerInterval);
+          return;
+        }
+
+        const elapsed = Date.now() - startTime;
+        const remainingMs = Math.max(0, totalMs - elapsed);
+        const remainingSec = Math.ceil(remainingMs / 1000);
+        const pct = (remainingMs / totalMs) * 100;
+
+        timerDisplay.textContent = `${remainingSec}s`;
+        timerBar.style.width = `${pct}%`;
+
+        if (remainingSec <= 3 && remainingMs > 0) {
+          timerDisplay.classList.add('danger');
+          timerBar.classList.add('danger');
+        }
+
+        if (remainingMs <= 0) {
+          clearInterval(state.mpTimerInterval);
+          // Admin otomatis mengubah status room ke 'reveal' saat timer habis
+          if (state.mpRole === 'admin') {
+            await adminForceRevealQuestion();
+          }
+        }
+      }, 100);
+    }
+
+    // Aksi Admin: Mulai Game
+    window.adminStartMultiplayerGame = async function() {
+      if (!db || state.mpRole !== 'admin') return;
+      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', state.roomCode);
+      await updateDoc(roomRef, {
+        status: 'question',
+        currentQuestionIndex: 0,
+        questionStartedAt: Date.now()
+      });
+    };
+
+    // Aksi Admin: Buka Jawaban (Waktu Habis)
+    window.adminForceRevealQuestion = async function() {
+      if (!db || state.mpRole !== 'admin') return;
+      if (state.mpRoomData?.status === 'reveal') return;
+      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', state.roomCode);
+      await updateDoc(roomRef, {
+        status: 'reveal'
+      });
+    };
+
+    // Aksi Admin: Pertanyaan Berikutnya atau Selesai (Podium)
+    window.adminNextMultiplayerQuestion = async function() {
+      if (!db || state.mpRole !== 'admin') return;
+      const nextIdx = state.mpRoomData.currentQuestionIndex + 1;
+      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', state.roomCode);
+
+      if (nextIdx < state.mpRoomData.questions.length) {
+        await updateDoc(roomRef, {
+          status: 'question',
+          currentQuestionIndex: nextIdx,
+          questionStartedAt: Date.now()
+        });
+      } else {
+        await updateDoc(roomRef, {
+          status: 'finished'
+        });
+      }
+    };
+
+    // Aksi Pemain: Kirim Pilihan Jawaban
+    async function submitPlayerAnswer(selectedLetter) {
+      if (state.mpRole !== 'player') return;
+      if (state.mpRoomData?.status !== 'question') return;
+      if (state.mpPlayerSelectedOpt) return;
+
+      const room = state.mpRoomData;
+      const qIdx = room.currentQuestionIndex;
+      const currentQ = room.questions[qIdx];
+
+      // Hitung kecepatan waktu jawab dalam detik (minimal 0.10 detik)
+      const elapsedSec = Math.max(0.10, Math.min(room.timerSeconds, (Date.now() - state.mpQuestionLocalStartTime) / 1000));
+      const isCorrect = selectedLetter === currentQ.correct;
+
+      // Rumus Skor: 500 Poin Dasar + Bonus Kecepatan hingga 500 Poin
+      let pointsEarned = 0;
+      if (isCorrect) {
+        const speedRatio = Math.max(0, (room.timerSeconds - elapsedSec) / room.timerSeconds);
+        pointsEarned = Math.round(500 + (speedRatio * 500));
+      }
+
+      state.mpPlayerSelectedOpt = selectedLetter;
+      state.mpPlayerAnswerTimeSec = elapsedSec;
+
+      // Kunci UI tombol di HP pemain segera
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const btn = document.getElementById(`mp-opt-${letter}`);
+        btn.disabled = true;
+        if (letter === selectedLetter) btn.classList.add('selected');
+        else btn.classList.add('dimmed');
+      });
+
+      document.getElementById('mpPlayerFeedback').style.display = 'block';
+      document.getElementById('mpPlayerFeedbackTitle').textContent = `🔒 Pilihan ${selectedLetter} Terkunci!`;
+      document.getElementById('mpPlayerFeedbackSub').textContent = `Kecepatan jawab: ${elapsedSec.toFixed(2)} detik. Menunggu hasil...`;
+
+      // Simpan ke Firestore
+      try {
+        const playerRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${state.roomCode}_players`, state.playerId);
+        const currentPlayerData = state.mpPlayersMap[state.playerId] || { score: 0, totalTimeSec: 0, answers: {} };
+        const updatedAnswers = { ...(currentPlayerData.answers || {}) };
+        updatedAnswers[qIdx] = {
+          option: selectedLetter,
+          timeSec: Number(elapsedSec.toFixed(2)),
+          isCorrect: isCorrect,
+          points: pointsEarned
+        };
+
+        // Hitung ulang total skor & akumulasi waktu dari semua jawaban
+        let totalScore = 0;
+        let totalTime = 0;
+        Object.values(updatedAnswers).forEach(ans => {
+          totalScore += ans.points;
+          totalTime += ans.timeSec;
+        });
+
+        await updateDoc(playerRef, {
+          answers: updatedAnswers,
+          score: totalScore,
+          totalTimeSec: Number(totalTime.toFixed(2))
+        });
+      } catch (err) {
+        console.error("Submit answer error:", err);
+      }
+    }
+
+    // Update Statistik Persentase (A, B, C, D) & Urutan Tercepat
+    function updateLiveAnswerAnalytics() {
+      const room = state.mpRoomData;
+      if (!room) return;
+      const qIdx = room.currentQuestionIndex;
+      const players = Object.values(state.mpPlayersMap);
+      const totalPlayers = players.length;
+
+      const counts = { A: 0, B: 0, C: 0, D: 0 };
+      let answeredCount = 0;
+      const correctResponders = [];
+
+      players.forEach(p => {
+        const ans = p.answers?.[qIdx];
+        if (ans && counts[ans.option] !== undefined) {
+          counts[ans.option]++;
+          answeredCount++;
+          if (ans.isCorrect) {
+            correctResponders.push({
+              name: p.name,
+              timeSec: ans.timeSec,
+              points: ans.points
+            });
+          }
+        }
+      });
+
+      document.getElementById('mpAnswerCountBadge').textContent = `Jawaban masuk: ${answeredCount}/${totalPlayers}`;
+
+      // Update Grafik Bar Persentase
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        const pct = answeredCount > 0 ? Math.round((counts[letter] / answeredCount) * 100) : 0;
+        const pctEl = document.getElementById(`pct-${letter}`);
+        const barEl = document.getElementById(`bar-${letter}`);
+        if (pctEl) pctEl.textContent = `${pct}% (${counts[letter]})`;
+        if (barEl) barEl.style.height = `${Math.max(8, pct * 1.25)}px`;
+      });
+
+      // Jika semua pemain sudah menjawab, Admin bisa otomatis membuka jawaban
+      if (state.mpRole === 'admin' && room.status === 'question' && totalPlayers > 0 && answeredCount === totalPlayers) {
+        adminForceRevealQuestion();
+      }
+
+      // Render Daftar Penjawab Benar & Tercepat pada Soal Ini
+      const listEl = document.getElementById('mpQuestionFastestList');
+      if (listEl) {
+        if (correctResponders.length === 0) {
+          listEl.innerHTML = `<p style="color: var(--text-muted);">Belum ada pemain yang menjawab benar pada soal ini.</p>`;
+        } else {
+          correctResponders.sort((a, b) => a.timeSec - b.timeSec);
+          listEl.innerHTML = correctResponders.map((r, idx) => `
+            <div class="lb-row ${idx === 0 ? 'top-1' : ''}">
+              <span>#${idx + 1} <strong>${escapeHtml(r.name)}</strong></span>
+              <span>⚡ ${r.timeSec.toFixed(2)} detik • <strong style="color: var(--success);">+${r.points} poin</strong></span>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    // Render Podium Juara 1, 2, dan 3
+    function renderMultiplayerPodium() {
+      const players = Object.values(state.mpPlayersMap);
+
+      // Urutkan berdasarkan Skor Tertinggi, jika seri urutkan berdasarkan Waktu Tercepat
+      players.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (a.totalTimeSec || 9999) - (b.totalTimeSec || 9999);
+      });
+
+      const p1 = players[0] || null;
+      const p2 = players[1] || null;
+      const p3 = players[2] || null;
+
+      const stage = document.getElementById('podiumStageContainer');
+      stage.innerHTML = `
+        <!-- Juara 2 -->
+        <div class="podium-place place-2">
+          <div class="podium-avatar">🥈</div>
+          <div class="podium-name">${p2 ? escapeHtml(p2.name) : '-'}</div>
+          <div class="podium-meta">${p2 ? `${p2.score} pts • ${p2.totalTimeSec.toFixed(2)}s` : ''}</div>
+          <div class="podium-block">
+            <span style="font-size: 1.5rem;">JUARA 2</span>
+          </div>
+        </div>
+
+        <!-- Juara 1 -->
+        <div class="podium-place place-1">
+          <div class="podium-avatar" style="border-color: #fbbf24; transform: scale(1.12);">👑</div>
+          <div class="podium-name" style="font-size: 1.2rem;">${p1 ? escapeHtml(p1.name) : '-'}</div>
+          <div class="podium-meta">${p1 ? `<strong>${p1.score} pts</strong> • ${p1.totalTimeSec.toFixed(2)}s` : ''}</div>
+          <div class="podium-block">
+            <span style="font-size: 1.75rem;">JUARA 1</span>
+          </div>
+        </div>
+
+        <!-- Juara 3 -->
+        <div class="podium-place place-3">
+          <div class="podium-avatar">🥉</div>
+          <div class="podium-name">${p3 ? escapeHtml(p3.name) : '-'}</div>
+          <div class="podium-meta">${p3 ? `${p3.score} pts • ${p3.totalTimeSec.toFixed(2)}s` : ''}</div>
+          <div class="podium-block">
+            <span style="font-size: 1.35rem;">JUARA 3</span>
+          </div>
+        </div>
+      `;
+
+      const fullList = document.getElementById('fullLeaderboardList');
+      if (players.length === 0) {
+        fullList.innerHTML = `<p style="color: var(--text-muted);">Tidak ada data pemain.</p>`;
+      } else {
+        fullList.innerHTML = players.map((p, idx) => `
+          <div class="lb-row ${idx === 0 ? 'top-1' : ''}">
+            <span>
+              <strong>#${idx + 1}</strong> ${escapeHtml(p.name)}
+            </span>
+            <span>
+              ⏱️ ${Number(p.totalTimeSec || 0).toFixed(2)} detik • 
+              <strong style="color: var(--brand-accent);">${p.score} poin</strong>
+            </span>
+          </div>
+        `).join('');
+      }
+    }
+
+    /* ------------------------------------------------------------------------
+       7. BOOTSTRAP & DETEKSI PARAMETER URL (?room=KODE)
+       ------------------------------------------------------------------------ */
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initFirebase();
+
+      const params = new URLSearchParams(window.location.search);
+      const roomParam = params.get('room');
+      if (roomParam) {
+        openPlayerJoinScreen(roomParam);
+      }
+    });
+  </script>
+</body>
+</html>
