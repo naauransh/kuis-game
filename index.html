@@ -1,1528 +1,1674 @@
 <!DOCTYPE html>
 <html lang="id" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KuisPintar — Platform Kuis Interaktif Kelas & Mabar Real-Time</title>
-  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-  <!-- Authentic ISO/IEC 18004 QR Code Generator -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-  <!-- Canvas Confetti -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <style>
-    /* ==========================================================================
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KuisPintar — Platform Kuis Interaktif Kelas & Mabar Real-Time</title>
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap"
+        rel="stylesheet">
+    <!-- Authentic ISO/IEC 18004 QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* ==========================================================================
        1. DESIGN TOKENS (PURE CSS — DEEP BLUE, NAVY & BABY BLUE)
        ========================================================================== */
-    :root {
-      /* Light Mode */
-      --bg-primary: #f0f6ff;
-      --bg-secondary: #ffffff;
-      --bg-card: #ffffff;
-      --bg-elevated: #e2eeff;
-      --text-primary: #0a1628;
-      --text-secondary: #2c4464;
-      --text-muted: #5a7394;
+        :root {
+            /* Light Mode */
+            --bg-primary: #f0f6ff;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-elevated: #e2eeff;
+            --text-primary: #0a1628;
+            --text-secondary: #2c4464;
+            --text-muted: #5a7394;
 
-      --brand-navy: #0a1628;
-      --brand-deep: #112240;
-      --brand-blue: #1d4ed8;
-      --brand-baby: #38bdf8;
-      --brand-baby-light: #60a5fa;
-      --brand-glow: rgba(56, 189, 248, 0.25);
-      --accent-pastel-blue: #bae6fd;
-      --accent-pastel-pink: #fbcfe8;
-      --accent-rose: #f472b6;
+            --brand-navy: #0a1628;
+            --brand-deep: #112240;
+            --brand-blue: #1d4ed8;
+            --brand-baby: #38bdf8;
+            --brand-baby-light: #60a5fa;
+            --brand-glow: rgba(56, 189, 248, 0.25);
+            --accent-pastel-blue: #bae6fd;
+            --accent-pastel-pink: #fbcfe8;
+            --accent-rose: #f472b6;
 
-      --border-color: #cbd8ec;
-      --shadow-sm: 0 2px 8px rgba(10, 22, 40, 0.06);
-      --shadow-md: 0 8px 24px rgba(10, 22, 40, 0.1);
-      --shadow-lg: 0 18px 42px rgba(17, 34, 64, 0.16);
+            --border-color: #cbd8ec;
+            --shadow-sm: 0 2px 8px rgba(10, 22, 40, 0.06);
+            --shadow-md: 0 8px 24px rgba(10, 22, 40, 0.1);
+            --shadow-lg: 0 18px 42px rgba(17, 34, 64, 0.16);
 
-      /* High-Contrast Option Colors */
-      --opt-a: #dc2626;
-      --opt-b: #1d4ed8;
-      --opt-c: #d97706;
-      --opt-d: #059669;
+            /* High-Contrast Option Colors */
+            --opt-a: #dc2626;
+            --opt-b: #1d4ed8;
+            --opt-c: #d97706;
+            --opt-d: #059669;
 
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-    }
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
 
-    [data-theme="dark"] {
-      /* Dark Mode (Deep Navy #0A1628 / #112240 & Baby Blue #38BDF8 / #60A5FA) */
-      --bg-primary: #0a1628;
-      --bg-secondary: #112240;
-      --bg-card: #112240;
-      --bg-elevated: #1b3258;
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5e1;
-      --text-muted: #8fa6c6;
+        [data-theme="dark"] {
+            /* Dark Mode (Deep Navy #0A1628 / #112240 & Baby Blue #38BDF8 / #60A5FA) */
+            --bg-primary: #0a1628;
+            --bg-secondary: #112240;
+            --bg-card: #112240;
+            --bg-elevated: #1b3258;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #8fa6c6;
 
-      --brand-navy: #0a1628;
-      --brand-deep: #112240;
-      --brand-blue: #2563eb;
-      --brand-baby: #38bdf8;
-      --brand-baby-light: #60a5fa;
-      --brand-glow: rgba(56, 189, 248, 0.24);
-      --accent-pastel-blue: #7dd3fc;
-      --accent-pastel-pink: #f9a8d4;
-      --accent-rose: #ec4899;
+            --brand-navy: #0a1628;
+            --brand-deep: #112240;
+            --brand-blue: #2563eb;
+            --brand-baby: #38bdf8;
+            --brand-baby-light: #60a5fa;
+            --brand-glow: rgba(56, 189, 248, 0.24);
+            --accent-pastel-blue: #7dd3fc;
+            --accent-pastel-pink: #f9a8d4;
+            --accent-rose: #ec4899;
 
-      --border-color: #233f6e;
-      --shadow-sm: 0 4px 12px rgba(2, 8, 20, 0.35);
-      --shadow-md: 0 10px 28px rgba(2, 8, 20, 0.5);
-      --shadow-lg: 0 20px 50px rgba(2, 8, 20, 0.72);
-    }
+            --border-color: #233f6e;
+            --shadow-sm: 0 4px 12px rgba(2, 8, 20, 0.35);
+            --shadow-md: 0 10px 28px rgba(2, 8, 20, 0.5);
+            --shadow-lg: 0 20px 50px rgba(2, 8, 20, 0.72);
+        }
 
-    /* ==========================================================================
+        /* ==========================================================================
        2. RESET & BASE TYPOGRAPHY
        ========================================================================== */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      transition: background-color 0.25s ease, color 0.25s ease;
-      overflow-x: hidden;
-      line-height: 1.55;
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.25s ease, color 0.25s ease;
+            overflow-x: hidden;
+            line-height: 1.55;
+        }
 
-    h1, h2, h3, h4 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      letter-spacing: -0.02em;
-    }
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.02em;
+        }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(circle at 12% 14%, var(--brand-glow) 0%, transparent 45%),
-        radial-gradient(circle at 88% 86%, rgba(244, 114, 182, 0.12) 0%, transparent 45%);
-      pointer-events: none;
-      z-index: 0;
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 12% 14%, var(--brand-glow) 0%, transparent 45%),
+                radial-gradient(circle at 88% 86%, rgba(244, 114, 182, 0.12) 0%, transparent 45%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    .navbar, main, .modal-backdrop, .toast-stack {
-      position: relative;
-      pointer-events: auto;
-    }
+        .navbar,
+        main,
+        .modal-backdrop,
+        .toast-stack {
+            position: relative;
+            pointer-events: auto;
+        }
 
-    .modal-backdrop {
-      position: fixed;
-      z-index: 1000;
-    }
+        .modal-backdrop {
+            position: fixed;
+            z-index: 1000;
+        }
 
-    .toast-stack {
-      position: fixed;
-      z-index: 2000;
-      pointer-events: none;
-    }
+        .toast-stack {
+            position: fixed;
+            z-index: 2000;
+            pointer-events: none;
+        }
 
-    .toast-msg {
-      pointer-events: auto;
-    }
+        .toast-msg {
+            pointer-events: auto;
+        }
 
-    /* ==========================================================================
+        /* ==========================================================================
        3. NAVBAR & CONTAINER
        ========================================================================== */
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background-color: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0.85rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      box-shadow: var(--shadow-sm);
-    }
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-sm);
+        }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      cursor: pointer;
-      user-select: none;
-    }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            user-select: none;
+        }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--brand-blue), var(--brand-baby));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 12px var(--brand-glow);
-    }
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--brand-blue), var(--brand-baby));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px var(--brand-glow);
+        }
 
-    .brand-name {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: var(--text-primary);
-    }
+        .brand-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
 
-    .brand-name span {
-      color: var(--brand-baby);
-    }
+        .brand-name span {
+            color: var(--brand-baby);
+        }
 
-    [data-theme="light"] .brand-name span {
-      color: var(--brand-blue);
-    }
+        [data-theme="light"] .brand-name span {
+            color: var(--brand-blue);
+        }
 
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      flex-wrap: wrap;
-    }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
 
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.42rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 700;
-      background-color: var(--bg-elevated);
-      border: 1.5px solid var(--border-color);
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease;
-    }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.42rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            background-color: var(--bg-elevated);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease;
+        }
 
-    .status-pill:hover {
-      transform: translateY(-1px);
-      border-color: var(--brand-baby);
-    }
+        .status-pill:hover {
+            transform: translateY(-1px);
+            border-color: var(--brand-baby);
+        }
 
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background-color: var(--warning);
-      flex-shrink: 0;
-    }
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background-color: var(--warning);
+            flex-shrink: 0;
+        }
 
-    .status-pill.connected .status-dot {
-      background-color: var(--success);
-      box-shadow: 0 0 8px var(--success);
-    }
+        .status-pill.connected .status-dot {
+            background-color: var(--success);
+            box-shadow: 0 0 8px var(--success);
+        }
 
-    .status-pill.connected {
-      color: var(--success);
-      border-color: rgba(16, 185, 129, 0.45);
-    }
+        .status-pill.connected {
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.45);
+        }
 
-    .status-pill.setup-needed .status-dot {
-      background-color: var(--warning);
-      box-shadow: 0 0 8px var(--warning);
-    }
+        .status-pill.setup-needed .status-dot {
+            background-color: var(--warning);
+            box-shadow: 0 0 8px var(--warning);
+        }
 
-    .status-pill.setup-needed {
-      color: var(--warning);
-      border-color: rgba(245, 158, 11, 0.5);
-    }
+        .status-pill.setup-needed {
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
 
-    .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 1140px;
-      margin: 0 auto;
-      padding: 1.5rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .view {
-      display: none;
-      width: 100%;
-      animation: fadeSlide 0.3s ease forwards;
-    }
+        .view {
+            display: none;
+            width: 100%;
+            animation: fadeSlide 0.3s ease forwards;
+        }
 
-    .view.active {
-      display: block;
-    }
+        .view.active {
+            display: block;
+        }
 
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
 
-    /* ==========================================================================
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==========================================================================
        4. UI PRIMITIVES (CARDS, BUTTONS, FORMS)
        ========================================================================== */
-    .card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 18px;
-      padding: 1.65rem;
-      box-shadow: var(--shadow-md);
-    }
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 1.65rem;
+            box-shadow: var(--shadow-md);
+        }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.8rem 1.35rem;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: transform 0.15s ease, filter 0.15s ease, background-color 0.2s ease;
-      user-select: none;
-    }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.35rem;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.15s ease, filter 0.15s ease, background-color 0.2s ease;
+            user-select: none;
+        }
 
-    .btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      filter: brightness(1.06);
-    }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.06);
+        }
 
-    .btn:active:not(:disabled) {
-      transform: scale(0.98);
-    }
+        .btn:active:not(:disabled) {
+            transform: scale(0.98);
+        }
 
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #1d4ed8, #1e40af);
-      color: #ffffff;
-      box-shadow: 0 4px 14px var(--brand-glow);
-    }
+        .btn-primary {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            color: #ffffff;
+            box-shadow: 0 4px 14px var(--brand-glow);
+        }
 
-    .btn-baby {
-      background: linear-gradient(135deg, #64b5f6, #90caf9);
-      color: #0a192f;
-      font-weight: 700;
-      box-shadow: 0 4px 14px rgba(100, 181, 246, 0.28);
-    }
+        .btn-baby {
+            background: linear-gradient(135deg, #64b5f6, #90caf9);
+            color: #0a192f;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(100, 181, 246, 0.28);
+        }
 
-    .btn-success {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
-    }
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
+        }
 
-    .btn-danger {
-      background-color: #dc2626;
-      color: #ffffff;
-    }
+        .btn-danger {
+            background-color: #dc2626;
+            color: #ffffff;
+        }
 
-    .btn-outline {
-      background-color: transparent;
-      border: 1.5px solid var(--border-color);
-      color: var(--text-primary);
-    }
+        .btn-outline {
+            background-color: transparent;
+            border: 1.5px solid var(--border-color);
+            color: var(--text-primary);
+        }
 
-    .btn-outline:hover:not(:disabled) {
-      border-color: var(--brand-baby);
-      background-color: var(--bg-elevated);
-    }
+        .btn-outline:hover:not(:disabled) {
+            border-color: var(--brand-baby);
+            background-color: var(--bg-elevated);
+        }
 
-    .btn-sm {
-      padding: 0.5rem 0.9rem;
-      font-size: 0.85rem;
-      border-radius: 10px;
-    }
+        .btn-sm {
+            padding: 0.5rem 0.9rem;
+            font-size: 0.85rem;
+            border-radius: 10px;
+        }
 
-    .btn-lg {
-      padding: 1rem 1.75rem;
-      font-size: 1.05rem;
-      border-radius: 14px;
-    }
+        .btn-lg {
+            padding: 1rem 1.75rem;
+            font-size: 1.05rem;
+            border-radius: 14px;
+        }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.35rem 0.8rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      background-color: var(--bg-elevated);
-      color: var(--brand-baby);
-      border: 1px solid rgba(249, 168, 212, 0.45);
-    }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            background-color: var(--bg-elevated);
+            color: var(--brand-baby);
+            border: 1px solid rgba(249, 168, 212, 0.45);
+        }
 
-    [data-theme="light"] .badge {
-      color: var(--brand-blue);
-      border-color: rgba(244, 114, 182, 0.5);
-    }
+        [data-theme="light"] .badge {
+            color: var(--brand-blue);
+            border-color: rgba(244, 114, 182, 0.5);
+        }
 
-    .form-group {
-      margin-bottom: 1.2rem;
-    }
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
 
-    .form-label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 0.45rem;
-    }
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.45rem;
+        }
 
-    .form-control {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      border-radius: 12px;
-      border: 1.5px solid var(--border-color);
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
 
-    .form-control:focus {
-      outline: none;
-      border-color: var(--brand-baby);
-      box-shadow: 0 0 0 3px var(--brand-glow);
-    }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--brand-baby);
+            box-shadow: 0 0 0 3px var(--brand-glow);
+        }
 
-    /* ==========================================================================
+        /* ==========================================================================
        5. HOME VIEW
        ========================================================================== */
-    .hero {
-      text-align: center;
-      max-width: 740px;
-      margin: 1rem auto 2.25rem;
-    }
+        .hero {
+            text-align: center;
+            max-width: 740px;
+            margin: 1rem auto 2.25rem;
+        }
 
-    .hero h1 {
-      font-size: clamp(1.9rem, 4.5vw, 2.9rem);
-      font-weight: 800;
-      line-height: 1.18;
-      margin: 0.65rem 0 1rem;
-    }
+        .hero h1 {
+            font-size: clamp(1.9rem, 4.5vw, 2.9rem);
+            font-weight: 800;
+            line-height: 1.18;
+            margin: 0.65rem 0 1rem;
+        }
 
-    .hero p {
-      color: var(--text-secondary);
-      font-size: 1.08rem;
-    }
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.08rem;
+        }
 
-    .mode-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
 
-    .mode-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.2s ease, border-color 0.2s ease;
-    }
+        .mode-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
 
-    .mode-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--brand-baby);
-    }
+        .mode-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--brand-baby);
+        }
 
-    .mode-icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
-      background-color: var(--bg-elevated);
-      color: var(--brand-baby);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.65rem;
-      margin-bottom: 1.1rem;
-    }
+        .mode-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background-color: var(--bg-elevated);
+            color: var(--brand-baby);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.65rem;
+            margin-bottom: 1.1rem;
+        }
 
-    .join-card {
-      border: 2px solid var(--brand-baby);
-      background: linear-gradient(145deg, var(--bg-card), var(--bg-elevated));
-    }
+        .join-card {
+            border: 2px solid var(--brand-baby);
+            background: linear-gradient(145deg, var(--bg-card), var(--bg-elevated));
+        }
 
-    .code-entry-row {
-      display: flex;
-      gap: 0.6rem;
-      margin-top: 1rem;
-    }
+        .code-entry-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
 
-    .code-entry-row input {
-      text-transform: uppercase;
-      font-weight: 800;
-      font-size: 1.2rem;
-      letter-spacing: 0.18em;
-      text-align: center;
-    }
+        .code-entry-row input {
+            text-transform: uppercase;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 0.18em;
+            text-align: center;
+        }
 
-    /* ==========================================================================
+        /* ==========================================================================
        6. QUIZ BUILDER (GURU / ADMIN)
        ========================================================================== */
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    .preset-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 0.85rem;
-    }
+        .preset-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.85rem;
+        }
 
-    .preset-btn {
-      padding: 0.45rem 0.9rem;
-      border-radius: 10px;
-      border: 1.5px solid var(--border-color);
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
+        .preset-btn {
+            padding: 0.45rem 0.9rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border-color);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
 
-    .preset-btn.active,
-    .preset-btn:hover {
-      background-color: var(--brand-blue);
-      border-color: var(--brand-blue);
-      color: #ffffff;
-    }
+        .preset-btn.active,
+        .preset-btn:hover {
+            background-color: var(--brand-blue);
+            border-color: var(--brand-blue);
+            color: #ffffff;
+        }
 
-    .custom-timer-inputs {
-      display: flex;
-      gap: 0.6rem;
-      max-width: 340px;
-    }
+        .custom-timer-inputs {
+            display: flex;
+            gap: 0.6rem;
+            max-width: 340px;
+        }
 
-    .q-builder-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 1.35rem;
-      margin-bottom: 1.25rem;
-      box-shadow: var(--shadow-sm);
-    }
+        .q-builder-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.35rem;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-sm);
+        }
 
-    .q-builder-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.9rem;
-    }
+        .q-builder-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.9rem;
+        }
 
-    .options-grid-editor {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 0.85rem;
-      margin-top: 0.65rem;
-    }
+        .options-grid-editor {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 0.85rem;
+            margin-top: 0.65rem;
+        }
 
-    .opt-box {
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      padding: 0.45rem 0.75rem;
-      border-radius: 12px;
-      border: 1.5px solid var(--border-color);
-      background-color: var(--bg-primary);
-      transition: border-color 0.2s, background-color 0.2s;
-    }
+        .opt-box {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.45rem 0.75rem;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-color);
+            background-color: var(--bg-primary);
+            transition: border-color 0.2s, background-color 0.2s;
+        }
 
-    .opt-box.is-correct {
-      border-color: var(--success);
-      background-color: rgba(16, 185, 129, 0.1);
-    }
+        .opt-box.is-correct {
+            border-color: var(--success);
+            background-color: rgba(16, 185, 129, 0.1);
+        }
 
-    .opt-tag {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-weight: 800;
-      flex-shrink: 0;
-    }
+        .opt-tag {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
 
-    .opt-tag.A { background-color: var(--opt-a); }
-    .opt-tag.B { background-color: var(--opt-b); }
-    .opt-tag.C { background-color: var(--opt-c); }
-    .opt-tag.D { background-color: var(--opt-d); }
+        .opt-tag.A {
+            background-color: var(--opt-a);
+        }
 
-    .opt-box input[type="text"] {
-      width: 100%;
-      border: none;
-      background: transparent;
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      outline: none;
-    }
+        .opt-tag.B {
+            background-color: var(--opt-b);
+        }
 
-    .opt-box input[type="radio"] {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--success);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
+        .opt-tag.C {
+            background-color: var(--opt-c);
+        }
 
-    /* ==========================================================================
+        .opt-tag.D {
+            background-color: var(--opt-d);
+        }
+
+        .opt-box input[type="text"] {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .opt-box input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--success);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* ==========================================================================
        7. GAMEPLAY STAGE (SOLO & MULTIPLAYER)
        ========================================================================== */
-    .stage-topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
+        .stage-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
 
-    .timer-track {
-      width: 100%;
-      height: 12px;
-      background-color: var(--bg-elevated);
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      margin-bottom: 1.5rem;
-    }
+        .timer-track {
+            width: 100%;
+            height: 12px;
+            background-color: var(--bg-elevated);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
 
-    .timer-fill {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, var(--brand-baby), var(--brand-blue));
-      transition: width 0.1s linear;
-    }
+        .timer-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--brand-baby), var(--brand-blue));
+            transition: width 0.1s linear;
+        }
 
-    .timer-fill.urgent {
-      background: linear-gradient(90deg, #f87171, #dc2626);
-    }
+        .timer-fill.urgent {
+            background: linear-gradient(90deg, #f87171, #dc2626);
+        }
 
-    .timer-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 72px;
-      height: 44px;
-      padding: 0 1rem;
-      border-radius: 12px;
-      background-color: var(--brand-blue);
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 12px var(--brand-glow);
-    }
+        .timer-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 72px;
+            height: 44px;
+            padding: 0 1rem;
+            border-radius: 12px;
+            background-color: var(--brand-blue);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px var(--brand-glow);
+        }
 
-    .timer-pill.urgent {
-      background-color: var(--danger);
-      animation: pulseAlert 0.75s infinite;
-    }
+        .timer-pill.urgent {
+            background-color: var(--danger);
+            animation: pulseAlert 0.75s infinite;
+        }
 
-    @keyframes pulseAlert {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.06); }
-    }
+        @keyframes pulseAlert {
 
-    .question-banner {
-      text-align: center;
-      padding: 2.25rem 1.5rem;
-      margin-bottom: 1.5rem;
-    }
+            0%,
+            100% {
+                transform: scale(1);
+            }
 
-    .question-banner h2 {
-      font-size: clamp(1.35rem, 3.2vw, 2.05rem);
-      font-weight: 800;
-      line-height: 1.35;
-    }
+            50% {
+                transform: scale(1.06);
+            }
+        }
 
-    .choices-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
+        .question-banner {
+            text-align: center;
+            padding: 2.25rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
 
-    @media (max-width: 640px) {
-      .choices-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+        .question-banner h2 {
+            font-size: clamp(1.35rem, 3.2vw, 2.05rem);
+            font-weight: 800;
+            line-height: 1.35;
+        }
 
-    .choice-btn {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem 1.4rem;
-      border-radius: 16px;
-      border: 3px solid transparent;
-      color: #ffffff;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-align: left;
-      cursor: pointer;
-      transition: transform 0.2s ease, opacity 0.25s ease, box-shadow 0.25s ease;
-      box-shadow: var(--shadow-sm);
-    }
+        .choices-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
 
-    .choice-btn.opt-A { background-color: var(--opt-a); }
-    .choice-btn.opt-B { background-color: var(--opt-b); }
-    .choice-btn.opt-C { background-color: var(--opt-c); }
-    .choice-btn.opt-D { background-color: var(--opt-d); }
+        @media (max-width: 640px) {
+            .choices-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .choice-btn:hover:not(:disabled) {
-      transform: translateY(-3px);
-      filter: brightness(1.07);
-      box-shadow: var(--shadow-md);
-    }
+        .choice-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 1.4rem;
+            border-radius: 16px;
+            border: 3px solid transparent;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: var(--shadow-sm);
+        }
 
-    .choice-btn:disabled {
-      cursor: default;
-    }
+        .choice-btn.opt-A {
+            background-color: var(--opt-a);
+        }
 
-    .choice-btn.chosen {
-      border-color: #ffffff;
-      box-shadow: 0 0 0 4px var(--brand-baby);
-      transform: scale(1.02);
-    }
+        .choice-btn.opt-B {
+            background-color: var(--opt-b);
+        }
 
-    .choice-btn.faded {
-      opacity: 0.3;
-      filter: grayscale(45%);
-      transform: scale(0.98);
-    }
+        .choice-btn.opt-C {
+            background-color: var(--opt-c);
+        }
 
-    .choice-btn.is-right {
-      opacity: 1 !important;
-      filter: none !important;
-      background-color: #10b981 !important;
-      border-color: #ffffff !important;
-      box-shadow: 0 0 24px rgba(16, 185, 129, 0.7) !important;
-      transform: scale(1.02);
-    }
+        .choice-btn.opt-D {
+            background-color: var(--opt-d);
+        }
 
-    .choice-letter {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background-color: rgba(0, 0, 0, 0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.15rem;
-      flex-shrink: 0;
-    }
+        .choice-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            filter: brightness(1.07);
+            box-shadow: var(--shadow-md);
+        }
 
-    /* ==========================================================================
+        .choice-btn:disabled {
+            cursor: default;
+        }
+
+        .choice-btn.chosen {
+            border-color: #ffffff;
+            box-shadow: 0 0 0 4px var(--brand-baby);
+            transform: scale(1.02);
+        }
+
+        .choice-btn.faded {
+            opacity: 0.3;
+            filter: grayscale(45%);
+            transform: scale(0.98);
+        }
+
+        .choice-btn.is-right {
+            opacity: 1 !important;
+            filter: none !important;
+            background-color: #10b981 !important;
+            border-color: #ffffff !important;
+            box-shadow: 0 0 24px rgba(16, 185, 129, 0.7) !important;
+            transform: scale(1.02);
+        }
+
+        .choice-letter {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        /* ==========================================================================
        8. MULTIPLAYER LOBBY & AUTHENTIC ISO QR CODE
        ========================================================================== */
-    .lobby-layout {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 1.5rem;
-    }
+        .lobby-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 1.5rem;
+        }
 
-    @media (max-width: 840px) {
-      .lobby-layout {
-        grid-template-columns: 1fr;
-      }
-    }
+        @media (max-width: 840px) {
+            .lobby-layout {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .room-code-box {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 800;
-      letter-spacing: 0.2em;
-      color: var(--brand-baby);
-      background-color: var(--bg-primary);
-      border: 2px dashed var(--brand-baby);
-      border-radius: 14px;
-      padding: 0.55rem 1.2rem;
-      margin: 0.65rem 0;
-      display: inline-block;
-    }
+        .room-code-box {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            color: var(--brand-baby);
+            background-color: var(--bg-primary);
+            border: 2px dashed var(--brand-baby);
+            border-radius: 14px;
+            padding: 0.55rem 1.2rem;
+            margin: 0.65rem 0;
+            display: inline-block;
+        }
 
-    [data-theme="light"] .room-code-box {
-      color: var(--brand-blue);
-      border-color: var(--brand-blue);
-    }
+        [data-theme="light"] .room-code-box {
+            color: var(--brand-blue);
+            border-color: var(--brand-blue);
+        }
 
-    .qr-wrapper {
-      background-color: #ffffff;
-      padding: 14px;
-      border-radius: 16px;
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin: 0.75rem auto;
-      border: 2px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
-      cursor: zoom-in;
-      transition: transform 0.2s ease;
-    }
+        .qr-wrapper {
+            background-color: #ffffff;
+            padding: 14px;
+            border-radius: 16px;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0.75rem auto;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
 
-    .qr-wrapper:hover {
-      transform: scale(1.03);
-    }
+        .qr-wrapper:hover {
+            transform: scale(1.03);
+        }
 
-    .qr-wrapper svg,
-    .qr-wrapper img,
-    .qr-wrapper canvas {
-      display: block;
-      width: 184px;
-      height: 184px;
-    }
+        .qr-wrapper svg,
+        .qr-wrapper img,
+        .qr-wrapper canvas {
+            display: block;
+            width: 184px;
+            height: 184px;
+        }
 
-    .student-roster {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem;
-      margin-top: 1rem;
-    }
+        .student-roster {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            margin-top: 1rem;
+        }
 
-    .student-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.9rem;
-      border-radius: 999px;
-      background-color: var(--bg-elevated);
-      border: 1px solid var(--brand-baby);
-      color: var(--text-primary);
-      font-weight: 600;
-      font-size: 0.92rem;
-      animation: popBadge 0.25s ease;
-    }
+        .student-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            background-color: var(--bg-elevated);
+            border: 1px solid var(--brand-baby);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.92rem;
+            animation: popBadge 0.25s ease;
+        }
 
-    @keyframes popBadge {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
-    }
+        @keyframes popBadge {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
 
-    .kick-btn {
-      background: transparent;
-      border: none;
-      color: var(--danger);
-      font-weight: 800;
-      cursor: pointer;
-      padding: 0 0.2rem;
-      font-size: 1rem;
-      line-height: 1;
-    }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
 
-    /* QR Zoom Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(6, 13, 31, 0.82);
-      backdrop-filter: blur(6px);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
+        .kick-btn {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            font-weight: 800;
+            cursor: pointer;
+            padding: 0 0.2rem;
+            font-size: 1rem;
+            line-height: 1;
+        }
 
-    .modal-backdrop.open {
-      display: flex;
-    }
+        /* QR Zoom Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 13, 31, 0.82);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
 
-    .modal-box {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 22px;
-      padding: 2rem;
-      max-width: 440px;
-      width: 100%;
-      text-align: center;
-      box-shadow: var(--shadow-lg);
-    }
+        .modal-backdrop.open {
+            display: flex;
+        }
 
-    .qr-zoom-frame {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 20px;
-      display: inline-block;
-      margin: 1rem auto;
-    }
+        .modal-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 2rem;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
 
-    .qr-zoom-frame svg,
-    .qr-zoom-frame img {
-      width: 280px;
-      height: 280px;
-      display: block;
-    }
+        .qr-zoom-frame {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 1rem auto;
+        }
 
-    /* ==========================================================================
+        .qr-zoom-frame svg,
+        .qr-zoom-frame img {
+            width: 280px;
+            height: 280px;
+            display: block;
+        }
+
+        /* ==========================================================================
        9. REAL-TIME ANALYTICS & PODIUM
        ========================================================================== */
-    .chart-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      align-items: end;
-      height: 195px;
-      padding: 1.25rem 1rem 0.65rem;
-      background-color: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      margin-top: 1.25rem;
-    }
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            align-items: end;
+            height: 195px;
+            padding: 1.25rem 1rem 0.65rem;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-top: 1.25rem;
+        }
 
-    .chart-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      height: 100%;
-      gap: 0.4rem;
-    }
+        .chart-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            gap: 0.4rem;
+        }
 
-    .chart-pct {
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
+        .chart-pct {
+            font-weight: 800;
+            font-size: 0.9rem;
+        }
 
-    .chart-bar {
-      width: 100%;
-      max-width: 68px;
-      min-height: 8px;
-      border-radius: 10px 10px 4px 4px;
-      transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
+        .chart-bar {
+            width: 100%;
+            max-width: 68px;
+            min-height: 8px;
+            border-radius: 10px 10px 4px 4px;
+            transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
 
-    .chart-bar.A { background-color: var(--opt-a); }
-    .chart-bar.B { background-color: var(--opt-b); }
-    .chart-bar.C { background-color: var(--opt-c); }
-    .chart-bar.D { background-color: var(--opt-d); }
+        .chart-bar.A {
+            background-color: var(--opt-a);
+        }
 
-    .chart-pill {
-      padding: 0.2rem 0.7rem;
-      border-radius: 6px;
-      color: #ffffff;
-      font-weight: 800;
-      font-size: 0.88rem;
-    }
+        .chart-bar.B {
+            background-color: var(--opt-b);
+        }
 
-    .rank-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      margin-top: 0.85rem;
-    }
+        .chart-bar.C {
+            background-color: var(--opt-c);
+        }
 
-    .rank-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.85rem 1.15rem;
-      border-radius: 14px;
-      background-color: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      font-weight: 600;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
+        .chart-bar.D {
+            background-color: var(--opt-d);
+        }
 
-    .rank-item.gold {
-      border-color: #fbbf24;
-      background: linear-gradient(90deg, rgba(251, 191, 36, 0.14), var(--bg-primary));
-    }
+        .chart-pill {
+            padding: 0.2rem 0.7rem;
+            border-radius: 6px;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.88rem;
+        }
 
-    .podium-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 1rem;
-      max-width: 680px;
-      margin: 2.25rem auto 2rem;
-    }
+        .rank-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.85rem;
+        }
 
-    .podium-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
+        .rank-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.85rem 1.15rem;
+            border-radius: 14px;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            font-weight: 600;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
 
-    .podium-medal {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background-color: var(--bg-elevated);
-      border: 3px solid var(--brand-baby);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.65rem;
-      margin-bottom: 0.55rem;
-      box-shadow: var(--shadow-md);
-    }
+        .rank-item.gold {
+            border-color: #fbbf24;
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.14), var(--bg-primary));
+        }
 
-    .podium-player {
-      font-weight: 800;
-      font-size: 1.05rem;
-      margin-bottom: 0.2rem;
-      word-break: break-word;
-    }
+        .podium-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 1rem;
+            max-width: 680px;
+            margin: 2.25rem auto 2rem;
+        }
 
-    .podium-stats {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.6rem;
-    }
+        .podium-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
 
-    .podium-step {
-      width: 100%;
-      border-radius: 16px 16px 6px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: #0a192f;
-      box-shadow: var(--shadow-md);
-    }
+        .podium-medal {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background-color: var(--bg-elevated);
+            border: 3px solid var(--brand-baby);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.65rem;
+            margin-bottom: 0.55rem;
+            box-shadow: var(--shadow-md);
+        }
 
-    .step-1 {
-      height: 175px;
-      background: linear-gradient(180deg, #fde047, #eab308);
-      font-size: 1.65rem;
-    }
+        .podium-player {
+            font-weight: 800;
+            font-size: 1.05rem;
+            margin-bottom: 0.2rem;
+            word-break: break-word;
+        }
 
-    .step-2 {
-      height: 135px;
-      background: linear-gradient(180deg, #e2e8f0, #94a3b8);
-      font-size: 1.4rem;
-    }
+        .podium-stats {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.6rem;
+        }
 
-    .step-3 {
-      height: 105px;
-      background: linear-gradient(180deg, #fdba74, #d97706);
-      font-size: 1.3rem;
-    }
+        .podium-step {
+            width: 100%;
+            border-radius: 16px 16px 6px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #0a192f;
+            box-shadow: var(--shadow-md);
+        }
 
-    /* ==========================================================================
+        .step-1 {
+            height: 175px;
+            background: linear-gradient(180deg, #fde047, #eab308);
+            font-size: 1.65rem;
+        }
+
+        .step-2 {
+            height: 135px;
+            background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+            font-size: 1.4rem;
+        }
+
+        .step-3 {
+            height: 105px;
+            background: linear-gradient(180deg, #fdba74, #d97706);
+            font-size: 1.3rem;
+        }
+
+        /* ==========================================================================
        10. TOAST NOTIFICATIONS & UTILITIES
        ========================================================================== */
-    .toast-stack {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      z-index: 2000;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
+        .toast-stack {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
 
-    .toast-msg {
-      background-color: var(--bg-card);
-      color: var(--text-primary);
-      border-left: 5px solid var(--brand-baby);
-      padding: 0.9rem 1.2rem;
-      border-radius: 12px;
-      box-shadow: var(--shadow-lg);
-      font-weight: 600;
-      font-size: 0.92rem;
-      max-width: 340px;
-      animation: slideToast 0.25s ease;
-    }
+        .toast-msg {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border-left: 5px solid var(--brand-baby);
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            font-weight: 600;
+            font-size: 0.92rem;
+            max-width: 340px;
+            animation: slideToast 0.25s ease;
+        }
 
-    @keyframes slideToast {
-      from { opacity: 0; transform: translateX(24px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
+        @keyframes slideToast {
+            from {
+                opacity: 0;
+                transform: translateX(24px);
+            }
 
-    .text-center { text-align: center; }
-    .mt-1 { margin-top: 0.5rem; }
-    .mt-2 { margin-top: 1rem; }
-    .mt-3 { margin-top: 1.5rem; }
-    .mb-1 { margin-bottom: 0.5rem; }
-    .mb-2 { margin-bottom: 1rem; }
-    .flex-row { display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
-  </style>
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .flex-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+    </style>
 </head>
+
 <body>
 
-  <!-- TOP NAVBAR -->
-  <header class="navbar">
-    <div class="brand" onclick="goHome()">
-      <div class="brand-logo">Q</div>
-      <div class="brand-name">Kuis<span>Pintar</span></div>
-    </div>
-    <div class="nav-right">
-      <button type="button" id="serverStatusPill" class="status-pill setup-needed" onclick="openCloudConfigModal()" title="Klik untuk mengatur koneksi Firebase Cloud">
-        <span class="status-dot"></span>
-        <span id="serverStatusText">Setup Cloud (Klik)</span>
-      </button>
-      <button type="button" class="btn btn-outline btn-sm" id="themeBtn" onclick="toggleTheme()">
-        ☀️ Light Mode
-      </button>
-    </div>
-  </header>
+    <!-- TOP NAVBAR -->
+    <header class="navbar">
+        <div class="brand" onclick="goHome()">
+            <div class="brand-logo">Q</div>
+            <div class="brand-name">Kuis<span>Pintar</span></div>
+        </div>
+        <div class="nav-right">
+            <button type="button" id="serverStatusPill" class="status-pill setup-needed"
+                onclick="openCloudConfigModal()" title="Klik untuk mengatur koneksi Firebase Cloud">
+                <span class="status-dot"></span>
+                <span id="serverStatusText">Setup Cloud (Klik)</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" id="themeBtn" onclick="toggleTheme()">
+                ☀️ Light Mode
+            </button>
+        </div>
+    </header>
 
-  <main class="container">
+    <main class="container">
 
-    <!-- ======================================================================
+        <!-- ======================================================================
          VIEW 1: BERANDA (PILIH PERAN GURU ATAU SISWA)
          ====================================================================== -->
-    <section id="view-home" class="view active">
-      <div class="hero">
-        <span class="badge">🏫 Platform Kuis Interaktif Sekolah</span>
-        <h1>Evaluasi Kelas & Kuis Mabar Real-Time</h1>
-        <p>
-          Susun soal pilihan ganda dengan pengatur waktu fleksibel. Tampilkan langsung di proyektor kelas atau ajak siswa bergabung serentak melalui QR Code & Kode Room.
-        </p>
-      </div>
+        <section id="view-home" class="view active">
+            <div class="hero">
+                <span class="badge">🏫 Platform Kuis Interaktif Sekolah</span>
+                <h1>Evaluasi Kelas & Kuis Mabar Real-Time</h1>
+                <p>
+                    Susun soal pilihan ganda dengan pengatur waktu fleksibel. Tampilkan langsung di proyektor kelas atau
+                    ajak siswa bergabung serentak melalui QR Code & Kode Room.
+                </p>
+            </div>
 
-      <div class="mode-grid">
-        <!-- Mode 1: Proyektor Kelas -->
-        <div class="card mode-card">
-          <div>
-            <div class="mode-icon">🖥️</div>
-            <h2 class="mb-1">Mode Proyektor (Solo Kelas)</h2>
-            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
-              Tampilkan pertanyaan satu per satu di layar proyektor kelas dengan hitung mundur waktu. Saat waktu habis, jawaban benar otomatis disorot hijau.
-            </p>
-          </div>
-          <button type="button" class="btn btn-primary btn-lg" onclick="openQuizBuilder('solo')">
-            ✨ Buat Kuis Proyektor
-          </button>
-        </div>
+            <div class="mode-grid">
+                <!-- Mode 1: Proyektor Kelas -->
+                <div class="card mode-card">
+                    <div>
+                        <div class="mode-icon">🖥️</div>
+                        <h2 class="mb-1">Mode Proyektor (Solo Kelas)</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                            Tampilkan pertanyaan satu per satu di layar proyektor kelas dengan hitung mundur waktu. Saat
+                            waktu habis, jawaban benar otomatis disorot hijau.
+                        </p>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="openQuizBuilder('solo')">
+                        ✨ Buat Kuis Proyektor
+                    </button>
+                </div>
 
-        <!-- Mode 2: Mabar Live Room -->
-        <div class="card mode-card">
-          <div>
-            <div class="mode-icon">📡</div>
-            <h2 class="mb-1">Buat Room Mabar (Live Siswa)</h2>
-            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
-              Buat room live dengan QR Code & Kode 6 karakter. Siswa menjawab dari HP/laptop masing-masing dan guru melihat grafik persentase jawaban serta podium juara.
-            </p>
-          </div>
-          <button type="button" class="btn btn-baby btn-lg" id="homeCreateRoomBtn" onclick="openQuizBuilder('multiplayer')">
-            🚀 Buat Room Mabar (Guru)
-          </button>
-        </div>
+                <!-- Mode 2: Mabar Live Room -->
+                <div class="card mode-card">
+                    <div>
+                        <div class="mode-icon">📡</div>
+                        <h2 class="mb-1">Buat Room Mabar (Live Siswa)</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                            Buat room live dengan QR Code & Kode 6 karakter. Siswa menjawab dari HP/laptop masing-masing
+                            dan guru melihat grafik persentase jawaban serta podium juara.
+                        </p>
+                    </div>
+                    <button type="button" class="btn btn-baby btn-lg" id="homeCreateRoomBtn"
+                        onclick="openQuizBuilder('multiplayer')">
+                        🚀 Buat Room Mabar (Guru)
+                    </button>
+                </div>
 
-        <!-- Gabung Siswa -->
-        <div class="card mode-card join-card">
-          <div>
-            <div class="mode-icon" style="background-color: var(--brand-blue); color: #ffffff;">📱</div>
-            <h2 class="mb-1">Gabung Kuis (Siswa)</h2>
-            <p style="color: var(--text-secondary); font-size: 0.95rem;">
-              Masukkan 6 karakter Kode Room yang ditampilkan guru di layar depan untuk langsung masuk ke sesi kuis.
-            </p>
-          </div>
-          <form onsubmit="handleHomeJoinSubmit(event)" class="code-entry-row">
-            <input type="text" id="homeCodeInput" class="form-control" placeholder="KODE" maxlength="6" autocomplete="off" required>
-            <button type="submit" class="btn btn-primary" id="homeJoinBtn">Masuk</button>
-          </form>
-        </div>
-      </div>
-    </section>
+                <!-- Gabung Siswa -->
+                <div class="card mode-card join-card">
+                    <div>
+                        <div class="mode-icon" style="background-color: var(--brand-blue); color: #ffffff;">📱</div>
+                        <h2 class="mb-1">Gabung Kuis (Siswa)</h2>
+                        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                            Masukkan 6 karakter Kode Room yang ditampilkan guru di layar depan untuk langsung masuk ke
+                            sesi kuis.
+                        </p>
+                    </div>
+                    <form onsubmit="handleHomeJoinSubmit(event)" class="code-entry-row">
+                        <input type="text" id="homeCodeInput" class="form-control" placeholder="KODE" maxlength="6"
+                            autocomplete="off" required>
+                        <button type="submit" class="btn btn-primary" id="homeJoinBtn">Masuk</button>
+                    </form>
+                </div>
+            </div>
+        </section>
 
-    <!-- ======================================================================
+        <!-- ======================================================================
          VIEW 2: EDITOR SOAL & PENGATURAN WAKTU (GURU / ADMIN)
          ====================================================================== -->
-    <section id="view-builder" class="view">
-      <div class="section-header">
-        <div>
-          <span class="badge mb-1" id="builderModeLabel">Mode: Proyektor Kelas</span>
-          <h2>Editor Pertanyaan & Pengaturan Timer</h2>
-        </div>
-        <div class="flex-row">
-          <button type="button" class="btn btn-outline btn-sm" onclick="loadSampleQuestions()">
-            ↺ Reset Contoh Soal
-          </button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">← Kembali</button>
-        </div>
-      </div>
+        <section id="view-builder" class="view">
+            <div class="section-header">
+                <div>
+                    <span class="badge mb-1" id="builderModeLabel">Mode: Proyektor Kelas</span>
+                    <h2>Editor Pertanyaan & Pengaturan Timer</h2>
+                </div>
+                <div class="flex-row">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="loadSampleQuestions()">
+                        ↺ Reset Contoh Soal
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">← Kembali</button>
+                </div>
+            </div>
 
-      <div class="card mb-2">
-        <div class="form-group">
-          <label class="form-label" for="quizTitleField">Judul Kuis / Mata Pelajaran</label>
-          <input type="text" id="quizTitleField" class="form-control" placeholder="Contoh: Kuis IPA — Tata Surya & Ekosistem" value="Kuis Pengetahuan Umum Sekolah">
-        </div>
+            <div class="card mb-2">
+                <div class="form-group">
+                    <label class="form-label" for="quizTitleField">Judul Kuis / Mata Pelajaran</label>
+                    <input type="text" id="quizTitleField" class="form-control"
+                        placeholder="Contoh: Kuis IPA — Tata Surya & Ekosistem" value="Kuis Pengetahuan Umum Sekolah">
+                </div>
 
-        <div class="form-group" style="margin-bottom: 0;">
-          <label class="form-label">⏱️ Atur Jeda Waktu Menjawab per Soal (Sebelum Mulai)</label>
-          <div class="preset-row" id="timerPresetRow">
-            <button type="button" class="preset-btn" data-sec="3" onclick="applyTimerPreset(3)">3 Detik</button>
-            <button type="button" class="preset-btn" data-sec="5" onclick="applyTimerPreset(5)">5 Detik</button>
-            <button type="button" class="preset-btn active" data-sec="10" onclick="applyTimerPreset(10)">10 Detik</button>
-            <button type="button" class="preset-btn" data-sec="30" onclick="applyTimerPreset(30)">30 Detik</button>
-            <button type="button" class="preset-btn" data-sec="60" onclick="applyTimerPreset(60)">1 Menit</button>
-            <button type="button" class="preset-btn" data-sec="300" onclick="applyTimerPreset(300)">5 Menit</button>
-          </div>
-          <div class="custom-timer-inputs">
-            <input type="number" id="customTimeVal" class="form-control" min="1" max="3600" value="10" oninput="updateCustomTimer()">
-            <select id="customTimeUnit" class="form-control" style="width: 135px;" onchange="updateCustomTimer()">
-              <option value="sec" selected>Detik</option>
-              <option value="min">Menit</option>
-            </select>
-          </div>
-          <small style="display: block; margin-top: 0.45rem; color: var(--text-muted);">
-            Waktu per pertanyaan yang dipilih: <strong id="timerActiveLabel" style="color: var(--brand-baby);">10 detik</strong>
-          </small>
-        </div>
-      </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label">⏱️ Atur Jeda Waktu Menjawab per Soal (Sebelum Mulai)</label>
+                    <div class="preset-row" id="timerPresetRow">
+                        <button type="button" class="preset-btn" data-sec="3" onclick="applyTimerPreset(3)">3
+                            Detik</button>
+                        <button type="button" class="preset-btn" data-sec="5" onclick="applyTimerPreset(5)">5
+                            Detik</button>
+                        <button type="button" class="preset-btn active" data-sec="10" onclick="applyTimerPreset(10)">10
+                            Detik</button>
+                        <button type="button" class="preset-btn" data-sec="30" onclick="applyTimerPreset(30)">30
+                            Detik</button>
+                        <button type="button" class="preset-btn" data-sec="60" onclick="applyTimerPreset(60)">1
+                            Menit</button>
+                        <button type="button" class="preset-btn" data-sec="300" onclick="applyTimerPreset(300)">5
+                            Menit</button>
+                    </div>
+                    <div class="custom-timer-inputs">
+                        <input type="number" id="customTimeVal" class="form-control" min="1" max="3600" value="10"
+                            oninput="updateCustomTimer()">
+                        <select id="customTimeUnit" class="form-control" style="width: 135px;"
+                            onchange="updateCustomTimer()">
+                            <option value="sec" selected>Detik</option>
+                            <option value="min">Menit</option>
+                        </select>
+                    </div>
+                    <small style="display: block; margin-top: 0.45rem; color: var(--text-muted);">
+                        Waktu per pertanyaan yang dipilih: <strong id="timerActiveLabel"
+                            style="color: var(--brand-baby);">10 detik</strong>
+                    </small>
+                </div>
+            </div>
 
-      <div id="builderQuestionsContainer"></div>
+            <div id="builderQuestionsContainer"></div>
 
-      <div class="flex-row mt-2" style="justify-content: space-between; padding-bottom: 2.5rem;">
-        <button type="button" class="btn btn-outline" onclick="addNewQuestion()">
-          ➕ Tambah Pertanyaan
-        </button>
-        <button type="button" class="btn btn-success btn-lg" id="launchSessionBtn" onclick="startQuizSession()">
-          🚀 Mulai Kuis
-        </button>
-      </div>
-    </section>
+            <div class="flex-row mt-2" style="justify-content: space-between; padding-bottom: 2.5rem;">
+                <button type="button" class="btn btn-outline" onclick="addNewQuestion()">
+                    ➕ Tambah Pertanyaan
+                </button>
+                <button type="button" class="btn btn-success btn-lg" id="launchSessionBtn" onclick="startQuizSession()">
+                    🚀 Mulai Kuis
+                </button>
+            </div>
+        </section>
 
-    <!-- ======================================================================
+        <!-- ======================================================================
          VIEW 3: GAMEPLAY MODE PROYEKTOR (SOLO KELAS)
          ====================================================================== -->
-    <section id="view-solo-play" class="view">
-      <div class="stage-topbar">
-        <div>
-          <span class="badge" id="soloTitleTag">Judul Kuis</span>
-          <h3 class="mt-1" id="soloCounterText">Pertanyaan 1 dari 3</h3>
-        </div>
-        <div class="flex-row">
-          <div class="timer-pill" id="soloTimerPill">10s</div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">Keluar</button>
-        </div>
-      </div>
+        <section id="view-solo-play" class="view">
+            <div class="stage-topbar">
+                <div>
+                    <span class="badge" id="soloTitleTag">Judul Kuis</span>
+                    <h3 class="mt-1" id="soloCounterText">Pertanyaan 1 dari 3</h3>
+                </div>
+                <div class="flex-row">
+                    <div class="timer-pill" id="soloTimerPill">10s</div>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">Keluar</button>
+                </div>
+            </div>
 
-      <div class="timer-track">
-        <div class="timer-fill" id="soloTimerFill"></div>
-      </div>
+            <div class="timer-track">
+                <div class="timer-fill" id="soloTimerFill"></div>
+            </div>
 
-      <div class="card question-banner">
-        <h2 id="soloQuestionDisplay">Memuat soal...</h2>
-      </div>
+            <div class="card question-banner">
+                <h2 id="soloQuestionDisplay">Memuat soal...</h2>
+            </div>
 
-      <div class="choices-grid" id="soloChoicesGrid"></div>
+            <div class="choices-grid" id="soloChoicesGrid"></div>
 
-      <div class="card mt-2 text-center">
-        <p id="soloHintText" style="color: var(--text-secondary); font-weight: 600;">
-          Menunggu jawaban atau hitung mundur selesai...
-        </p>
-        <div class="flex-row mt-1">
-          <button type="button" class="btn btn-outline" id="soloShowAnswerBtn" onclick="revealSoloQuestion()">
-            👁️ Tampilkan Kunci Jawaban
-          </button>
-          <button type="button" class="btn btn-primary btn-lg" id="soloNextQuestionBtn" style="display: none;" onclick="advanceSoloQuestion()">
-            Pertanyaan Berikutnya →
-          </button>
-        </div>
-      </div>
-    </section>
+            <div class="card mt-2 text-center">
+                <p id="soloHintText" style="color: var(--text-secondary); font-weight: 600;">
+                    Menunggu jawaban atau hitung mundur selesai...
+                </p>
+                <div class="flex-row mt-1">
+                    <button type="button" class="btn btn-outline" id="soloShowAnswerBtn" onclick="revealSoloQuestion()">
+                        👁️ Tampilkan Kunci Jawaban
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg" id="soloNextQuestionBtn" style="display: none;"
+                        onclick="advanceSoloQuestion()">
+                        Pertanyaan Berikutnya →
+                    </button>
+                </div>
+            </div>
+        </section>
 
-    <!-- ======================================================================
+        <!-- ======================================================================
          VIEW 4: SELEBRASI AKHIR MODE PROYEKTOR
          ====================================================================== -->
-    <section id="view-solo-complete" class="view">
-      <div class="card text-center" style="max-width: 760px; margin: 1.5rem auto; padding: 2.5rem 1.5rem;">
-        <div style="font-size: 4.2rem; margin-bottom: 0.85rem;">🎉🏆🎊</div>
-        <h1 style="font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 0.75rem;">
-          Hore! Semua Pertanyaan Selesai!
-        </h1>
-        <p id="soloCompleteDesc" style="color: var(--text-secondary); font-size: 1.08rem; margin-bottom: 1.5rem;">
-          Selamat, seluruh pertanyaan pada sesi kuis ini telah berhasil ditampilkan.
-        </p>
+        <section id="view-solo-complete" class="view">
+            <div class="card text-center" style="max-width: 760px; margin: 1.5rem auto; padding: 2.5rem 1.5rem;">
+                <div style="font-size: 4.2rem; margin-bottom: 0.85rem;">🎉🏆🎊</div>
+                <h1 style="font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 0.75rem;">
+                    Hore! Semua Pertanyaan Selesai!
+                </h1>
+                <p id="soloCompleteDesc"
+                    style="color: var(--text-secondary); font-size: 1.08rem; margin-bottom: 1.5rem;">
+                    Selamat, seluruh pertanyaan pada sesi kuis ini telah berhasil ditampilkan.
+                </p>
 
-        <div style="text-align: left; margin-bottom: 1.75rem;">
-          <h3 class="mb-1">📋 Ringkasan Pertanyaan & Kunci Jawaban</h3>
-          <div class="rank-list" id="soloSummaryList"></div>
-        </div>
+                <div style="text-align: left; margin-bottom: 1.75rem;">
+                    <h3 class="mb-1">📋 Ringkasan Pertanyaan & Kunci Jawaban</h3>
+                    <div class="rank-list" id="soloSummaryList"></div>
+                </div>
 
-        <div class="flex-row">
-          <button type="button" class="btn btn-primary btn-lg" onclick="restartSoloSession()">🔄 Ulangi Kuis</button>
-          <button type="button" class="btn btn-outline btn-lg" onclick="goHome()">🏠 Kembali ke Beranda</button>
-        </div>
-      </div>
-    </section>
+                <div class="flex-row">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="restartSoloSession()">🔄 Ulangi
+                        Kuis</button>
+                    <button type="button" class="btn btn-outline btn-lg" onclick="goHome()">🏠 Kembali ke
+                        Beranda</button>
+                </div>
+            </div>
+        </section>
 
-    <!-- ======================================================================
+        <!-- ======================================================================
          VIEW 5: LOBBY MULTIPLAYER GURU (QR CODE ASLI & DAFTAR SISWA)
          ====================================================================== -->
-    <section id="view-mp-lobby" class="view">
-      <div class="section-header">
-        <div>
-          <span class="badge mb-1">📡 Ruang Mabar Aktif (Guru / Admin)</span>
-          <h2 id="lobbyTitleHeading">Judul Kuis</h2>
-        </div>
-        <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">Tutup Room</button>
-      </div>
-
-      <div class="lobby-layout">
-        <!-- Kolom Kiri: QR Code Standar ISO & Kode Room -->
-        <div class="card text-center">
-          <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.05em;">
-            KODE ROOM SISWA
-          </p>
-          <div class="room-code-box" id="lobbyCodeDisplay">------</div>
-
-          <!-- QR Code ISO/IEC 18004 Asli -->
-          <div class="qr-wrapper" id="qrCodeRenderTarget" onclick="openQrZoomModal()" title="Klik untuk memperbesar QR Code di proyektor"></div>
-
-          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.85rem;">
-            Arahkan kamera HP siswa ke QR Code di atas atau bagikan link undangan:
-          </p>
-
-          <div style="display: flex; flex-direction: column; gap: 0.55rem;">
-            <button type="button" class="btn btn-baby btn-sm" style="width: 100%;" onclick="openQrZoomModal()">
-              🔍 Perbesar QR Code (Proyektor)
-            </button>
-            <button type="button" class="btn btn-outline btn-sm" style="width: 100%;" onclick="copyInviteUrl()">
-              📋 Salin Link Undangan Room
-            </button>
-          </div>
-
-          <div class="mt-2" style="font-size: 0.85rem; color: var(--text-secondary);">
-            Timer: <strong id="lobbyTimerMeta">10 detik</strong> • Jumlah Soal: <strong id="lobbyCountMeta">0 soal</strong>
-          </div>
-        </div>
-
-        <!-- Kolom Kanan: Daftar Siswa Real-Time -->
-        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-              <h3>👥 Siswa Bergabung (<span id="lobbyStudentTotal">0</span>)</h3>
-              <span class="badge">Menunggu Guru Memulai</span>
+        <section id="view-mp-lobby" class="view">
+            <div class="section-header">
+                <div>
+                    <span class="badge mb-1">📡 Ruang Mabar Aktif (Guru / Admin)</span>
+                    <h2 id="lobbyTitleHeading">Judul Kuis</h2>
+                </div>
+                <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">Tutup Room</button>
             </div>
-            <div class="student-roster" id="lobbyStudentList">
-              <p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">
-                Belum ada siswa yang bergabung. Silakan minta siswa memindai QR Code atau memasukkan kode room di perangkat masing-masing.
-              </p>
+
+            <div class="lobby-layout">
+                <!-- Kolom Kiri: QR Code Standar ISO & Kode Room -->
+                <div class="card text-center">
+                    <p
+                        style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.05em;">
+                        KODE ROOM SISWA
+                    </p>
+                    <div class="room-code-box" id="lobbyCodeDisplay">------</div>
+
+                    <!-- QR Code ISO/IEC 18004 Asli -->
+                    <div class="qr-wrapper" id="qrCodeRenderTarget" onclick="openQrZoomModal()"
+                        title="Klik untuk memperbesar QR Code di proyektor"></div>
+
+                    <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+                        Arahkan kamera HP siswa ke QR Code di atas atau bagikan link undangan:
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.55rem;">
+                        <button type="button" class="btn btn-baby btn-sm" style="width: 100%;"
+                            onclick="openQrZoomModal()">
+                            🔍 Perbesar QR Code (Proyektor)
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm" style="width: 100%;"
+                            onclick="copyInviteUrl()">
+                            📋 Salin Link Undangan Room
+                        </button>
+                    </div>
+
+                    <div class="mt-2" style="font-size: 0.85rem; color: var(--text-secondary);">
+                        Timer: <strong id="lobbyTimerMeta">10 detik</strong> • Jumlah Soal: <strong
+                            id="lobbyCountMeta">0 soal</strong>
+                    </div>
+                </div>
+
+                <!-- Kolom Kanan: Daftar Siswa Real-Time -->
+                <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                            <h3>👥 Siswa Bergabung (<span id="lobbyStudentTotal">0</span>)</h3>
+                            <span class="badge">Menunggu Guru Memulai</span>
+                        </div>
+                        <div class="student-roster" id="lobbyStudentList">
+                            <p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">
+                                Belum ada siswa yang bergabung. Silakan minta siswa memindai QR Code atau memasukkan
+                                kode room di perangkat masing-masing.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-3"
+                        style="padding-top: 1.25rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                        <small style="color: var(--text-muted);">
+                            Pastikan seluruh siswa sudah tampil di daftar sebelum memulai.
+                        </small>
+                        <button type="button" class="btn btn-success btn-lg" id="startMultiplayerBtn"
+                            onclick="hostStartMultiplayer()">
+                            🚀 Mulai Kuis Sekarang
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
+        </section>
 
-          <div class="mt-3" style="padding-top: 1.25rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-            <small style="color: var(--text-muted);">
-              Pastikan seluruh siswa sudah tampil di daftar sebelum memulai.
-            </small>
-            <button type="button" class="btn btn-success btn-lg" id="startMultiplayerBtn" onclick="hostStartMultiplayer()">
-              🚀 Mulai Kuis Sekarang
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======================================================================
+        <!-- ======================================================================
          VIEW 6: FORM GABUNG SISWA (NAMA & KODE)
          ====================================================================== -->
-    <section id="view-student-join" class="view">
-      <div class="card" style="max-width: 460px; margin: 2rem auto; text-align: center;">
-        <div class="mode-icon" style="margin: 0 auto 1rem;">🎓</div>
-        <h2 class="mb-1">Gabung ke Sesi Kuis</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-          Masukkan kode room dan nama lengkap / panggilanmu untuk ikut menjawab.
-        </p>
+        <section id="view-student-join" class="view">
+            <div class="card" style="max-width: 460px; margin: 2rem auto; text-align: center;">
+                <div class="mode-icon" style="margin: 0 auto 1rem;">🎓</div>
+                <h2 class="mb-1">Gabung ke Sesi Kuis</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Masukkan kode room dan nama lengkap / panggilanmu untuk ikut menjawab.
+                </p>
 
-        <form onsubmit="submitStudentJoinForm(event)">
-          <div class="form-group">
-            <label class="form-label" style="text-align: left;" for="studentCodeField">Kode Room (6 Karakter)</label>
-            <input type="text" id="studentCodeField" class="form-control" style="text-transform: uppercase; font-weight: 800; letter-spacing: 0.2em; text-align: center; font-size: 1.25rem;" maxlength="6" autocomplete="off" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label" style="text-align: left;" for="studentNameField">Nama Siswa</label>
-            <input type="text" id="studentNameField" class="form-control" placeholder="Contoh: Siti Rahmawati (VII-A)" maxlength="24" required>
-          </div>
-          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="confirmStudentJoinBtn">
-            Masuk ke Ruang Tunggu →
-          </button>
-        </form>
-        <button type="button" class="btn btn-outline btn-sm mt-2" onclick="goHome()">← Kembali</button>
-      </div>
-    </section>
+                <form onsubmit="submitStudentJoinForm(event)">
+                    <div class="form-group">
+                        <label class="form-label" style="text-align: left;" for="studentCodeField">Kode Room (6
+                            Karakter)</label>
+                        <input type="text" id="studentCodeField" class="form-control"
+                            style="text-transform: uppercase; font-weight: 800; letter-spacing: 0.2em; text-align: center; font-size: 1.25rem;"
+                            maxlength="6" autocomplete="off" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" style="text-align: left;" for="studentNameField">Nama Siswa</label>
+                        <input type="text" id="studentNameField" class="form-control"
+                            placeholder="Contoh: Siti Rahmawati (VII-A)" maxlength="24" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;"
+                        id="confirmStudentJoinBtn">
+                        Masuk ke Ruang Tunggu →
+                    </button>
+                </form>
+                <button type="button" class="btn btn-outline btn-sm mt-2" onclick="goHome()">← Kembali</button>
+            </div>
+        </section>
 
-    <!-- ======================================================================
+        <!-- ======================================================================
          VIEW 7: GAMEPLAY MULTIPLAYER (LAYAR PROYEKTOR GURU & LAYAR HP SISWA)
          ====================================================================== -->
-    <section id="view-mp-stage" class="view">
-      <div class="stage-topbar">
-        <div>
-          <span class="badge" id="mpActorBadge">Peran</span>
-          <h3 class="mt-1" id="mpQuestionNumber">Pertanyaan 1 / 3</h3>
-        </div>
-        <div class="flex-row">
-          <div class="badge" id="mpAnsweredRatioBadge" style="font-size: 0.95rem;">0 / 0 Siswa Menjawab</div>
-          <div class="timer-pill" id="mpStageTimerPill">10s</div>
-        </div>
-      </div>
-
-      <div class="timer-track">
-        <div class="timer-fill" id="mpStageTimerFill"></div>
-      </div>
-
-      <!-- Layar Tunggu Siswa Sebelum Guru Mulai -->
-      <div id="studentLobbyWaitCard" class="card text-center" style="display: none; padding: 3rem 1.5rem;">
-        <div style="font-size: 3.5rem; margin-bottom: 0.85rem;">⏳</div>
-        <h2>Kamu Sudah Terdaftar di Room!</h2>
-        <p style="color: var(--text-secondary); font-size: 1.08rem; margin-top: 0.5rem;">
-          Halo <strong id="studentWaitDisplayName" style="color: var(--brand-baby);">Siswa</strong>, bersiaplah! Pertanyaan akan muncul otomatis begitu guru memulai kuis.
-        </p>
-      </div>
-
-      <!-- Layar Pertanyaan Aktif -->
-      <div id="mpQuestionLiveArea">
-        <div class="card question-banner">
-          <h2 id="mpLiveQuestionText">Menunggu pertanyaan...</h2>
-        </div>
-
-        <div class="choices-grid" id="mpLiveChoicesGrid"></div>
-
-        <!-- Umpan Balik Layar Siswa -->
-        <div id="studentFeedbackCard" class="card mt-2 text-center" style="display: none;">
-          <h3 id="studentFeedbackHeading">Jawaban Terkirim!</h3>
-          <p id="studentFeedbackDetail" style="color: var(--text-secondary); margin-top: 0.35rem;">Menunggu waktu habis...</p>
-          <div id="studentLiveRankBadge" class="badge mt-1" style="display: none; font-size: 0.92rem;"></div>
-        </div>
-
-        <!-- Panel Analitik & Kontrol Khusus Guru -->
-        <div id="teacherAnalyticsCard" class="card mt-2" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-            <h3>📊 Distribusi Jawaban Siswa (Real-Time)</h3>
-            <div class="flex-row">
-              <button type="button" class="btn btn-outline btn-sm" id="teacherEndEarlyBtn" onclick="hostRevealCurrentQuestion()">
-                ⏹️ Akhiri Timer & Buka Jawaban
-              </button>
-              <button type="button" class="btn btn-primary" id="teacherNextStepBtn" style="display: none;" onclick="hostAdvanceQuestion()">
-                Pertanyaan Berikutnya →
-              </button>
+        <section id="view-mp-stage" class="view">
+            <div class="stage-topbar">
+                <div>
+                    <span class="badge" id="mpActorBadge">Peran</span>
+                    <h3 class="mt-1" id="mpQuestionNumber">Pertanyaan 1 / 3</h3>
+                </div>
+                <div class="flex-row">
+                    <div class="badge" id="mpAnsweredRatioBadge" style="font-size: 0.95rem;">0 / 0 Siswa Menjawab</div>
+                    <div class="timer-pill" id="mpStageTimerPill">10s</div>
+                </div>
             </div>
-          </div>
 
-          <div class="chart-grid">
-            <div class="chart-col">
-              <span class="chart-pct" id="statPct-A">0%</span>
-              <div class="chart-bar A" id="statBar-A" style="height: 8px;"></div>
-              <span class="chart-pill" style="background-color: var(--opt-a);">A</span>
+            <div class="timer-track">
+                <div class="timer-fill" id="mpStageTimerFill"></div>
             </div>
-            <div class="chart-col">
-              <span class="chart-pct" id="statPct-B">0%</span>
-              <div class="chart-bar B" id="statBar-B" style="height: 8px;"></div>
-              <span class="chart-pill" style="background-color: var(--opt-b);">B</span>
-            </div>
-            <div class="chart-col">
-              <span class="chart-pct" id="statPct-C">0%</span>
-              <div class="chart-bar C" id="statBar-C" style="height: 8px;"></div>
-              <span class="chart-pill" style="background-color: var(--opt-c);">C</span>
-            </div>
-            <div class="chart-col">
-              <span class="chart-pct" id="statPct-D">0%</span>
-              <div class="chart-bar D" id="statBar-D" style="height: 8px;"></div>
-              <span class="chart-pill" style="background-color: var(--opt-d);">D</span>
-            </div>
-          </div>
 
-          <!-- Daftar Penjawab Benar Tercepat pada Soal Ini -->
-          <div id="teacherQuestionResultBox" style="display: none; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
-            <h4 class="mb-1">⚡ Siswa dengan Jawaban Benar & Tercepat (Soal Ini):</h4>
-            <div class="rank-list" id="teacherFastestList"></div>
-          </div>
-        </div>
-      </div>
-    </section>
+            <!-- Layar Tunggu Siswa Sebelum Guru Mulai -->
+            <div id="studentLobbyWaitCard" class="card text-center" style="display: none; padding: 3rem 1.5rem;">
+                <div style="font-size: 3.5rem; margin-bottom: 0.85rem;">⏳</div>
+                <h2>Kamu Sudah Terdaftar di Room!</h2>
+                <p style="color: var(--text-secondary); font-size: 1.08rem; margin-top: 0.5rem;">
+                    Halo <strong id="studentWaitDisplayName" style="color: var(--brand-baby);">Siswa</strong>,
+                    bersiaplah! Pertanyaan akan muncul otomatis begitu guru memulai kuis.
+                </p>
+            </div>
 
-    <!-- ======================================================================
+            <!-- Layar Pertanyaan Aktif -->
+            <div id="mpQuestionLiveArea">
+                <div class="card question-banner">
+                    <h2 id="mpLiveQuestionText">Menunggu pertanyaan...</h2>
+                </div>
+
+                <div class="choices-grid" id="mpLiveChoicesGrid"></div>
+
+                <!-- Umpan Balik Layar Siswa -->
+                <div id="studentFeedbackCard" class="card mt-2 text-center" style="display: none;">
+                    <h3 id="studentFeedbackHeading">Jawaban Terkirim!</h3>
+                    <p id="studentFeedbackDetail" style="color: var(--text-secondary); margin-top: 0.35rem;">Menunggu
+                        waktu habis...</p>
+                    <div id="studentLiveRankBadge" class="badge mt-1" style="display: none; font-size: 0.92rem;"></div>
+                </div>
+
+                <!-- Panel Analitik & Kontrol Khusus Guru -->
+                <div id="teacherAnalyticsCard" class="card mt-2" style="display: none;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                        <h3>📊 Distribusi Jawaban Siswa (Real-Time)</h3>
+                        <div class="flex-row">
+                            <button type="button" class="btn btn-outline btn-sm" id="teacherEndEarlyBtn"
+                                onclick="hostRevealCurrentQuestion()">
+                                ⏹️ Akhiri Timer & Buka Jawaban
+                            </button>
+                            <button type="button" class="btn btn-primary" id="teacherNextStepBtn" style="display: none;"
+                                onclick="hostAdvanceQuestion()">
+                                Pertanyaan Berikutnya →
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chart-grid">
+                        <div class="chart-col">
+                            <span class="chart-pct" id="statPct-A">0%</span>
+                            <div class="chart-bar A" id="statBar-A" style="height: 8px;"></div>
+                            <span class="chart-pill" style="background-color: var(--opt-a);">A</span>
+                        </div>
+                        <div class="chart-col">
+                            <span class="chart-pct" id="statPct-B">0%</span>
+                            <div class="chart-bar B" id="statBar-B" style="height: 8px;"></div>
+                            <span class="chart-pill" style="background-color: var(--opt-b);">B</span>
+                        </div>
+                        <div class="chart-col">
+                            <span class="chart-pct" id="statPct-C">0%</span>
+                            <div class="chart-bar C" id="statBar-C" style="height: 8px;"></div>
+                            <span class="chart-pill" style="background-color: var(--opt-c);">C</span>
+                        </div>
+                        <div class="chart-col">
+                            <span class="chart-pct" id="statPct-D">0%</span>
+                            <div class="chart-bar D" id="statBar-D" style="height: 8px;"></div>
+                            <span class="chart-pill" style="background-color: var(--opt-d);">D</span>
+                        </div>
+                    </div>
+
+                    <!-- Daftar Penjawab Benar Tercepat pada Soal Ini -->
+                    <div id="teacherQuestionResultBox"
+                        style="display: none; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+                        <h4 class="mb-1">⚡ Siswa dengan Jawaban Benar & Tercepat (Soal Ini):</h4>
+                        <div class="rank-list" id="teacherFastestList"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================================
          VIEW 8: PODIUM JUARA 1, 2, 3 & KLASEMEN AKHIR
          ====================================================================== -->
-    <section id="view-mp-podium" class="view">
-      <div class="card text-center">
-        <span class="badge mb-1">🏆 HASIL AKHIR KUIS KELAS</span>
-        <h1 style="font-size: clamp(1.85rem, 4vw, 2.6rem);">Podium Pemenang</h1>
-        <p style="color: var(--text-secondary);">
-          Peringkat dihitung berdasarkan jumlah jawaban benar dan kecepatan waktu menjawab (detik)
-        </p>
+        <section id="view-mp-podium" class="view">
+            <div class="card text-center">
+                <span class="badge mb-1">🏆 HASIL AKHIR KUIS KELAS</span>
+                <h1 style="font-size: clamp(1.85rem, 4vw, 2.6rem);">Podium Pemenang</h1>
+                <p style="color: var(--text-secondary);">
+                    Peringkat dihitung berdasarkan jumlah jawaban benar dan kecepatan waktu menjawab (detik)
+                </p>
 
-        <div class="podium-wrap" id="finalPodiumStage"></div>
+                <div class="podium-wrap" id="finalPodiumStage"></div>
 
-        <div style="max-width: 680px; margin: 1.5rem auto; text-align: left;">
-          <h3 class="mb-1">📋 Peringkat Lengkap Seluruh Peserta</h3>
-          <div class="rank-list" id="finalFullRankingList"></div>
+                <div style="max-width: 680px; margin: 1.5rem auto; text-align: left;">
+                    <h3 class="mb-1">📋 Peringkat Lengkap Seluruh Peserta</h3>
+                    <div class="rank-list" id="finalFullRankingList"></div>
+                </div>
+
+                <div class="flex-row mt-3">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="goHome()">🏠 Kembali ke
+                        Beranda</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL PERBESAR QR CODE (UNTUK PROYEKTOR KELAS) -->
+    <div class="modal-backdrop" id="qrZoomModal" onclick="closeQrZoomModal(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <span class="badge mb-1">📱 Pindai dari Kamera HP</span>
+            <h3>Gabung Room: <span id="modalRoomCodeText" style="color: var(--brand-baby);">------</span></h3>
+            <div class="qr-zoom-frame" id="qrZoomRenderTarget"></div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                Arahkan kamera ponsel siswa ke QR Code di atas untuk langsung masuk ke room kuis.
+            </p>
+            <button type="button" class="btn btn-primary" style="width: 100%;"
+                onclick="closeQrZoomModal()">Tutup</button>
         </div>
-
-        <div class="flex-row mt-3">
-          <button type="button" class="btn btn-primary btn-lg" onclick="goHome()">🏠 Kembali ke Beranda</button>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- MODAL PERBESAR QR CODE (UNTUK PROYEKTOR KELAS) -->
-  <div class="modal-backdrop" id="qrZoomModal" onclick="closeQrZoomModal(event)">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <span class="badge mb-1">📱 Pindai dari Kamera HP</span>
-      <h3>Gabung Room: <span id="modalRoomCodeText" style="color: var(--brand-baby);">------</span></h3>
-      <div class="qr-zoom-frame" id="qrZoomRenderTarget"></div>
-      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
-        Arahkan kamera ponsel siswa ke QR Code di atas untuk langsung masuk ke room kuis.
-      </p>
-      <button type="button" class="btn btn-primary" style="width: 100%;" onclick="closeQrZoomModal()">Tutup</button>
     </div>
-  </div>
 
-  <!-- MODAL PENGATURAN KONEKSI FIREBASE CLOUD (VERCEL READY) -->
-  <div class="modal-backdrop" id="cloudConfigModal" onclick="closeCloudConfigModal(event)">
-    <div class="modal-box" style="max-width: 560px; text-align: left;" onclick="event.stopPropagation()">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-        <span class="badge">☁️ Koneksi Cloud Real-Time (Vercel)</span>
-        <button type="button" class="btn btn-outline btn-sm" onclick="closeCloudConfigModal()">✕</button>
-      </div>
-      <h3 class="mb-1">⚙️ Pengaturan Firebase Firestore</h3>
-      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.9rem;">
-        Agar fitur <strong>Mabar Lintas HP Siswa</strong> berjalan online di Vercel, tempel konfigurasi Firebase Anda di bawah ini. Saat guru membuat QR Code / Direct Link, konfigurasi ini otomatis terbawa ke HP siswa!
-      </p>
+    <!-- MODAL PENGATURAN KONEKSI FIREBASE CLOUD (VERCEL READY) -->
+    <div class="modal-backdrop" id="cloudConfigModal" onclick="closeCloudConfigModal(event)">
+        <div class="modal-box" style="max-width: 560px; text-align: left;" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <span class="badge">☁️ Koneksi Cloud Real-Time (Vercel)</span>
+                <button type="button" class="btn btn-outline btn-sm" onclick="closeCloudConfigModal()">✕</button>
+            </div>
+            <h3 class="mb-1">⚙️ Pengaturan Firebase Firestore</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.9rem;">
+                Agar fitur <strong>Mabar Lintas HP Siswa</strong> berjalan online di Vercel, tempel konfigurasi Firebase
+                Anda di bawah ini. Saat guru membuat QR Code / Direct Link, konfigurasi ini otomatis terbawa ke HP
+                siswa!
+            </p>
 
-      <div style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 1rem;">
-        <strong style="color: var(--brand-baby);">Panduan Cepat Setup Firebase (Gratis 3 Menit):</strong>
-        <ol style="padding-left: 1.25rem; margin-top: 0.35rem; line-height: 1.55;">
-          <li>Buka <strong>console.firebase.google.com</strong> &rarr; Buat Project baru.</li>
-          <li>Masuk ke menu <strong>Build &rarr; Firestore Database</strong> &rarr; Klik <em>Create database</em> &rarr; Pilih <strong>Start in test mode</strong>.</li>
-          <li>Buka <strong>Project Settings (ikon gerigi)</strong> &rarr; Scroll ke <em>Your apps</em> &rarr; Klik ikon Web (<code>&lt;/&gt;</code>).</li>
-          <li>Salin seluruh blok <code>const firebaseConfig = { ... };</code> (atau format JSON) lalu tempel di kolom di bawah ini.</li>
-        </ol>
-      </div>
+            <div
+                style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                <strong style="color: var(--brand-baby);">Panduan Cepat Setup Firebase (Gratis 3 Menit):</strong>
+                <ol style="padding-left: 1.25rem; margin-top: 0.35rem; line-height: 1.55;">
+                    <li>Buka <strong>console.firebase.google.com</strong> &rarr; Buat Project baru.</li>
+                    <li>Masuk ke menu <strong>Build &rarr; Firestore Database</strong> &rarr; Klik <em>Create
+                            database</em> &rarr; Pilih <strong>Start in test mode</strong>.</li>
+                    <li>Buka <strong>Project Settings (ikon gerigi)</strong> &rarr; Scroll ke <em>Your apps</em> &rarr;
+                        Klik ikon Web (<code>&lt;/&gt;</code>).</li>
+                    <li>Salin seluruh blok <code>const firebaseConfig = { ... };</code> (atau format JSON) lalu tempel
+                        di kolom di bawah ini.</li>
+                </ol>
+            </div>
 
-      <div class="form-group">
-        <label class="form-label" for="firebaseSnippetInput">Tempel Snippet <code>firebaseConfig</code> (JSON atau JavaScript):</label>
-        <textarea id="firebaseSnippetInput" class="form-control" rows="6" style="font-family: monospace; font-size: 0.85rem; resize: vertical;" placeholder='const firebaseConfig = {
+            <div class="form-group">
+                <label class="form-label" for="firebaseSnippetInput">Tempel Snippet <code>firebaseConfig</code> (JSON
+                    atau JavaScript):</label>
+                <textarea id="firebaseSnippetInput" class="form-control" rows="6"
+                    style="font-family: monospace; font-size: 0.85rem; resize: vertical;" placeholder='const firebaseConfig = {
   apiKey: "AIzaSy...",
   authDomain: "kuis-sekolah.firebaseapp.com",
   projectId: "kuis-sekolah",
@@ -1530,28 +1676,31 @@
   messagingSenderId: "1234567890",
   appId: "1:1234567890:web:abcdef"
 };'></textarea>
-      </div>
+            </div>
 
-      <div class="flex-row" style="justify-content: space-between; margin-top: 1rem;">
-        <button type="button" class="btn btn-danger btn-sm" onclick="clearSavedCloudConfig()">🗑️ Reset Config</button>
-        <div class="flex-row">
-          <button type="button" class="btn btn-outline btn-sm" onclick="closeCloudConfigModal()">Batal</button>
-          <button type="button" class="btn btn-success" id="saveCloudConfigBtn" onclick="saveAndConnectCloudConfig()">
-            💾 Simpan & Hubungkan
-          </button>
+            <div class="flex-row" style="justify-content: space-between; margin-top: 1rem;">
+                <button type="button" class="btn btn-danger btn-sm" onclick="clearSavedCloudConfig()">🗑️ Reset
+                    Config</button>
+                <div class="flex-row">
+                    <button type="button" class="btn btn-outline btn-sm"
+                        onclick="closeCloudConfigModal()">Batal</button>
+                    <button type="button" class="btn btn-success" id="saveCloudConfigBtn"
+                        onclick="saveAndConnectCloudConfig()">
+                        💾 Simpan & Hubungkan
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- TOAST STACK -->
-  <div class="toast-stack" id="toastStack"></div>
+    <!-- TOAST STACK -->
+    <div class="toast-stack" id="toastStack"></div>
 
-  <!-- ========================================================================
+    <!-- ========================================================================
        APPLICATION LOGIC & FIREBASE REAL-TIME SYNC
        ======================================================================== -->
-  <script type="module">
-    import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    <script type="module">
+        import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import {
       getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection
@@ -1560,17 +1709,15 @@
     /* ------------------------------------------------------------------------
        0. DEFAULT FIREBASE CONFIG (ISI LANGSUNG DI SINI SEBELUM DEPLOY KE VERCEL)
        ------------------------------------------------------------------------ */
-    const DEFAULT_FIREBASE_CONFIG = null;
-    /* Contoh pengisian langsung:
-    const DEFAULT_FIREBASE_CONFIG = {
-      apiKey: "AIzaSy...",
-      authDomain: "project-anda.firebaseapp.com",
-      projectId: "project-anda",
-      storageBucket: "project-anda.firebasestorage.app",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef"
-    };
-    */
+    const firebaseConfig = {
+  apiKey: "AIzaSyDG_ikh-KJ3G_7xyK1nU_eTdSu8Kuzghf0",
+  authDomain: "kuis-game.firebaseapp.com",
+  projectId: "kuis-game",
+  storageBucket: "kuis-game.firebasestorage.app",
+  messagingSenderId: "603775129291",
+  appId: "1:603775129291:web:325e8c0fdbb250ef5ded4e",
+  measurementId: "G-M2K04ZYQ2Z"
+};
 
     /* ------------------------------------------------------------------------
        1. INITIALIZATION & REAL-TIME STORAGE ENGINE
@@ -3027,4 +3174,5 @@
     });
   </script>
 </body>
+
 </html>
