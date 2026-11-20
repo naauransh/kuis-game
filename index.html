@@ -23,20 +23,20 @@
       --bg-secondary: #ffffff;
       --bg-card: #ffffff;
       --bg-elevated: #e2eeff;
-      --text-primary: #0a192f;
+      --text-primary: #0a1628;
       --text-secondary: #2c4464;
       --text-muted: #5a7394;
 
-      --brand-navy: #0a192f;
+      --brand-navy: #0a1628;
       --brand-deep: #112240;
       --brand-blue: #1d4ed8;
-      --brand-baby: #64b5f6;
-      --brand-baby-light: #90caf9;
-      --brand-glow: rgba(29, 78, 216, 0.22);
+      --brand-baby: #38bdf8;
+      --brand-baby-light: #60a5fa;
+      --brand-glow: rgba(56, 189, 248, 0.25);
 
       --border-color: #cbd8ec;
-      --shadow-sm: 0 2px 8px rgba(10, 25, 47, 0.06);
-      --shadow-md: 0 8px 24px rgba(10, 25, 47, 0.1);
+      --shadow-sm: 0 2px 8px rgba(10, 22, 40, 0.06);
+      --shadow-md: 0 8px 24px rgba(10, 22, 40, 0.1);
       --shadow-lg: 0 18px 42px rgba(17, 34, 64, 0.16);
 
       /* High-Contrast Option Colors */
@@ -51,8 +51,8 @@
     }
 
     [data-theme="dark"] {
-      /* Dark Mode (Deep Navy #0A192F / #112240 & Baby Blue #64B5F6) */
-      --bg-primary: #0a192f;
+      /* Dark Mode (Deep Navy #0A1628 / #112240 & Baby Blue #38BDF8 / #60A5FA) */
+      --bg-primary: #0a1628;
       --bg-secondary: #112240;
       --bg-card: #112240;
       --bg-elevated: #1b3258;
@@ -60,12 +60,12 @@
       --text-secondary: #cbd5e1;
       --text-muted: #8fa6c6;
 
-      --brand-navy: #0a192f;
+      --brand-navy: #0a1628;
       --brand-deep: #112240;
       --brand-blue: #2563eb;
-      --brand-baby: #64b5f6;
-      --brand-baby-light: #90caf9;
-      --brand-glow: rgba(100, 181, 246, 0.24);
+      --brand-baby: #38bdf8;
+      --brand-baby-light: #60a5fa;
+      --brand-glow: rgba(56, 189, 248, 0.24);
 
       --border-color: #233f6e;
       --shadow-sm: 0 4px 12px rgba(2, 8, 20, 0.35);
@@ -175,13 +175,48 @@
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      padding: 0.4rem 0.85rem;
+      padding: 0.42rem 0.9rem;
       border-radius: 999px;
       font-size: 0.82rem;
       font-weight: 700;
       background-color: var(--bg-elevated);
-      border: 1px solid var(--border-color);
+      border: 1.5px solid var(--border-color);
       color: var(--text-secondary);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .status-pill:hover {
+      transform: translateY(-1px);
+      border-color: var(--brand-baby);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: var(--warning);
+      flex-shrink: 0;
+    }
+
+    .status-pill.connected .status-dot {
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .status-pill.connected {
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.45);
+    }
+
+    .status-pill.setup-needed .status-dot {
+      background-color: var(--warning);
+      box-shadow: 0 0 8px var(--warning);
+    }
+
+    .status-pill.setup-needed {
+      color: var(--warning);
+      border-color: rgba(245, 158, 11, 0.5);
     }
 
     .status-dot {
@@ -1041,10 +1076,10 @@
       <div class="brand-name">Kuis<span>Pintar</span></div>
     </div>
     <div class="nav-right">
-      <div id="serverStatusPill" class="status-pill" title="Status Koneksi Real-Time Antar Perangkat">
+      <button type="button" id="serverStatusPill" class="status-pill setup-needed" onclick="openCloudConfigModal()" title="Klik untuk mengatur koneksi Firebase Cloud">
         <span class="status-dot"></span>
-        <span id="serverStatusText">Menghubungkan Server...</span>
-      </div>
+        <span id="serverStatusText">Setup Cloud (Klik)</span>
+      </button>
       <button type="button" class="btn btn-outline btn-sm" id="themeBtn" onclick="toggleTheme()">
         ☀️ Light Mode
       </button>
@@ -1213,14 +1248,20 @@
          VIEW 4: SELEBRASI AKHIR MODE PROYEKTOR
          ====================================================================== -->
     <section id="view-solo-complete" class="view">
-      <div class="card text-center" style="max-width: 680px; margin: 2rem auto; padding: 3rem 1.5rem;">
+      <div class="card text-center" style="max-width: 760px; margin: 1.5rem auto; padding: 2.5rem 1.5rem;">
         <div style="font-size: 4.2rem; margin-bottom: 0.85rem;">🎉🏆🎊</div>
         <h1 style="font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 0.75rem;">
-          Hore! Semua Pertanyaan Telah Selesai!
+          Hore! Semua Pertanyaan Selesai!
         </h1>
-        <p id="soloCompleteDesc" style="color: var(--text-secondary); font-size: 1.08rem; margin-bottom: 1.75rem;">
+        <p id="soloCompleteDesc" style="color: var(--text-secondary); font-size: 1.08rem; margin-bottom: 1.5rem;">
           Selamat, seluruh pertanyaan pada sesi kuis ini telah berhasil ditampilkan.
         </p>
+
+        <div style="text-align: left; margin-bottom: 1.75rem;">
+          <h3 class="mb-1">📋 Ringkasan Pertanyaan & Kunci Jawaban</h3>
+          <div class="rank-list" id="soloSummaryList"></div>
+        </div>
+
         <div class="flex-row">
           <button type="button" class="btn btn-primary btn-lg" onclick="restartSoloSession()">🔄 Ulangi Kuis</button>
           <button type="button" class="btn btn-outline btn-lg" onclick="goHome()">🏠 Kembali ke Beranda</button>
@@ -1363,6 +1404,7 @@
         <div id="studentFeedbackCard" class="card mt-2 text-center" style="display: none;">
           <h3 id="studentFeedbackHeading">Jawaban Terkirim!</h3>
           <p id="studentFeedbackDetail" style="color: var(--text-secondary); margin-top: 0.35rem;">Menunggu waktu habis...</p>
+          <div id="studentLiveRankBadge" class="badge mt-1" style="display: none; font-size: 0.92rem;"></div>
         </div>
 
         <!-- Panel Analitik & Kontrol Khusus Guru -->
@@ -1450,6 +1492,52 @@
     </div>
   </div>
 
+  <!-- MODAL PENGATURAN KONEKSI FIREBASE CLOUD (VERCEL READY) -->
+  <div class="modal-backdrop" id="cloudConfigModal" onclick="closeCloudConfigModal(event)">
+    <div class="modal-box" style="max-width: 560px; text-align: left;" onclick="event.stopPropagation()">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <span class="badge">☁️ Koneksi Cloud Real-Time (Vercel)</span>
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeCloudConfigModal()">✕</button>
+      </div>
+      <h3 class="mb-1">⚙️ Pengaturan Firebase Firestore</h3>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.9rem;">
+        Agar fitur <strong>Mabar Lintas HP Siswa</strong> berjalan online di Vercel, tempel konfigurasi Firebase Anda di bawah ini. Saat guru membuat QR Code / Direct Link, konfigurasi ini otomatis terbawa ke HP siswa!
+      </p>
+
+      <div style="background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        <strong style="color: var(--brand-baby);">Panduan Cepat Setup Firebase (Gratis 3 Menit):</strong>
+        <ol style="padding-left: 1.25rem; margin-top: 0.35rem; line-height: 1.55;">
+          <li>Buka <strong>console.firebase.google.com</strong> &rarr; Buat Project baru.</li>
+          <li>Masuk ke menu <strong>Build &rarr; Firestore Database</strong> &rarr; Klik <em>Create database</em> &rarr; Pilih <strong>Start in test mode</strong>.</li>
+          <li>Buka <strong>Project Settings (ikon gerigi)</strong> &rarr; Scroll ke <em>Your apps</em> &rarr; Klik ikon Web (<code>&lt;/&gt;</code>).</li>
+          <li>Salin seluruh blok <code>const firebaseConfig = { ... };</code> (atau format JSON) lalu tempel di kolom di bawah ini.</li>
+        </ol>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="firebaseSnippetInput">Tempel Snippet <code>firebaseConfig</code> (JSON atau JavaScript):</label>
+        <textarea id="firebaseSnippetInput" class="form-control" rows="6" style="font-family: monospace; font-size: 0.85rem; resize: vertical;" placeholder='const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  authDomain: "kuis-sekolah.firebaseapp.com",
+  projectId: "kuis-sekolah",
+  storageBucket: "kuis-sekolah.firebasestorage.app",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef"
+};'></textarea>
+      </div>
+
+      <div class="flex-row" style="justify-content: space-between; margin-top: 1rem;">
+        <button type="button" class="btn btn-danger btn-sm" onclick="clearSavedCloudConfig()">🗑️ Reset Config</button>
+        <div class="flex-row">
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeCloudConfigModal()">Batal</button>
+          <button type="button" class="btn btn-success" id="saveCloudConfigBtn" onclick="saveAndConnectCloudConfig()">
+            💾 Simpan & Hubungkan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST STACK -->
   <div class="toast-stack" id="toastStack"></div>
 
@@ -1457,11 +1545,26 @@
        APPLICATION LOGIC & FIREBASE REAL-TIME SYNC
        ======================================================================== -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import {
       getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    /* ------------------------------------------------------------------------
+       0. DEFAULT FIREBASE CONFIG (ISI LANGSUNG DI SINI SEBELUM DEPLOY KE VERCEL)
+       ------------------------------------------------------------------------ */
+    const DEFAULT_FIREBASE_CONFIG = null;
+    /* Contoh pengisian langsung:
+    const DEFAULT_FIREBASE_CONFIG = {
+      apiKey: "AIzaSy...",
+      authDomain: "project-anda.firebaseapp.com",
+      projectId: "project-anda",
+      storageBucket: "project-anda.firebasestorage.app",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef"
+    };
+    */
 
     /* ------------------------------------------------------------------------
        1. INITIALIZATION & REAL-TIME STORAGE ENGINE
@@ -1470,13 +1573,12 @@
     let auth = null;
     let currentUser = null;
     let isCloudConnected = false;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'kuispintar-school-app';
-    const sessionDeviceId = 'dev_' + Math.random().toString(36).slice(2, 10);
+    let activeFirebaseConfig = null;
+    let activeConfigSource = 'none'; // 'window' | 'default' | 'url' | 'localStorage' | 'none'
 
-    // Fallback sync lintas tab jika environment berjalan tanpa konfigurasi Firebase
-    const localChannel = (typeof BroadcastChannel !== 'undefined')
-      ? new BroadcastChannel('kuispintar_school_sync')
-      : null;
+    const STORAGE_CFG_KEY = 'kuispintar_firebase_cfg_v1';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'kuispintar-vercel-school';
+    const sessionDeviceId = 'dev_' + Math.random().toString(36).slice(2, 10);
 
     const appState = {
       mode: 'solo', // 'solo' | 'multiplayer'
@@ -1504,205 +1606,350 @@
       studentChosenOpt: null,
       studentResponseTimeMs: null,
       questionShownAtMs: 0,
-      podiumCelebrated: false
+      podiumCelebrated: false,
+      autoRevealing: false
     };
 
-    async function initRealtimeBackend() {
-      const pill = document.getElementById('serverStatusPill');
-      const text = document.getElementById('serverStatusText');
-      const createBtn = document.getElementById('homeCreateRoomBtn');
-      const joinBtn = document.getElementById('homeJoinBtn');
+    // Parser otomatis untuk mengekstrak field firebaseConfig dari JSON maupun snippet JS mentah
+    function parseFirebaseConfigSnippet(rawInput) {
+      if (!rawInput || typeof rawInput !== 'string') return null;
+      const trimmed = rawInput.trim();
+      if (!trimmed) return null;
 
-      createBtn.disabled = true;
-      joinBtn.disabled = true;
-
+      // 1. Coba parse sebagai JSON langsung
       try {
-        if (typeof __firebase_config === 'undefined' || !__firebase_config) {
-          throw new Error('Konfigurasi cloud tidak tersedia di lingkungan ini.');
+        const parsed = JSON.parse(trimmed);
+        if (parsed && parsed.apiKey && parsed.projectId) {
+          return normalizeFirebaseConfig(parsed);
         }
-
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-
-        currentUser = auth.currentUser;
-        if (!currentUser) {
-          throw new Error('Autentikasi sesi gagal.');
-        }
-
-        isCloudConnected = true;
-        pill.classList.add('connected');
-        text.textContent = 'Server Terhubung';
-      } catch (err) {
-        console.warn('Mode sinkronisasi lokal aktif:', err);
-        isCloudConnected = false;
-        pill.classList.add('offline');
-        text.textContent = 'Mode Lokal Aktif';
-      } finally {
-        createBtn.disabled = false;
-        joinBtn.disabled = false;
-      }
-    }
-
-    // Operasi Database (Firestore Utama + Fallback Lintas Tab)
-    async function writeRoom(code, payload) {
-      try {
-        localStorage.setItem(`kp_room_${code}`, JSON.stringify(payload));
-        if (localChannel) localChannel.postMessage({ kind: 'room', code, payload });
       } catch (_) {}
 
-      if (isCloudConnected && db && currentUser) {
-        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
-        await setDoc(ref, payload);
+      // 2. Ekstrak pasangan key: "value" dari kode JavaScript const firebaseConfig = { ... }
+      const keys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId', 'databaseURL'];
+      const extracted = {};
+      keys.forEach((key) => {
+        const regex = new RegExp(`["']?${key}["']?\\s*:\\s*["']([^"']+)["']`);
+        const match = trimmed.match(regex);
+        if (match && match[1]) {
+          extracted[key] = match[1].trim();
+        }
+      });
+
+      if (extracted.apiKey && extracted.projectId) {
+        return normalizeFirebaseConfig(extracted);
+      }
+      return null;
+    }
+
+    function normalizeFirebaseConfig(cfg) {
+      const out = {
+        apiKey: String(cfg.apiKey || '').trim(),
+        authDomain: String(cfg.authDomain || `${cfg.projectId}.firebaseapp.com`).trim(),
+        projectId: String(cfg.projectId || '').trim()
+      };
+      if (cfg.storageBucket) out.storageBucket = String(cfg.storageBucket).trim();
+      if (cfg.messagingSenderId) out.messagingSenderId = String(cfg.messagingSenderId).trim();
+      if (cfg.appId) out.appId = String(cfg.appId).trim();
+      if (cfg.databaseURL) out.databaseURL = String(cfg.databaseURL).trim();
+      return out;
+    }
+
+    // Encode/Decode ringkas config ke Base64URL agar aman dibawa parameter ?cfg=... pada QR Code
+    function encodeConfigForUrl(cfg) {
+      try {
+        const compact = {
+          k: cfg.apiKey,
+          d: cfg.authDomain,
+          p: cfg.projectId,
+          s: cfg.storageBucket || '',
+          m: cfg.messagingSenderId || '',
+          a: cfg.appId || ''
+        };
+        const json = JSON.stringify(compact);
+        return btoa(unescape(encodeURIComponent(json)))
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=+$/, '');
+      } catch (_) {
+        return '';
       }
     }
 
-    async function updateRoom(code, patch) {
+    function decodeConfigFromUrl(encoded) {
       try {
-        const existing = JSON.parse(localStorage.getItem(`kp_room_${code}`) || '{}');
-        const merged = { ...existing, ...patch };
-        localStorage.setItem(`kp_room_${code}`, JSON.stringify(merged));
-        if (localChannel) localChannel.postMessage({ kind: 'room', code, payload: merged });
-      } catch (_) {}
-
-      if (isCloudConnected && db && currentUser) {
-        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
-        await updateDoc(ref, patch);
-      }
-    }
-
-    async function readRoom(code) {
-      if (isCloudConnected && db && currentUser) {
-        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
-        const snap = await getDoc(ref);
-        if (snap.exists()) return snap.data();
-      }
-      try {
-        const raw = localStorage.getItem(`kp_room_${code}`);
-        if (raw) return JSON.parse(raw);
+        if (!encoded) return null;
+        let b64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4) b64 += '=';
+        const json = decodeURIComponent(escape(atob(b64)));
+        const c = JSON.parse(json);
+        if (c && c.k && c.p) {
+          return normalizeFirebaseConfig({
+            apiKey: c.k,
+            authDomain: c.d,
+            projectId: c.p,
+            storageBucket: c.s,
+            messagingSenderId: c.m,
+            appId: c.a
+          });
+        }
       } catch (_) {}
       return null;
     }
 
-    async function writeStudent(code, studentId, studentData) {
-      try {
-        const map = JSON.parse(localStorage.getItem(`kp_students_${code}`) || '{}');
-        map[studentId] = studentData;
-        localStorage.setItem(`kp_students_${code}`, JSON.stringify(map));
-        if (localChannel) localChannel.postMessage({ kind: 'students', code, map });
-      } catch (_) {}
-
-      if (isCloudConnected && db && currentUser) {
-        const ref = doc(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`, studentId);
-        await setDoc(ref, studentData, { merge: true });
+    function updateCloudStatusUI(connected, labelText) {
+      const pill = document.getElementById('serverStatusPill');
+      const text = document.getElementById('serverStatusText');
+      pill.classList.remove('connected', 'setup-needed');
+      if (connected) {
+        pill.classList.add('connected');
+        text.textContent = labelText || '● Cloud Online';
+      } else {
+        pill.classList.add('setup-needed');
+        text.textContent = labelText || 'Setup Cloud (Klik)';
       }
     }
 
-    async function removeStudent(code, studentId) {
+    async function connectToFirestore(configObj, sourceLabel = 'localStorage') {
+      if (!configObj || !configObj.apiKey || !configObj.projectId) {
+        isCloudConnected = false;
+        activeFirebaseConfig = null;
+        activeConfigSource = 'none';
+        updateCloudStatusUI(false, 'Setup Cloud (Klik)');
+        return false;
+      }
+
+      updateCloudStatusUI(false, 'Menghubungkan Cloud...');
+
       try {
-        const map = JSON.parse(localStorage.getItem(`kp_students_${code}`) || '{}');
-        delete map[studentId];
-        localStorage.setItem(`kp_students_${code}`, JSON.stringify(map));
-        if (localChannel) localChannel.postMessage({ kind: 'students', code, map });
+        // Bersihkan instance app sebelumnya jika berganti konfigurasi
+        const existingApps = getApps();
+        for (const existing of existingApps) {
+          await deleteApp(existing);
+        }
+
+        const app = initializeApp(configObj);
+        db = getFirestore(app);
+
+        // Coba anonymous auth jika diaktifkan; tetap izinkan Firestore open test-mode rules jika anonymous auth tidak dinyalakan di Firebase Console
+        try {
+          auth = getAuth(app);
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && sourceLabel === 'window') {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+          currentUser = auth.currentUser;
+        } catch (authErr) {
+          console.warn('Anonymous Auth tidak aktif, melanjutkan dengan aturan akses publik Firestore:', authErr?.code || authErr);
+          currentUser = { uid: sessionDeviceId };
+        }
+
+        // Uji koneksi baca cepat ke Firestore untuk memastikan projectId & API key valid
+        const pingRef = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_health', 'ping');
+        await getDoc(pingRef);
+
+        isCloudConnected = true;
+        activeFirebaseConfig = configObj;
+        activeConfigSource = sourceLabel;
+        updateCloudStatusUI(true, 'Cloud Online');
+        return true;
+      } catch (err) {
+        console.error('Gagal terhubung ke Firebase Firestore:', err);
+        isCloudConnected = false;
+        activeFirebaseConfig = null;
+        activeConfigSource = 'none';
+        updateCloudStatusUI(false, 'Setup Cloud (Klik)');
+        return false;
+      }
+    }
+
+    async function initRealtimeBackend() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const cfgFromUrl = decodeConfigFromUrl(urlParams.get('cfg'));
+
+      // Prioritas 1: Parameter ?cfg=... dari QR Code / Direct Link guru
+      if (cfgFromUrl) {
+        try { localStorage.setItem(STORAGE_CFG_KEY, JSON.stringify(cfgFromUrl)); } catch (_) {}
+        const ok = await connectToFirestore(cfgFromUrl, 'url');
+        if (ok) return;
+      }
+
+      // Prioritas 2: Environment Canvas (window.__firebase_config)
+      if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+        const parsedEnv = parseFirebaseConfigSnippet(__firebase_config);
+        if (parsedEnv) {
+          const ok = await connectToFirestore(parsedEnv, 'window');
+          if (ok) return;
+        }
+      }
+
+      // Prioritas 3: Konstanta DEFAULT_FIREBASE_CONFIG di atas script
+      if (DEFAULT_FIREBASE_CONFIG && DEFAULT_FIREBASE_CONFIG.apiKey && DEFAULT_FIREBASE_CONFIG.projectId) {
+        const ok = await connectToFirestore(normalizeFirebaseConfig(DEFAULT_FIREBASE_CONFIG), 'default');
+        if (ok) return;
+      }
+
+      // Prioritas 4: Konfigurasi tersimpan di localStorage browser guru/siswa
+      try {
+        const savedRaw = localStorage.getItem(STORAGE_CFG_KEY);
+        if (savedRaw) {
+          const parsedSaved = JSON.parse(savedRaw);
+          if (parsedSaved && parsedSaved.apiKey && parsedSaved.projectId) {
+            const ok = await connectToFirestore(parsedSaved, 'localStorage');
+            if (ok) return;
+          }
+        }
       } catch (_) {}
 
-      if (isCloudConnected && db && currentUser) {
-        const ref = doc(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`, studentId);
-        await deleteDoc(ref);
+      updateCloudStatusUI(false, 'Setup Cloud (Klik)');
+    }
+
+    // Modal Koneksi Cloud Controls
+    window.openCloudConfigModal = function() {
+      const textarea = document.getElementById('firebaseSnippetInput');
+      if (activeFirebaseConfig) {
+        textarea.value = JSON.stringify(activeFirebaseConfig, null, 2);
+      } else {
+        try {
+          const saved = localStorage.getItem(STORAGE_CFG_KEY);
+          textarea.value = saved ? JSON.stringify(JSON.parse(saved), null, 2) : '';
+        } catch (_) {
+          textarea.value = '';
+        }
       }
+      document.getElementById('cloudConfigModal').classList.add('open');
+    };
+
+    window.closeCloudConfigModal = function(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('cloudConfigModal').classList.remove('open');
+    };
+
+    window.saveAndConnectCloudConfig = async function() {
+      const raw = document.getElementById('firebaseSnippetInput').value;
+      const parsed = parseFirebaseConfigSnippet(raw);
+      if (!parsed) {
+        notify('⚠️ Format tidak dikenali. Pastikan berisi apiKey dan projectId dari Firebase Console.');
+        return;
+      }
+
+      const btn = document.getElementById('saveCloudConfigBtn');
+      btn.disabled = true;
+      btn.textContent = 'Menghubungkan...';
+
+      try {
+        const ok = await connectToFirestore(parsed, 'localStorage');
+        if (ok) {
+          localStorage.setItem(STORAGE_CFG_KEY, JSON.stringify(parsed));
+          closeCloudConfigModal();
+          notify('✅ Berhasil terhubung ke Firebase Cloud!');
+        } else {
+          notify('❌ Gagal konek ke Firestore. Pastikan Firestore Database sudah dibuat dalam Test Mode.');
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Simpan & Hubungkan';
+      }
+    };
+
+    window.clearSavedCloudConfig = async function() {
+      try { localStorage.removeItem(STORAGE_CFG_KEY); } catch (_) {}
+      document.getElementById('firebaseSnippetInput').value = '';
+      isCloudConnected = false;
+      activeFirebaseConfig = null;
+      activeConfigSource = 'none';
+      updateCloudStatusUI(false, 'Setup Cloud (Klik)');
+      notify('🗑️ Konfigurasi Cloud lokal telah dihapus.');
+    };
+
+    // Operasi Database Firestore
+    async function writeRoom(code, payload) {
+      const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+      await setDoc(ref, payload);
+    }
+
+    async function updateRoom(code, patch) {
+      const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+      await updateDoc(ref, patch);
+    }
+
+    async function readRoom(code) {
+      const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+
+    async function writeStudent(code, studentId, studentData) {
+      const ref = doc(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`, studentId);
+      await setDoc(ref, studentData, { merge: true });
+    }
+
+    async function removeStudent(code, studentId) {
+      const ref = doc(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`, studentId);
+      await deleteDoc(ref);
     }
 
     function listenRoomAndStudents(code) {
       if (appState.unsubRoom) appState.unsubRoom();
       if (appState.unsubStudents) appState.unsubStudents();
 
-      // Local fallback listener
-      const localHandler = (ev) => {
-        if (!ev.data || ev.data.code !== code) return;
-        if (ev.data.kind === 'room') {
-          appState.roomData = ev.data.payload;
+      const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+      const fsRoomUnsub = onSnapshot(roomRef, (snap) => {
+        if (snap.exists()) {
+          appState.roomData = snap.data();
           onRoomChanged();
-        } else if (ev.data.kind === 'students') {
-          appState.studentsMap = ev.data.map;
-          onStudentsChanged();
         }
-      };
-      if (localChannel) localChannel.addEventListener('message', localHandler);
+      }, (err) => {
+        console.error('Error listener room:', err);
+        notify('⚠️ Koneksi room terganggu, memeriksa ulang...');
+      });
 
-      let fsRoomUnsub = null;
-      let fsStudentsUnsub = null;
-
-      if (isCloudConnected && db && currentUser) {
-        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
-        fsRoomUnsub = onSnapshot(roomRef, (snap) => {
-          if (snap.exists()) {
-            appState.roomData = snap.data();
-            onRoomChanged();
-          }
-        }, (err) => {
-          console.error('Error listener room:', err);
-          notify('⚠️ Koneksi room terganggu, mencoba menyambungkan ulang...');
+      const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`);
+      const fsStudentsUnsub = onSnapshot(studentsCol, (querySnap) => {
+        const map = {};
+        querySnap.forEach((docSnap) => {
+          map[docSnap.id] = docSnap.data();
         });
+        appState.studentsMap = map;
+        onStudentsChanged();
+      }, (err) => {
+        console.error('Error listener siswa:', err);
+      });
 
-        const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`);
-        fsStudentsUnsub = onSnapshot(studentsCol, (querySnap) => {
-          const map = {};
-          querySnap.forEach((docSnap) => {
-            map[docSnap.id] = docSnap.data();
-          });
-          appState.studentsMap = map;
-          onStudentsChanged();
-        }, (err) => {
-          console.error('Error listener siswa:', err);
-        });
-      } else {
-        // Hydrate dari localStorage jika offline
-        try {
-          const r = localStorage.getItem(`kp_room_${code}`);
-          if (r) { appState.roomData = JSON.parse(r); onRoomChanged(); }
-          const s = localStorage.getItem(`kp_students_${code}`);
-          if (s) { appState.studentsMap = JSON.parse(s); onStudentsChanged(); }
-        } catch (_) {}
-      }
-
-      appState.unsubRoom = () => {
-        if (localChannel) localChannel.removeEventListener('message', localHandler);
-        if (fsRoomUnsub) fsRoomUnsub();
-      };
-      appState.unsubStudents = () => {
-        if (fsStudentsUnsub) fsStudentsUnsub();
-      };
+      appState.unsubRoom = fsRoomUnsub;
+      appState.unsubStudents = fsStudentsUnsub;
     }
 
     /* ------------------------------------------------------------------------
-       2. AUTHENTIC ISO/IEC 18004 QR CODE GENERATOR
+       2. AUTHENTIC ISO/IEC 18004 QR CODE GENERATOR & AUTO-CONFIG URL
        ------------------------------------------------------------------------ */
     function renderStandardQRCode(containerEl, urlString, cellSize = 6) {
       containerEl.innerHTML = '';
       if (typeof window.qrcode === 'function') {
-        const qr = window.qrcode(0, 'M');
+        // Error correction 'L' agar QR tetap ringkas & super mudah di-scan kamera HP meski membawa parameter ?cfg=
+        const qr = window.qrcode(0, 'L');
         qr.addData(urlString);
         qr.make();
-        // Menghasilkan SVG tajam dengan quiet zone 4 modul sesuai standar ISO/IEC 18004
         containerEl.innerHTML = qr.createSvgTag({
           cellSize: cellSize,
           margin: 4,
           scalable: true
         });
       } else {
-        containerEl.innerHTML = `<p style="color:#0a192f;font-size:0.8rem;padding:1rem;">Gagal memuat library QR. Gunakan kode room di atas.</p>`;
+        containerEl.innerHTML = `<p style="color:#0a1628;font-size:0.8rem;padding:1rem;">Gagal memuat library QR. Gunakan kode room di atas.</p>`;
       }
     }
 
     function getJoinUrl(code) {
-      return `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(code)}`;
+      const base = `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(code)}`;
+      // Sematkan parameter ?cfg=... jika konfigurasi berasal dari modal/URL agar HP siswa otomatis terkoneksi di Vercel
+      if (activeFirebaseConfig && (activeConfigSource === 'localStorage' || activeConfigSource === 'url')) {
+        const encodedCfg = encodeConfigForUrl(activeFirebaseConfig);
+        if (encodedCfg) {
+          return `${base}&cfg=${encodedCfg}`;
+        }
+      }
+      return base;
     }
 
     window.openQrZoomModal = function() {
@@ -1738,7 +1985,7 @@
         item.style.transform = 'translateX(20px)';
         item.style.transition = 'all 0.25s ease';
         setTimeout(() => item.remove(), 250);
-      }, 3200);
+      }, 3600);
     };
 
     function showScreen(id) {
@@ -1755,8 +2002,9 @@
       if (appState.unsubStudents) { appState.unsubStudents(); appState.unsubStudents = null; }
 
       const url = new URL(window.location.href);
-      if (url.searchParams.has('room')) {
+      if (url.searchParams.has('room') || url.searchParams.has('cfg')) {
         url.searchParams.delete('room');
+        url.searchParams.delete('cfg');
         window.history.replaceState({}, '', url.toString());
       }
       showScreen('view-home');
@@ -1789,6 +2037,12 @@
        4. QUIZ BUILDER (GURU / ADMIN)
        ------------------------------------------------------------------------ */
     window.openQuizBuilder = function(mode) {
+      if (mode === 'multiplayer' && !isCloudConnected) {
+        notify('⚠️ Hubungkan Firebase Cloud terlebih dahulu agar room bisa diakses dari HP siswa!');
+        openCloudConfigModal();
+        return;
+      }
+
       appState.mode = mode;
       const label = document.getElementById('builderModeLabel');
       const btn = document.getElementById('launchSessionBtn');
@@ -2074,6 +2328,15 @@
       } else {
         document.getElementById('soloCompleteDesc').textContent =
           `Seluruh ${appState.questions.length} pertanyaan pada "${appState.quizTitle}" telah selesai ditampilkan!`;
+
+        const summaryList = document.getElementById('soloSummaryList');
+        summaryList.innerHTML = appState.questions.map((q, i) => `
+          <div class="rank-item">
+            <span><strong>#${i + 1}</strong> ${escapeHtml(q.text)}</span>
+            <span style="color: var(--success); font-weight: 700;">✔ ${q.correct}. ${escapeHtml(q.options[q.correct])}</span>
+          </div>
+        `).join('');
+
         showScreen('view-solo-complete');
         launchConfetti();
       }
@@ -2092,9 +2355,15 @@
     }
 
     async function createLiveRoom() {
+      if (!isCloudConnected || !db) {
+        notify('⚠️ Koneksi Firebase Cloud belum aktif. Klik tombol "Setup Cloud" di pojok kanan atas.');
+        openCloudConfigModal();
+        return;
+      }
+
       const btn = document.getElementById('launchSessionBtn');
       btn.disabled = true;
-      btn.textContent = 'Membuat Room...';
+      btn.textContent = 'Membuat Room Cloud...';
 
       try {
         const code = generateUniqueRoomCode();
@@ -2105,6 +2374,7 @@
         appState.lastRenderedQ = -1;
         appState.lastRenderedStatus = null;
         appState.podiumCelebrated = false;
+        appState.autoRevealing = false;
 
         const roomDoc = {
           roomCode: code,
@@ -2129,10 +2399,10 @@
 
         listenRoomAndStudents(code);
         showScreen('view-mp-lobby');
-        notify(`✅ Room ${code} berhasil dibuat!`);
+        notify(`✅ Room ${code} aktif di Cloud! Silakan siswa scan QR Code.`);
       } catch (err) {
         console.error('Gagal membuat room:', err);
-        notify('❌ Gagal membuat room. Periksa koneksi internet dan coba lagi.');
+        notify('❌ Gagal membuat room di Firestore. Pastikan Rules Firestore dalam Test Mode.');
       } finally {
         btn.disabled = false;
         btn.textContent = '🎮 Buat Room & Tampilkan QR';
@@ -2179,6 +2449,12 @@
 
     window.submitStudentJoinForm = async function(e) {
       e.preventDefault();
+      if (!isCloudConnected || !db) {
+        notify('⚠️ Perangkat belum terhubung ke Firebase Cloud. Klik "Setup Cloud" atau scan ulang QR Code dari guru.');
+        openCloudConfigModal();
+        return;
+      }
+
       const code = document.getElementById('studentCodeField').value.trim().toUpperCase();
       const name = document.getElementById('studentNameField').value.trim();
       if (!code || !name) return;
@@ -2190,7 +2466,7 @@
       try {
         const room = await readRoom(code);
         if (!room) {
-          notify('❌ Room tidak ditemukan! Periksa kembali kode room dari guru.');
+          notify('❌ Room tidak ditemukan di server! Periksa kembali kode room dari guru.');
           return;
         }
         if (room.status === 'finished') {
@@ -2222,7 +2498,7 @@
         notify(`🎉 Berhasil bergabung ke room ${code}!`);
       } catch (err) {
         console.error('Gagal bergabung:', err);
-        notify('❌ Gagal masuk ke room. Silakan coba lagi.');
+        notify('❌ Gagal masuk ke room. Periksa koneksi internet dan coba lagi.');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Masuk ke Ruang Tunggu →';
@@ -2263,6 +2539,25 @@
 
       if (appState.roomData && (appState.roomData.status === 'question' || appState.roomData.status === 'reveal')) {
         refreshLiveAnalytics();
+
+        // Otomatis buka jawaban jika seluruh siswa yang bergabung telah menjawab soal aktif
+        if (
+          appState.role === 'teacher' &&
+          appState.roomData.status === 'question' &&
+          students.length > 0 &&
+          !appState.autoRevealing
+        ) {
+          const qIdx = appState.roomData.currentQuestionIndex;
+          const allAnswered = students.every((s) => s.answers && s.answers[qIdx] !== undefined);
+          if (allAnswered) {
+            appState.autoRevealing = true;
+            setTimeout(() => {
+              hostRevealCurrentQuestion().finally(() => {
+                appState.autoRevealing = false;
+              });
+            }, 450);
+          }
+        }
       }
 
       if (appState.roomData?.status === 'finished') {
@@ -2381,6 +2676,19 @@
             document.getElementById('studentFeedbackHeading').innerHTML = `⏰ Waktu Habis!`;
             document.getElementById('studentFeedbackDetail').textContent = `Kamu belum sempat memilih. Jawaban benar: ${currentQ.correct}. ${currentQ.options[currentQ.correct]}`;
           }
+
+          // Tampilkan peringkat sementara siswa
+          const ranked = Object.values(appState.studentsMap).sort((a, b) => {
+            if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+            return (a.totalResponseTimeMs || 999999) - (b.totalResponseTimeMs || 999999);
+          });
+          const myPos = ranked.findIndex((s) => s.studentId === appState.studentId);
+          const myData = appState.studentsMap[appState.studentId];
+          const rankBadge = document.getElementById('studentLiveRankBadge');
+          if (myPos !== -1 && myData) {
+            rankBadge.style.display = 'inline-flex';
+            rankBadge.textContent = `🏅 Peringkat Sementara: #${myPos + 1} dari ${ranked.length} • Total ${myData.score || 0} Poin`;
+          }
         }
       }
 
@@ -2391,20 +2699,7 @@
       const grid = document.getElementById('mpLiveChoicesGrid');
       grid.innerHTML = '';
       document.getElementById('studentFeedbackCard').style.display = 'none';
-
-      ['A', 'B', 'C', 'D'].forEach(letter => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `choice-btn opt-${letter}`;
-        btn.id = `mpChoice-${letter}`;
-        btn.innerHTML = `<span class="choice-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
-
-        if (!isStudent) {
-          btn.disabled = true;
-        } else if (appState.studentChosenOpt) {
-          btn.disabled = true;
-          if (appState.studentChosenOpt === letter) btn.classList.add('chosen');
-          else btn.classList.add('faded');
+      document.getElementById('studentLiveRankBadge').style.display = 'none';
         } else {
           btn.onclick = () => submitStudentChoice(letter);
         }
