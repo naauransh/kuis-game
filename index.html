@@ -3,48 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KuisPintar - Kuis Interaktif & Mabar Real-Time</title>
+  <title>KuisPintar — Platform Kuis Interaktif Kelas & Mabar Real-Time</title>
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
-  <!-- Canvas Confetti CDN -->
+  <!-- Authentic ISO/IEC 18004 QR Code Generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
     /* ==========================================================================
-       1. DESIGN TOKENS & PURE CSS THEME SYSTEM (DEEP BLUE, BABY BLUE, NAVY)
+       1. DESIGN TOKENS (PURE CSS — DEEP BLUE, NAVY & BABY BLUE)
        ========================================================================== */
     :root {
-      /* Light Mode Tokens */
+      /* Light Mode */
       --bg-primary: #f0f6ff;
       --bg-secondary: #ffffff;
       --bg-card: #ffffff;
-      --bg-elevated: #e1eeff;
+      --bg-elevated: #e2eeff;
       --text-primary: #0a192f;
-      --text-secondary: #334e68;
-      --text-muted: #627d98;
-      
-      --brand-navy: #0a192f;
-      --brand-deep: #1d4ed8;
-      --brand-baby: #60a5fa;
-      --brand-accent: #2563eb;
-      --brand-glow: rgba(37, 99, 235, 0.25);
+      --text-secondary: #2c4464;
+      --text-muted: #5a7394;
 
-      --border-color: #cbd5e1;
+      --brand-navy: #0a192f;
+      --brand-deep: #112240;
+      --brand-blue: #1d4ed8;
+      --brand-baby: #64b5f6;
+      --brand-baby-light: #90caf9;
+      --brand-glow: rgba(29, 78, 216, 0.22);
+
+      --border-color: #cbd8ec;
       --shadow-sm: 0 2px 8px rgba(10, 25, 47, 0.06);
       --shadow-md: 0 8px 24px rgba(10, 25, 47, 0.1);
-      --shadow-lg: 0 16px 40px rgba(29, 78, 216, 0.15);
+      --shadow-lg: 0 18px 42px rgba(17, 34, 64, 0.16);
 
-      /* Option Colors (Accessible & Vibrant) */
-      --opt-a: #e11d48;
-      --opt-a-hover: #be123c;
+      /* High-Contrast Option Colors */
+      --opt-a: #dc2626;
       --opt-b: #1d4ed8;
-      --opt-b-hover: #1e40af;
       --opt-c: #d97706;
-      --opt-c-hover: #b45309;
       --opt-d: #059669;
-      --opt-d-hover: #047857;
 
       --success: #10b981;
       --danger: #ef4444;
@@ -52,29 +51,30 @@
     }
 
     [data-theme="dark"] {
-      /* Dark Mode Tokens (Deep Navy & Electric Baby Blue) */
-      --bg-primary: #060d1f;
-      --bg-secondary: #0b162c;
-      --bg-card: #10203e;
-      --bg-elevated: #172c54;
+      /* Dark Mode (Deep Navy #0A192F / #112240 & Baby Blue #64B5F6) */
+      --bg-primary: #0a192f;
+      --bg-secondary: #112240;
+      --bg-card: #112240;
+      --bg-elevated: #1b3258;
       --text-primary: #f8fafc;
       --text-secondary: #cbd5e1;
-      --text-muted: #94a3b8;
+      --text-muted: #8fa6c6;
 
-      --brand-navy: #060d1f;
-      --brand-deep: #2563eb;
-      --brand-baby: #7dd3fc;
-      --brand-accent: #38bdf8;
-      --brand-glow: rgba(56, 189, 248, 0.25);
+      --brand-navy: #0a192f;
+      --brand-deep: #112240;
+      --brand-blue: #2563eb;
+      --brand-baby: #64b5f6;
+      --brand-baby-light: #90caf9;
+      --brand-glow: rgba(100, 181, 246, 0.24);
 
-      --border-color: #1e3a6e;
-      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
-      --shadow-lg: 0 20px 50px rgba(2, 6, 23, 0.7);
+      --border-color: #233f6e;
+      --shadow-sm: 0 4px 12px rgba(2, 8, 20, 0.35);
+      --shadow-md: 0 10px 28px rgba(2, 8, 20, 0.5);
+      --shadow-lg: 0 20px 50px rgba(2, 8, 20, 0.72);
     }
 
     /* ==========================================================================
-       2. RESET & BASE STYLES
+       2. RESET & BASE TYPOGRAPHY
        ========================================================================== */
     * {
       box-sizing: border-box;
@@ -89,30 +89,29 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background-color 0.25s ease, color 0.25s ease;
       overflow-x: hidden;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
-    h1, h2, h3, h4, .font-display {
+    h1, h2, h3, h4 {
       font-family: 'Plus Jakarta Sans', sans-serif;
       letter-spacing: -0.02em;
     }
 
-    /* Background Decorative Grid */
     body::before {
       content: "";
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-image: 
-        radial-gradient(circle at 15% 15%, var(--brand-glow) 0%, transparent 45%),
-        radial-gradient(circle at 85% 85%, rgba(29, 78, 216, 0.15) 0%, transparent 45%);
+      inset: 0;
+      background:
+        radial-gradient(circle at 12% 14%, var(--brand-glow) 0%, transparent 45%),
+        radial-gradient(circle at 88% 86%, rgba(100, 181, 246, 0.14) 0%, transparent 45%);
       pointer-events: none;
       z-index: 0;
     }
 
     /* ==========================================================================
-       3. LAYOUT & NAVBAR
+       3. NAVBAR & CONTAINER
        ========================================================================== */
     .navbar {
       position: sticky;
@@ -124,8 +123,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 0.75rem;
       box-shadow: var(--shadow-sm);
-      backdrop-filter: blur(12px);
     }
 
     .brand {
@@ -133,15 +132,14 @@
       align-items: center;
       gap: 0.75rem;
       cursor: pointer;
-      text-decoration: none;
-      color: var(--text-primary);
+      user-select: none;
     }
 
-    .brand-icon {
+    .brand-logo {
       width: 40px;
       height: 40px;
       border-radius: 12px;
-      background: linear-gradient(135deg, var(--brand-deep), var(--brand-baby));
+      background: linear-gradient(135deg, var(--brand-blue), var(--brand-baby));
       display: flex;
       align-items: center;
       justify-content: center;
@@ -151,25 +149,67 @@
       box-shadow: 0 4px 12px var(--brand-glow);
     }
 
-    .brand-title {
+    .brand-name {
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.35rem;
       font-weight: 800;
-      background: linear-gradient(90deg, var(--brand-deep), var(--brand-accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-primary);
     }
 
-    .nav-actions {
+    .brand-name span {
+      color: var(--brand-baby);
+    }
+
+    [data-theme="light"] .brand-name span {
+      color: var(--brand-blue);
+    }
+
+    .nav-right {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: var(--warning);
+    }
+
+    .status-pill.connected .status-dot {
+      background-color: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .status-pill.connected {
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .status-pill.offline .status-dot {
+      background-color: var(--brand-baby);
     }
 
     .container {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 1120px;
+      max-width: 1140px;
       margin: 0 auto;
       padding: 1.5rem;
       flex: 1;
@@ -177,32 +217,30 @@
       flex-direction: column;
     }
 
-    /* Views management */
     .view {
       display: none;
-      animation: fadeIn 0.35s ease forwards;
       width: 100%;
+      animation: fadeSlide 0.3s ease forwards;
     }
 
     .view.active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     /* ==========================================================================
-       4. COMPONENTS (CARDS, BUTTONS, INPUTS, BADGES)
+       4. UI PRIMITIVES (CARDS, BUTTONS, FORMS)
        ========================================================================== */
     .card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 20px;
-      padding: 1.75rem;
+      border-radius: 18px;
+      padding: 1.65rem;
       box-shadow: var(--shadow-md);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
     .btn {
@@ -210,66 +248,52 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.8rem 1.4rem;
+      padding: 0.8rem 1.35rem;
       border-radius: 12px;
-      font-weight: 600;
+      font-family: inherit;
       font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
       border: none;
-      transition: all 0.2s ease;
-      font-family: inherit;
-      text-decoration: none;
+      transition: transform 0.15s ease, filter 0.15s ease, background-color 0.2s ease;
       user-select: none;
     }
 
-    .btn:active {
-      transform: scale(0.97);
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.06);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.98);
     }
 
     .btn:disabled {
-      opacity: 0.55;
+      opacity: 0.5;
       cursor: not-allowed;
-      transform: none;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--brand-deep), #1e40af);
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
       color: #ffffff;
       box-shadow: 0 4px 14px var(--brand-glow);
     }
 
-    .btn-primary:hover:not(:disabled) {
-      filter: brightness(1.1);
-      transform: translateY(-2px);
-    }
-
     .btn-baby {
-      background: linear-gradient(135deg, #0284c7, #38bdf8);
-      color: #060d1f;
+      background: linear-gradient(135deg, #64b5f6, #90caf9);
+      color: #0a192f;
       font-weight: 700;
-      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
-    }
-
-    .btn-baby:hover:not(:disabled) {
-      filter: brightness(1.08);
-      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(100, 181, 246, 0.28);
     }
 
     .btn-success {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #ffffff;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-warning {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #0a192f;
-      font-weight: 700;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28);
     }
 
     .btn-danger {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
+      background-color: #dc2626;
       color: #ffffff;
     }
 
@@ -280,7 +304,7 @@
     }
 
     .btn-outline:hover:not(:disabled) {
-      border-color: var(--brand-accent);
+      border-color: var(--brand-baby);
       background-color: var(--bg-elevated);
     }
 
@@ -291,21 +315,38 @@
     }
 
     .btn-lg {
-      padding: 1rem 1.8rem;
-      font-size: 1.1rem;
+      padding: 1rem 1.75rem;
+      font-size: 1.05rem;
       border-radius: 14px;
     }
 
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background-color: var(--bg-elevated);
+      color: var(--brand-baby);
+      border: 1px solid var(--border-color);
+    }
+
+    [data-theme="light"] .badge {
+      color: var(--brand-blue);
+    }
+
     .form-group {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.2rem;
     }
 
     .form-label {
       display: block;
-      font-weight: 600;
-      margin-bottom: 0.45rem;
-      color: var(--text-secondary);
       font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 0.45rem;
     }
 
     .form-control {
@@ -313,7 +354,7 @@
       padding: 0.8rem 1rem;
       border-radius: 12px;
       border: 1.5px solid var(--border-color);
-      background-color: var(--bg-secondary);
+      background-color: var(--bg-primary);
       color: var(--text-primary);
       font-family: inherit;
       font-size: 1rem;
@@ -322,208 +363,191 @@
 
     .form-control:focus {
       outline: none;
-      border-color: var(--brand-accent);
+      border-color: var(--brand-baby);
       box-shadow: 0 0 0 3px var(--brand-glow);
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      background-color: var(--bg-elevated);
-      color: var(--brand-accent);
-      border: 1px solid var(--border-color);
-    }
-
     /* ==========================================================================
-       5. HOME MENU & MODE CARDS
+       5. HOME VIEW
        ========================================================================== */
-    .hero-section {
+    .hero {
       text-align: center;
-      max-width: 760px;
-      margin: 1rem auto 2.5rem;
+      max-width: 740px;
+      margin: 1rem auto 2.25rem;
     }
 
-    .hero-title {
-      font-size: clamp(2rem, 5vw, 3.1rem);
+    .hero h1 {
+      font-size: clamp(1.9rem, 4.5vw, 2.9rem);
       font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 1rem;
+      line-height: 1.18;
+      margin: 0.65rem 0 1rem;
     }
 
-    .hero-subtitle {
-      font-size: 1.1rem;
+    .hero p {
       color: var(--text-secondary);
-      margin-bottom: 1.5rem;
+      font-size: 1.08rem;
     }
 
     .mode-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
-      margin-bottom: 2rem;
     }
 
     .mode-card {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      position: relative;
-      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
     .mode-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--brand-accent);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+      border-color: var(--brand-baby);
     }
 
     .mode-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 16px;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background-color: var(--bg-elevated);
+      color: var(--brand-baby);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.75rem;
-      margin-bottom: 1.25rem;
-      background-color: var(--bg-elevated);
-      color: var(--brand-accent);
+      font-size: 1.65rem;
+      margin-bottom: 1.1rem;
     }
 
-    .join-box {
-      background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
-      border: 2px solid var(--brand-accent);
+    .join-card {
+      border: 2px solid var(--brand-baby);
+      background: linear-gradient(145deg, var(--bg-card), var(--bg-elevated));
     }
 
-    .join-input-row {
+    .code-entry-row {
       display: flex;
       gap: 0.6rem;
       margin-top: 1rem;
     }
 
-    .join-input-row input {
+    .code-entry-row input {
       text-transform: uppercase;
       font-weight: 800;
-      letter-spacing: 0.15em;
+      font-size: 1.2rem;
+      letter-spacing: 0.18em;
       text-align: center;
-      font-size: 1.15rem;
     }
 
     /* ==========================================================================
-       6. QUIZ BUILDER (PEMBUAT SOAL)
+       6. QUIZ BUILDER (GURU / ADMIN)
        ========================================================================== */
-    .builder-header {
+    .section-header {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
 
-    .timer-presets {
+    .preset-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.85rem;
     }
 
-    .preset-chip {
+    .preset-btn {
       padding: 0.45rem 0.9rem;
       border-radius: 10px;
       border: 1.5px solid var(--border-color);
-      background-color: var(--bg-secondary);
+      background-color: var(--bg-primary);
       color: var(--text-primary);
       font-weight: 600;
       font-size: 0.85rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.15s;
     }
 
-    .preset-chip.active, .preset-chip:hover {
-      background-color: var(--brand-deep);
+    .preset-btn.active,
+    .preset-btn:hover {
+      background-color: var(--brand-blue);
+      border-color: var(--brand-blue);
       color: #ffffff;
-      border-color: var(--brand-deep);
     }
 
-    .custom-timer-row {
+    .custom-timer-inputs {
       display: flex;
-      align-items: center;
       gap: 0.6rem;
       max-width: 340px;
     }
 
-    .question-item-card {
-      background-color: var(--bg-secondary);
+    .q-builder-card {
+      background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 16px;
       padding: 1.35rem;
       margin-bottom: 1.25rem;
-      position: relative;
+      box-shadow: var(--shadow-sm);
     }
 
-    .q-item-header {
+    .q-builder-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.9rem;
     }
 
-    .options-editor-grid {
+    .options-grid-editor {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 0.85rem;
-      margin-top: 0.75rem;
+      margin-top: 0.65rem;
     }
 
-    .opt-input-wrap {
+    .opt-box {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background-color: var(--bg-card);
+      gap: 0.55rem;
       padding: 0.45rem 0.75rem;
       border-radius: 12px;
       border: 1.5px solid var(--border-color);
-      transition: border-color 0.2s;
+      background-color: var(--bg-primary);
+      transition: border-color 0.2s, background-color 0.2s;
     }
 
-    .opt-input-wrap.is-correct {
+    .opt-box.is-correct {
       border-color: var(--success);
-      background-color: rgba(16, 185, 129, 0.08);
+      background-color: rgba(16, 185, 129, 0.1);
     }
 
-    .opt-badge {
+    .opt-tag {
       width: 30px;
       height: 30px;
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #ffffff;
       font-weight: 800;
-      color: #fff;
       flex-shrink: 0;
     }
 
-    .opt-badge.A { background-color: var(--opt-a); }
-    .opt-badge.B { background-color: var(--opt-b); }
-    .opt-badge.C { background-color: var(--opt-c); }
-    .opt-badge.D { background-color: var(--opt-d); }
+    .opt-tag.A { background-color: var(--opt-a); }
+    .opt-tag.B { background-color: var(--opt-b); }
+    .opt-tag.C { background-color: var(--opt-c); }
+    .opt-tag.D { background-color: var(--opt-d); }
 
-    .opt-input-wrap input[type="text"] {
+    .opt-box input[type="text"] {
+      width: 100%;
       border: none;
       background: transparent;
       color: var(--text-primary);
-      width: 100%;
       font-size: 0.95rem;
       outline: none;
     }
 
-    .radio-correct {
+    .opt-box input[type="radio"] {
       width: 20px;
       height: 20px;
       accent-color: var(--success);
@@ -532,89 +556,88 @@
     }
 
     /* ==========================================================================
-       7. GAMEPLAY SCREEN (SOLO & MULTIPLAYER)
+       7. GAMEPLAY STAGE (SOLO & MULTIPLAYER)
        ========================================================================== */
-    .game-topbar {
+    .stage-topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 1.25rem;
       flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
 
-    .timer-wrapper {
+    .timer-track {
       width: 100%;
       height: 12px;
       background-color: var(--bg-elevated);
       border-radius: 999px;
       overflow: hidden;
-      margin-bottom: 1.5rem;
       border: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
     }
 
-    .timer-bar {
+    .timer-fill {
       height: 100%;
       width: 100%;
-      background: linear-gradient(90deg, var(--brand-baby), var(--brand-deep));
-      transition: width 0.1s linear, background 0.3s ease;
+      background: linear-gradient(90deg, var(--brand-baby), var(--brand-blue));
+      transition: width 0.1s linear;
     }
 
-    .timer-bar.danger {
+    .timer-fill.urgent {
       background: linear-gradient(90deg, #f87171, #dc2626);
     }
 
-    .timer-circle {
+    .timer-pill {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 68px;
+      min-width: 72px;
       height: 44px;
       padding: 0 1rem;
       border-radius: 12px;
-      background-color: var(--brand-deep);
+      background-color: var(--brand-blue);
       color: #ffffff;
       font-weight: 800;
       font-size: 1.25rem;
       box-shadow: 0 4px 12px var(--brand-glow);
     }
 
-    .timer-circle.danger {
+    .timer-pill.urgent {
       background-color: var(--danger);
-      animation: pulse 0.8s infinite;
+      animation: pulseAlert 0.75s infinite;
     }
 
-    @keyframes pulse {
+    @keyframes pulseAlert {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.06); }
     }
 
-    .question-stage {
+    .question-banner {
       text-align: center;
       padding: 2.25rem 1.5rem;
       margin-bottom: 1.5rem;
-      background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
     }
 
-    .question-text {
-      font-size: clamp(1.35rem, 3vw, 2rem);
+    .question-banner h2 {
+      font-size: clamp(1.35rem, 3.2vw, 2.05rem);
       font-weight: 800;
       line-height: 1.35;
     }
 
-    .answers-grid {
+    .choices-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
     }
 
     @media (max-width: 640px) {
-      .answers-grid {
+      .choices-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .answer-btn {
+    .choice-btn {
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -626,49 +649,47 @@
       font-weight: 700;
       text-align: left;
       cursor: pointer;
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
+      transition: transform 0.2s ease, opacity 0.25s ease, box-shadow 0.25s ease;
       box-shadow: var(--shadow-sm);
     }
 
-    .answer-btn.opt-A { background-color: var(--opt-a); }
-    .answer-btn.opt-B { background-color: var(--opt-b); }
-    .answer-btn.opt-C { background-color: var(--opt-c); }
-    .answer-btn.opt-D { background-color: var(--opt-d); }
+    .choice-btn.opt-A { background-color: var(--opt-a); }
+    .choice-btn.opt-B { background-color: var(--opt-b); }
+    .choice-btn.opt-C { background-color: var(--opt-c); }
+    .choice-btn.opt-D { background-color: var(--opt-d); }
 
-    .answer-btn:hover:not(:disabled) {
+    .choice-btn:hover:not(:disabled) {
       transform: translateY(-3px);
-      filter: brightness(1.08);
+      filter: brightness(1.07);
       box-shadow: var(--shadow-md);
     }
 
-    .answer-btn:disabled {
+    .choice-btn:disabled {
       cursor: default;
     }
 
-    .answer-btn.selected {
+    .choice-btn.chosen {
       border-color: #ffffff;
-      box-shadow: 0 0 0 4px var(--brand-accent);
+      box-shadow: 0 0 0 4px var(--brand-baby);
       transform: scale(1.02);
     }
 
-    .answer-btn.dimmed {
-      opacity: 0.32;
-      filter: grayscale(40%);
+    .choice-btn.faded {
+      opacity: 0.3;
+      filter: grayscale(45%);
       transform: scale(0.98);
     }
 
-    .answer-btn.correct-reveal {
+    .choice-btn.is-right {
       opacity: 1 !important;
       filter: none !important;
       background-color: #10b981 !important;
       border-color: #ffffff !important;
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.7) !important;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.7) !important;
       transform: scale(1.02);
     }
 
-    .ans-letter {
+    .choice-letter {
       width: 38px;
       height: 38px;
       border-radius: 10px;
@@ -682,165 +703,232 @@
     }
 
     /* ==========================================================================
-       8. MULTIPLAYER LOBBY & REALTIME CHARTS
+       8. MULTIPLAYER LOBBY & AUTHENTIC ISO QR CODE
        ========================================================================== */
-    .lobby-grid {
+    .lobby-layout {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 340px 1fr;
       gap: 1.5rem;
     }
 
-    @media (max-width: 820px) {
-      .lobby-grid {
+    @media (max-width: 840px) {
+      .lobby-layout {
         grid-template-columns: 1fr;
       }
     }
 
-    .qr-box {
-      background-color: #ffffff;
-      padding: 0.85rem;
-      border-radius: 16px;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0.85rem auto;
-      box-shadow: var(--shadow-sm);
-      border: 2px solid var(--border-color);
-    }
-
-    .qr-box canvas {
-      display: block;
-      width: 168px;
-      height: 168px;
-      border-radius: 8px;
-    }
-
-    .room-code-display {
+    .room-code-box {
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 2.5rem;
       font-weight: 800;
-      letter-spacing: 0.18em;
-      color: var(--brand-accent);
-      background-color: var(--bg-elevated);
-      padding: 0.6rem 1.2rem;
+      letter-spacing: 0.2em;
+      color: var(--brand-baby);
+      background-color: var(--bg-primary);
+      border: 2px dashed var(--brand-baby);
       border-radius: 14px;
-      border: 2px dashed var(--brand-accent);
-      margin: 0.5rem 0;
+      padding: 0.55rem 1.2rem;
+      margin: 0.65rem 0;
       display: inline-block;
     }
 
-    .players-chip-list {
+    [data-theme="light"] .room-code-box {
+      color: var(--brand-blue);
+      border-color: var(--brand-blue);
+    }
+
+    .qr-wrapper {
+      background-color: #ffffff;
+      padding: 14px;
+      border-radius: 16px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0.75rem auto;
+      border: 2px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      cursor: zoom-in;
+      transition: transform 0.2s ease;
+    }
+
+    .qr-wrapper:hover {
+      transform: scale(1.03);
+    }
+
+    .qr-wrapper svg,
+    .qr-wrapper img,
+    .qr-wrapper canvas {
+      display: block;
+      width: 184px;
+      height: 184px;
+    }
+
+    .student-roster {
       display: flex;
       flex-wrap: wrap;
       gap: 0.65rem;
       margin-top: 1rem;
     }
 
-    .player-chip {
-      background-color: var(--bg-elevated);
-      border: 1px solid var(--brand-accent);
-      color: var(--text-primary);
-      padding: 0.55rem 1rem;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.95rem;
+    .student-tag {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
-      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      gap: 0.5rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--brand-baby);
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.92rem;
+      animation: popBadge 0.25s ease;
     }
 
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.7); }
+    @keyframes popBadge {
+      from { opacity: 0; transform: scale(0.8); }
       to { opacity: 1; transform: scale(1); }
     }
 
-    /* Percentage Distribution Bars */
-    .stats-bars-grid {
+    .kick-btn {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      font-weight: 800;
+      cursor: pointer;
+      padding: 0 0.2rem;
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* QR Zoom Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 13, 31, 0.82);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 22px;
+      padding: 2rem;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .qr-zoom-frame {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 20px;
+      display: inline-block;
+      margin: 1rem auto;
+    }
+
+    .qr-zoom-frame svg,
+    .qr-zoom-frame img {
+      width: 280px;
+      height: 280px;
+      display: block;
+    }
+
+    /* ==========================================================================
+       9. REAL-TIME ANALYTICS & PODIUM
+       ========================================================================== */
+    .chart-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
       align-items: end;
-      height: 190px;
-      padding: 1.25rem 1rem 0.5rem;
-      background-color: var(--bg-secondary);
-      border-radius: 16px;
+      height: 195px;
+      padding: 1.25rem 1rem 0.65rem;
+      background-color: var(--bg-primary);
       border: 1px solid var(--border-color);
+      border-radius: 16px;
       margin-top: 1.25rem;
     }
 
-    .bar-col {
+    .chart-col {
       display: flex;
       flex-direction: column;
       align-items: center;
-      height: 100%;
       justify-content: flex-end;
+      height: 100%;
       gap: 0.4rem;
     }
 
-    .bar-pct {
-      font-weight: 800;
-      font-size: 0.95rem;
-    }
-
-    .bar-fill {
-      width: 100%;
-      max-width: 64px;
-      min-height: 8px;
-      border-radius: 10px 10px 4px 4px;
-      transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .bar-fill.A { background-color: var(--opt-a); }
-    .bar-fill.B { background-color: var(--opt-b); }
-    .bar-fill.C { background-color: var(--opt-c); }
-    .bar-fill.D { background-color: var(--opt-d); }
-
-    .bar-label {
+    .chart-pct {
       font-weight: 800;
       font-size: 0.9rem;
-      padding: 0.2rem 0.65rem;
-      border-radius: 6px;
-      color: #fff;
     }
 
-    /* Fast Correct List & Leaderboard */
-    .leaderboard-list {
+    .chart-bar {
+      width: 100%;
+      max-width: 68px;
+      min-height: 8px;
+      border-radius: 10px 10px 4px 4px;
+      transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .chart-bar.A { background-color: var(--opt-a); }
+    .chart-bar.B { background-color: var(--opt-b); }
+    .chart-bar.C { background-color: var(--opt-c); }
+    .chart-bar.D { background-color: var(--opt-d); }
+
+    .chart-pill {
+      padding: 0.2rem 0.7rem;
+      border-radius: 6px;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .rank-list {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
-      margin-top: 1rem;
+      gap: 0.6rem;
+      margin-top: 0.85rem;
     }
 
-    .lb-row {
+    .rank-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0.85rem 1.15rem;
-      background-color: var(--bg-secondary);
-      border: 1px solid var(--border-color);
       border-radius: 14px;
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-color);
       font-weight: 600;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    .lb-row.top-1 {
+    .rank-item.gold {
       border-color: #fbbf24;
-      background: linear-gradient(90deg, rgba(251, 191, 36, 0.15), var(--bg-secondary));
+      background: linear-gradient(90deg, rgba(251, 191, 36, 0.14), var(--bg-primary));
     }
 
-    /* ==========================================================================
-       9. PODIUM & CELEBRATION
-       ========================================================================== */
-    .podium-stage {
+    .podium-wrap {
       display: flex;
       justify-content: center;
       align-items: flex-end;
       gap: 1rem;
-      margin: 2.5rem auto 2rem;
       max-width: 680px;
-      padding: 0 0.5rem;
+      margin: 2.25rem auto 2rem;
     }
 
-    .podium-place {
+    .podium-col {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -848,90 +936,90 @@
       text-align: center;
     }
 
-    .podium-avatar {
-      width: 60px;
-      height: 60px;
+    .podium-medal {
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
+      background-color: var(--bg-elevated);
+      border: 3px solid var(--brand-baby);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
-      font-weight: 800;
-      margin-bottom: 0.6rem;
-      background-color: var(--bg-elevated);
-      border: 3px solid var(--brand-accent);
+      font-size: 1.65rem;
+      margin-bottom: 0.55rem;
       box-shadow: var(--shadow-md);
     }
 
-    .podium-name {
+    .podium-player {
       font-weight: 800;
       font-size: 1.05rem;
       margin-bottom: 0.2rem;
       word-break: break-word;
     }
 
-    .podium-meta {
+    .podium-stats {
       font-size: 0.82rem;
       color: var(--text-secondary);
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.6rem;
     }
 
-    .podium-block {
+    .podium-step {
       width: 100%;
       border-radius: 16px 16px 6px 6px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #0a192f;
       font-weight: 800;
-      padding: 1rem 0.5rem;
+      color: #0a192f;
       box-shadow: var(--shadow-md);
     }
 
-    .place-1 .podium-block {
+    .step-1 {
       height: 175px;
-      background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
+      background: linear-gradient(180deg, #fde047, #eab308);
+      font-size: 1.65rem;
     }
 
-    .place-2 .podium-block {
+    .step-2 {
       height: 135px;
-      background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
+      background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+      font-size: 1.4rem;
     }
 
-    .place-3 .podium-block {
+    .step-3 {
       height: 105px;
-      background: linear-gradient(180deg, #fdba74 0%, #d97706 100%);
+      background: linear-gradient(180deg, #fdba74, #d97706);
+      font-size: 1.3rem;
     }
 
     /* ==========================================================================
-       10. TOAST NOTIFICATION
+       10. TOAST NOTIFICATIONS & UTILITIES
        ========================================================================== */
-    .toast-container {
+    .toast-stack {
       position: fixed;
       bottom: 1.5rem;
       right: 1.5rem;
-      z-index: 9999;
+      z-index: 2000;
       display: flex;
       flex-direction: column;
       gap: 0.6rem;
     }
 
-    .toast {
+    .toast-msg {
       background-color: var(--bg-card);
       color: var(--text-primary);
-      border-left: 5px solid var(--brand-accent);
-      padding: 0.9rem 1.25rem;
+      border-left: 5px solid var(--brand-baby);
+      padding: 0.9rem 1.2rem;
       border-radius: 12px;
       box-shadow: var(--shadow-lg);
       font-weight: 600;
       font-size: 0.92rem;
-      animation: slideInRight 0.3s ease;
       max-width: 340px;
+      animation: slideToast 0.25s ease;
     }
 
-    @keyframes slideInRight {
-      from { opacity: 0; transform: translateX(30px); }
+    @keyframes slideToast {
+      from { opacity: 0; transform: translateX(24px); }
       to { opacity: 1; transform: translateX(0); }
     }
 
@@ -941,181 +1029,180 @@
     .mt-3 { margin-top: 1.5rem; }
     .mb-1 { margin-bottom: 0.5rem; }
     .mb-2 { margin-bottom: 1rem; }
-    .flex-center { display: flex; justify-content: center; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .flex-row { display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; }
   </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- TOP NAVBAR -->
   <header class="navbar">
     <div class="brand" onclick="goHome()">
-      <div class="brand-icon">Q</div>
-      <span class="brand-title">KuisPintar</span>
+      <div class="brand-logo">Q</div>
+      <div class="brand-name">Kuis<span>Pintar</span></div>
     </div>
-    <div class="nav-actions">
-      <span id="connectionStatus" class="badge" title="Status Sinkronisasi Real-Time">● Live Sync Siap</span>
-      <button class="btn btn-outline btn-sm" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Ganti Tema">
+    <div class="nav-right">
+      <div id="serverStatusPill" class="status-pill" title="Status Koneksi Real-Time Antar Perangkat">
+        <span class="status-dot"></span>
+        <span id="serverStatusText">Menghubungkan Server...</span>
+      </div>
+      <button type="button" class="btn btn-outline btn-sm" id="themeBtn" onclick="toggleTheme()">
         ☀️ Light Mode
       </button>
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
   <main class="container">
 
     <!-- ======================================================================
-         VIEW 1: MENU UTAMA (HOME)
+         VIEW 1: BERANDA (PILIH PERAN GURU ATAU SISWA)
          ====================================================================== -->
     <section id="view-home" class="view active">
-      <div class="hero-section">
-        <span class="badge mb-1">⚡ Kuis Interaktif & Mabar Real-Time</span>
-        <h1 class="hero-title">Belajar & Adu Cepat Jadi Lebih Seru!</h1>
-        <p class="hero-subtitle">
-          Buat pertanyaan pilihan ganda dengan timer custom. Tampilkan langsung di layar kelas atau main bareng (mabar) lewat HP & laptop dengan skor kecepatan real-time.
+      <div class="hero">
+        <span class="badge">🏫 Platform Kuis Interaktif Sekolah</span>
+        <h1>Evaluasi Kelas & Kuis Mabar Real-Time</h1>
+        <p>
+          Susun soal pilihan ganda dengan pengatur waktu fleksibel. Tampilkan langsung di proyektor kelas atau ajak siswa bergabung serentak melalui QR Code & Kode Room.
         </p>
       </div>
 
       <div class="mode-grid">
-        <!-- Mode 1: Solo / Presentasi Kelas -->
+        <!-- Mode 1: Proyektor Kelas -->
         <div class="card mode-card">
           <div>
             <div class="mode-icon">🖥️</div>
-            <h2 class="mb-1">Mode 1: Solo / Presentasi Kelas</h2>
+            <h2 class="mb-1">Mode Proyektor (Solo Kelas)</h2>
             <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
-              Cocok untuk ditampilkan di proyektor kelas (1 Layar). Pertanyaan muncul satu per satu dengan hitung mundur custom dan kunci jawaban otomatis saat waktu habis.
+              Tampilkan pertanyaan satu per satu di layar proyektor kelas dengan hitung mundur waktu. Saat waktu habis, jawaban benar otomatis disorot hijau.
             </p>
           </div>
-          <button class="btn btn-primary btn-lg" onclick="openBuilder('solo')">
-            ✨ Buat Kuis Solo / Kelas
+          <button type="button" class="btn btn-primary btn-lg" onclick="openQuizBuilder('solo')">
+            ✨ Buat Kuis Proyektor
           </button>
         </div>
 
-        <!-- Mode 2: Mabar / Multiplayer Room -->
+        <!-- Mode 2: Mabar Live Room -->
         <div class="card mode-card">
           <div>
-            <div class="mode-icon">🚀</div>
-            <h2 class="mb-1">Mode 2: Mabar / Live Room</h2>
+            <div class="mode-icon">📡</div>
+            <h2 class="mb-1">Buat Room Mabar (Live Siswa)</h2>
             <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem;">
-              Jadi Host/Admin! Buat room dengan Kode, Link & QR Code. Pantau persentase jawaban (A/B/C/D) secara live dan lihat Podium Juara 1, 2, 3 tercepat.
+              Buat room live dengan QR Code & Kode 6 karakter. Siswa menjawab dari HP/laptop masing-masing dan guru melihat grafik persentase jawaban serta podium juara.
             </p>
           </div>
-          <button class="btn btn-baby btn-lg" onclick="openBuilder('multiplayer')">
-            🎮 Buat Room Mabar (Admin)
+          <button type="button" class="btn btn-baby btn-lg" id="homeCreateRoomBtn" onclick="openQuizBuilder('multiplayer')">
+            🚀 Buat Room Mabar (Guru)
           </button>
         </div>
 
-        <!-- Gabung Room Sebagai Pemain -->
-        <div class="card mode-card join-box">
+        <!-- Gabung Siswa -->
+        <div class="card mode-card join-card">
           <div>
-            <div class="mode-icon" style="background: var(--brand-deep); color: #fff;">📱</div>
-            <h2 class="mb-1">Gabung Room Mabar</h2>
+            <div class="mode-icon" style="background-color: var(--brand-blue); color: #ffffff;">📱</div>
+            <h2 class="mb-1">Gabung Kuis (Siswa)</h2>
             <p style="color: var(--text-secondary); font-size: 0.95rem;">
-              Punya kode room dari guru atau teman? Masukkan 6 digit kodenya di bawah ini untuk ikut menjawab langsung dari perangkatmu!
+              Masukkan 6 karakter Kode Room yang ditampilkan guru di layar depan untuk langsung masuk ke sesi kuis.
             </p>
           </div>
-          <form onsubmit="handleJoinFromHome(event)" class="join-input-row">
-            <input type="text" id="homeRoomCodeInput" class="form-control" placeholder="KODE" maxlength="6" required>
-            <button type="submit" class="btn btn-primary">Gabung</button>
+          <form onsubmit="handleHomeJoinSubmit(event)" class="code-entry-row">
+            <input type="text" id="homeCodeInput" class="form-control" placeholder="KODE" maxlength="6" autocomplete="off" required>
+            <button type="submit" class="btn btn-primary" id="homeJoinBtn">Masuk</button>
           </form>
         </div>
       </div>
     </section>
 
     <!-- ======================================================================
-         VIEW 2: PEMBUAT SOAL & PENGATURAN KUIS (ADMIN/GURU)
+         VIEW 2: EDITOR SOAL & PENGATURAN WAKTU (GURU / ADMIN)
          ====================================================================== -->
     <section id="view-builder" class="view">
-      <div class="builder-header">
+      <div class="section-header">
         <div>
-          <span class="badge mb-1" id="builderModeBadge">Mode: Solo / Presentasi</span>
-          <h2>Susun Pertanyaan & Pengaturan Waktu</h2>
+          <span class="badge mb-1" id="builderModeLabel">Mode: Proyektor Kelas</span>
+          <h2>Editor Pertanyaan & Pengaturan Timer</h2>
         </div>
-        <div class="flex-center">
-          <button class="btn btn-outline btn-sm" onclick="fillSampleQuestions()">
-            🪄 Isi Contoh Soal Otomatis
+        <div class="flex-row">
+          <button type="button" class="btn btn-outline btn-sm" onclick="loadSampleQuestions()">
+            ↺ Reset Contoh Soal
           </button>
-          <button class="btn btn-outline btn-sm" onclick="goHome()">← Kembali</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">← Kembali</button>
         </div>
       </div>
 
       <div class="card mb-2">
         <div class="form-group">
-          <label class="form-label" for="quizTitleInput">Judul Kuis</label>
-          <input type="text" id="quizTitleInput" class="form-control" placeholder="Contoh: Kuis Pengetahuan Umum & Sains" value="Kuis Cerdas Cermat Seru">
+          <label class="form-label" for="quizTitleField">Judul Kuis / Mata Pelajaran</label>
+          <input type="text" id="quizTitleField" class="form-control" placeholder="Contoh: Kuis IPA — Tata Surya & Ekosistem" value="Kuis Pengetahuan Umum Sekolah">
         </div>
 
         <div class="form-group" style="margin-bottom: 0;">
-          <label class="form-label">⏱️ Pengaturan Timer per Pertanyaan (Sebelum Mulai)</label>
-          <div class="timer-presets" id="timerPresets">
-            <button type="button" class="preset-chip" data-sec="3" onclick="selectTimerPreset(3)">3 Detik</button>
-            <button type="button" class="preset-chip" data-sec="5" onclick="selectTimerPreset(5)">5 Detik</button>
-            <button type="button" class="preset-chip active" data-sec="10" onclick="selectTimerPreset(10)">10 Detik</button>
-            <button type="button" class="preset-chip" data-sec="30" onclick="selectTimerPreset(30)">30 Detik</button>
-            <button type="button" class="preset-chip" data-sec="60" onclick="selectTimerPreset(60)">1 Menit</button>
-            <button type="button" class="preset-chip" data-sec="300" onclick="selectTimerPreset(300)">5 Menit</button>
+          <label class="form-label">⏱️ Atur Jeda Waktu Menjawab per Soal (Sebelum Mulai)</label>
+          <div class="preset-row" id="timerPresetRow">
+            <button type="button" class="preset-btn" data-sec="3" onclick="applyTimerPreset(3)">3 Detik</button>
+            <button type="button" class="preset-btn" data-sec="5" onclick="applyTimerPreset(5)">5 Detik</button>
+            <button type="button" class="preset-btn active" data-sec="10" onclick="applyTimerPreset(10)">10 Detik</button>
+            <button type="button" class="preset-btn" data-sec="30" onclick="applyTimerPreset(30)">30 Detik</button>
+            <button type="button" class="preset-btn" data-sec="60" onclick="applyTimerPreset(60)">1 Menit</button>
+            <button type="button" class="preset-btn" data-sec="300" onclick="applyTimerPreset(300)">5 Menit</button>
           </div>
-          <div class="custom-timer-row mt-1">
-            <input type="number" id="customTimerValue" class="form-control" min="1" max="3600" value="10" oninput="syncCustomTimer()">
-            <select id="customTimerUnit" class="form-control" style="width: 130px;" onchange="syncCustomTimer()">
+          <div class="custom-timer-inputs">
+            <input type="number" id="customTimeVal" class="form-control" min="1" max="3600" value="10" oninput="updateCustomTimer()">
+            <select id="customTimeUnit" class="form-control" style="width: 135px;" onchange="updateCustomTimer()">
               <option value="sec" selected>Detik</option>
               <option value="min">Menit</option>
             </select>
           </div>
-          <small style="color: var(--text-muted); display: block; margin-top: 0.4rem;">
-            Durasi aktif per soal: <strong id="timerSummaryText" style="color: var(--brand-accent);">10 detik</strong>
+          <small style="display: block; margin-top: 0.45rem; color: var(--text-muted);">
+            Waktu per pertanyaan yang dipilih: <strong id="timerActiveLabel" style="color: var(--brand-baby);">10 detik</strong>
           </small>
         </div>
       </div>
 
-      <!-- Daftar Pertanyaan -->
-      <div id="questionsListContainer"></div>
+      <div id="builderQuestionsContainer"></div>
 
-      <div class="flex-center mt-2 mb-3" style="justify-content: space-between; padding-bottom: 2rem;">
-        <button type="button" class="btn btn-outline" onclick="addQuestionCard()">
-          ➕ Tambah Pertanyaan Baru
+      <div class="flex-row mt-2" style="justify-content: space-between; padding-bottom: 2.5rem;">
+        <button type="button" class="btn btn-outline" onclick="addNewQuestion()">
+          ➕ Tambah Pertanyaan
         </button>
-        <button type="button" class="btn btn-success btn-lg" id="startQuizSetupBtn" onclick="launchQuiz()">
-          🚀 Mulai Kuis Sekarang
+        <button type="button" class="btn btn-success btn-lg" id="launchSessionBtn" onclick="startQuizSession()">
+          🚀 Mulai Kuis
         </button>
       </div>
     </section>
 
     <!-- ======================================================================
-         VIEW 3: GAMEPLAY MODE SOLO / PRESENTASI KELAS
+         VIEW 3: GAMEPLAY MODE PROYEKTOR (SOLO KELAS)
          ====================================================================== -->
-    <section id="view-solo-game" class="view">
-      <div class="game-topbar">
+    <section id="view-solo-play" class="view">
+      <div class="stage-topbar">
         <div>
-          <span class="badge" id="soloQuizTitleBadge">Judul Kuis</span>
-          <h3 class="mt-1" id="soloProgressText">Pertanyaan 1 dari 5</h3>
+          <span class="badge" id="soloTitleTag">Judul Kuis</span>
+          <h3 class="mt-1" id="soloCounterText">Pertanyaan 1 dari 3</h3>
         </div>
-        <div class="flex-center">
-          <div class="timer-circle" id="soloTimerDisplay">10s</div>
-          <button class="btn btn-outline btn-sm" onclick="goHome()">Keluar</button>
+        <div class="flex-row">
+          <div class="timer-pill" id="soloTimerPill">10s</div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">Keluar</button>
         </div>
       </div>
 
-      <div class="timer-wrapper">
-        <div class="timer-bar" id="soloTimerBar"></div>
+      <div class="timer-track">
+        <div class="timer-fill" id="soloTimerFill"></div>
       </div>
 
-      <div class="card question-stage">
-        <div class="question-text" id="soloQuestionText">Memuat pertanyaan...</div>
+      <div class="card question-banner">
+        <h2 id="soloQuestionDisplay">Memuat soal...</h2>
       </div>
 
-      <div class="answers-grid" id="soloAnswersGrid">
-        <!-- Diisi oleh JS -->
-      </div>
+      <div class="choices-grid" id="soloChoicesGrid"></div>
 
-      <div class="card mt-2 text-center" id="soloControlPanel">
-        <p id="soloStatusMsg" style="color: var(--text-secondary); font-weight: 600;">
-          Pilih jawaban atau tunggu waktu habis untuk melihat kunci jawaban...
+      <div class="card mt-2 text-center">
+        <p id="soloHintText" style="color: var(--text-secondary); font-weight: 600;">
+          Menunggu jawaban atau hitung mundur selesai...
         </p>
-        <div class="flex-center mt-1">
-          <button class="btn btn-outline" id="soloRevealBtn" onclick="revealSoloAnswer()">
-            👁️ Lihat Jawaban Sekarang
+        <div class="flex-row mt-1">
+          <button type="button" class="btn btn-outline" id="soloShowAnswerBtn" onclick="revealSoloQuestion()">
+            👁️ Tampilkan Kunci Jawaban
           </button>
-          <button class="btn btn-primary btn-lg" id="soloNextBtn" style="display: none;" onclick="nextSoloQuestion()">
+          <button type="button" class="btn btn-primary btn-lg" id="soloNextQuestionBtn" style="display: none;" onclick="advanceSoloQuestion()">
             Pertanyaan Berikutnya →
           </button>
         </div>
@@ -1123,82 +1210,85 @@
     </section>
 
     <!-- ======================================================================
-         VIEW 4: SELEBRASI AKHIR MODE SOLO
+         VIEW 4: SELEBRASI AKHIR MODE PROYEKTOR
          ====================================================================== -->
-    <section id="view-solo-finish" class="view">
-      <div class="card text-center" style="padding: 3rem 1.5rem; max-width: 680px; margin: 1.5rem auto;">
-        <div style="font-size: 4.5rem; margin-bottom: 1rem;">🎉🏆🎊</div>
-        <h1 class="mb-1" style="font-size: clamp(1.8rem, 4vw, 2.5rem);">
-          Hore! Selamat, semua pertanyaan telah selesai!
+    <section id="view-solo-complete" class="view">
+      <div class="card text-center" style="max-width: 680px; margin: 2rem auto; padding: 3rem 1.5rem;">
+        <div style="font-size: 4.2rem; margin-bottom: 0.85rem;">🎉🏆🎊</div>
+        <h1 style="font-size: clamp(1.8rem, 4vw, 2.5rem); margin-bottom: 0.75rem;">
+          Hore! Semua Pertanyaan Telah Selesai!
         </h1>
-        <p style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 1.5rem;" id="soloFinishSummary">
-          Semua soal dalam sesi presentasi ini telah berhasil ditampilkan.
+        <p id="soloCompleteDesc" style="color: var(--text-secondary); font-size: 1.08rem; margin-bottom: 1.75rem;">
+          Selamat, seluruh pertanyaan pada sesi kuis ini telah berhasil ditampilkan.
         </p>
-        <div class="flex-center">
-          <button class="btn btn-primary btn-lg" onclick="restartSolo()">🔄 Ulangi Kuis Ini</button>
-          <button class="btn btn-outline btn-lg" onclick="goHome()">🏠 Kembali ke Menu</button>
+        <div class="flex-row">
+          <button type="button" class="btn btn-primary btn-lg" onclick="restartSoloSession()">🔄 Ulangi Kuis</button>
+          <button type="button" class="btn btn-outline btn-lg" onclick="goHome()">🏠 Kembali ke Beranda</button>
         </div>
       </div>
     </section>
 
     <!-- ======================================================================
-         VIEW 5: LOBBY MULTIPLAYER (ADMIN / GURU)
+         VIEW 5: LOBBY MULTIPLAYER GURU (QR CODE ASLI & DAFTAR SISWA)
          ====================================================================== -->
-    <section id="view-mp-admin-lobby" class="view">
-      <div class="builder-header">
+    <section id="view-mp-lobby" class="view">
+      <div class="section-header">
         <div>
-          <span class="badge mb-1">📡 Live Room Admin</span>
-          <h2 id="lobbyQuizTitle">Judul Kuis Mabar</h2>
+          <span class="badge mb-1">📡 Ruang Mabar Aktif (Guru / Admin)</span>
+          <h2 id="lobbyTitleHeading">Judul Kuis</h2>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="goHome()">Tutup Room</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="goHome()">Tutup Room</button>
       </div>
 
-      <div class="lobby-grid">
-        <!-- Info Kode, Link & QR Code -->
+      <div class="lobby-layout">
+        <!-- Kolom Kiri: QR Code Standar ISO & Kode Room -->
         <div class="card text-center">
-          <p style="font-weight: 700; color: var(--text-secondary);">KODE ROOM MABAR</p>
-          <div class="room-code-display" id="lobbyRoomCode">------</div>
-          
-          <div class="qr-box" id="lobbyQrCode"></div>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.85rem;">
-            Scan QR Code dari kamera HP, buka tab baru dengan link, atau masukkan kode room:
+          <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.05em;">
+            KODE ROOM SISWA
+          </p>
+          <div class="room-code-box" id="lobbyCodeDisplay">------</div>
+
+          <!-- QR Code ISO/IEC 18004 Asli -->
+          <div class="qr-wrapper" id="qrCodeRenderTarget" onclick="openQrZoomModal()" title="Klik untuk memperbesar QR Code di proyektor"></div>
+
+          <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+            Arahkan kamera HP siswa ke QR Code di atas atau bagikan link undangan:
           </p>
 
-          <div class="flex-center" style="flex-direction: column; gap: 0.5rem;">
-            <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="copyRoomLink()">
-              📋 Salin Direct Link Undangan
+          <div style="display: flex; flex-direction: column; gap: 0.55rem;">
+            <button type="button" class="btn btn-baby btn-sm" style="width: 100%;" onclick="openQrZoomModal()">
+              🔍 Perbesar QR Code (Proyektor)
             </button>
-            <button class="btn btn-baby btn-sm" style="width: 100%;" onclick="openPlayerTabForCurrentRoom()">
-              🪟 Buka Layar Pemain di Tab Baru
+            <button type="button" class="btn btn-outline btn-sm" style="width: 100%;" onclick="copyInviteUrl()">
+              📋 Salin Link Undangan Room
             </button>
           </div>
+
           <div class="mt-2" style="font-size: 0.85rem; color: var(--text-secondary);">
-            Timer per soal: <strong id="lobbyTimerInfo">10 detik</strong> • Total: <strong id="lobbyTotalQInfo">0 soal</strong>
+            Timer: <strong id="lobbyTimerMeta">10 detik</strong> • Jumlah Soal: <strong id="lobbyCountMeta">0 soal</strong>
           </div>
         </div>
 
-        <!-- Daftar Pemain Bergabung -->
+        <!-- Kolom Kanan: Daftar Siswa Real-Time -->
         <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-              <h3>👥 Pemain Bergabung (<span id="lobbyPlayerCount">0</span>)</h3>
-              <div class="flex-center">
-                <button type="button" class="btn btn-warning btn-sm" onclick="addSimulatedBotPlayer()">
-                  🤖 + Tambah Bot Uji Coba
-                </button>
-                <span class="badge">Siap Dimulai</span>
-              </div>
+              <h3>👥 Siswa Bergabung (<span id="lobbyStudentTotal">0</span>)</h3>
+              <span class="badge">Menunggu Guru Memulai</span>
             </div>
-            <div class="players-chip-list" id="lobbyPlayersList">
+            <div class="student-roster" id="lobbyStudentList">
               <p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">
-                Belum ada pemain yang masuk. Bagikan kode, buka tab pemain baru, atau klik "+ Tambah Bot Uji Coba"!
+                Belum ada siswa yang bergabung. Silakan minta siswa memindai QR Code atau memasukkan kode room di perangkat masing-masing.
               </p>
             </div>
           </div>
 
-          <div class="mt-3 pt-2" style="border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 0.75rem; flex-wrap: wrap;">
-            <button class="btn btn-success btn-lg" id="adminStartMatchBtn" onclick="adminStartMultiplayerGame()">
-              🚀 Mulai Game Mabar!
+          <div class="mt-3" style="padding-top: 1.25rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <small style="color: var(--text-muted);">
+              Pastikan seluruh siswa sudah tampil di daftar sebelum memulai.
+            </small>
+            <button type="button" class="btn btn-success btn-lg" id="startMultiplayerBtn" onclick="hostStartMultiplayer()">
+              🚀 Mulai Kuis Sekarang
             </button>
           </div>
         </div>
@@ -1206,301 +1296,231 @@
     </section>
 
     <!-- ======================================================================
-         VIEW 6: LAYAR JOIN PEMAIN (HP / LAPTOP)
+         VIEW 6: FORM GABUNG SISWA (NAMA & KODE)
          ====================================================================== -->
-    <section id="view-mp-player-join" class="view">
+    <section id="view-student-join" class="view">
       <div class="card" style="max-width: 460px; margin: 2rem auto; text-align: center;">
-        <div class="mode-icon" style="margin: 0 auto 1rem;">🎮</div>
-        <h2 class="mb-1">Masuk ke Room Mabar</h2>
+        <div class="mode-icon" style="margin: 0 auto 1rem;">🎓</div>
+        <h2 class="mb-1">Gabung ke Sesi Kuis</h2>
         <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-          Masukkan kode room dan nama panggilanmu untuk ikut bermain!
+          Masukkan kode room dan nama lengkap / panggilanmu untuk ikut menjawab.
         </p>
 
-        <form onsubmit="submitPlayerJoin(event)">
-          <div class="form-group text-left">
-            <label class="form-label" style="text-align: left;">Kode Room (6 Karakter)</label>
-            <input type="text" id="playerJoinCode" class="form-control" style="text-transform: uppercase; font-weight: 800; letter-spacing: 0.15em; text-align: center; font-size: 1.25rem;" maxlength="6" required>
+        <form onsubmit="submitStudentJoinForm(event)">
+          <div class="form-group">
+            <label class="form-label" style="text-align: left;" for="studentCodeField">Kode Room (6 Karakter)</label>
+            <input type="text" id="studentCodeField" class="form-control" style="text-transform: uppercase; font-weight: 800; letter-spacing: 0.2em; text-align: center; font-size: 1.25rem;" maxlength="6" autocomplete="off" required>
           </div>
           <div class="form-group">
-            <label class="form-label" style="text-align: left;">Nama Panggilan Kamu</label>
-            <input type="text" id="playerJoinName" class="form-control" placeholder="Contoh: Budi Juara" maxlength="18" required>
+            <label class="form-label" style="text-align: left;" for="studentNameField">Nama Siswa</label>
+            <input type="text" id="studentNameField" class="form-control" placeholder="Contoh: Siti Rahmawati (VII-A)" maxlength="24" required>
           </div>
-          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="btnConfirmJoin">
-            Gabung Sekarang →
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="confirmStudentJoinBtn">
+            Masuk ke Ruang Tunggu →
           </button>
         </form>
-        <button class="btn btn-outline btn-sm mt-2" onclick="goHome()">← Batal</button>
+        <button type="button" class="btn btn-outline btn-sm mt-2" onclick="goHome()">← Kembali</button>
       </div>
     </section>
 
     <!-- ======================================================================
-         VIEW 7: LAYAR GAMEPLAY MULTIPLAYER (ADMIN & PEMAIN)
+         VIEW 7: GAMEPLAY MULTIPLAYER (LAYAR PROYEKTOR GURU & LAYAR HP SISWA)
          ====================================================================== -->
-    <section id="view-mp-game" class="view">
-      <!-- Top Bar -->
-      <div class="game-topbar">
+    <section id="view-mp-stage" class="view">
+      <div class="stage-topbar">
         <div>
-          <span class="badge" id="mpRoleBadge">Role</span>
-          <h3 class="mt-1" id="mpQuestionCounter">Pertanyaan 1 / 5</h3>
+          <span class="badge" id="mpActorBadge">Peran</span>
+          <h3 class="mt-1" id="mpQuestionNumber">Pertanyaan 1 / 3</h3>
         </div>
-        <div class="flex-center">
-          <div class="badge" id="mpAnswerCountBadge" style="font-size: 0.95rem;">Jawaban masuk: 0/0</div>
-          <div class="timer-circle" id="mpTimerDisplay">10s</div>
+        <div class="flex-row">
+          <div class="badge" id="mpAnsweredRatioBadge" style="font-size: 0.95rem;">0 / 0 Siswa Menjawab</div>
+          <div class="timer-pill" id="mpStageTimerPill">10s</div>
         </div>
       </div>
 
-      <div class="timer-wrapper">
-        <div class="timer-bar" id="mpTimerBar"></div>
+      <div class="timer-track">
+        <div class="timer-fill" id="mpStageTimerFill"></div>
       </div>
 
-      <!-- Waiting Room State for Player before Q1 starts -->
-      <div id="mpPlayerWaitingBox" class="card text-center" style="display: none; padding: 3rem 1.5rem;">
-        <div style="font-size: 3.5rem; margin-bottom: 1rem;">⏳</div>
-        <h2>Kamu Sudah Terhubung!</h2>
-        <p style="color: var(--text-secondary); font-size: 1.1rem; margin-top: 0.5rem;">
-          Halo <strong id="mpPlayerWelcomeName" style="color: var(--brand-accent);">Pemain</strong>, tunggu Admin/Guru menekan tombol <strong>Mulai</strong> ya!
+      <!-- Layar Tunggu Siswa Sebelum Guru Mulai -->
+      <div id="studentLobbyWaitCard" class="card text-center" style="display: none; padding: 3rem 1.5rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 0.85rem;">⏳</div>
+        <h2>Kamu Sudah Terdaftar di Room!</h2>
+        <p style="color: var(--text-secondary); font-size: 1.08rem; margin-top: 0.5rem;">
+          Halo <strong id="studentWaitDisplayName" style="color: var(--brand-baby);">Siswa</strong>, bersiaplah! Pertanyaan akan muncul otomatis begitu guru memulai kuis.
         </p>
       </div>
 
-      <!-- Active Question Stage -->
-      <div id="mpActiveStage">
-        <div class="card question-stage">
-          <div class="question-text" id="mpQuestionText">Menunggu soal...</div>
+      <!-- Layar Pertanyaan Aktif -->
+      <div id="mpQuestionLiveArea">
+        <div class="card question-banner">
+          <h2 id="mpLiveQuestionText">Menunggu pertanyaan...</h2>
         </div>
 
-        <!-- 4 Tombol Pilihan (Untuk Pemain memilih, untuk Admin menampilkan opsi & kunci saat selesai) -->
-        <div class="answers-grid" id="mpAnswersGrid"></div>
+        <div class="choices-grid" id="mpLiveChoicesGrid"></div>
 
-        <!-- Status Feedback untuk Pemain setelah memilih -->
-        <div id="mpPlayerFeedback" class="card mt-2 text-center" style="display: none;">
-          <h3 id="mpPlayerFeedbackTitle">Jawaban Terkirim!</h3>
-          <p id="mpPlayerFeedbackSub" style="color: var(--text-secondary);">Menunggu waktu habis...</p>
+        <!-- Umpan Balik Layar Siswa -->
+        <div id="studentFeedbackCard" class="card mt-2 text-center" style="display: none;">
+          <h3 id="studentFeedbackHeading">Jawaban Terkirim!</h3>
+          <p id="studentFeedbackDetail" style="color: var(--text-secondary); margin-top: 0.35rem;">Menunggu waktu habis...</p>
         </div>
 
-        <!-- Panel Khusus Admin: Grafik Persentase Live & Hasil Waktu Habis -->
-        <div id="mpAdminAnalytics" class="card mt-2" style="display: none;">
+        <!-- Panel Analitik & Kontrol Khusus Guru -->
+        <div id="teacherAnalyticsCard" class="card mt-2" style="display: none;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-            <h3>📊 Statistik Jawaban Real-Time</h3>
-            <div class="flex-center">
-              <button class="btn btn-outline btn-sm" id="mpAdminForceEndBtn" onclick="adminForceRevealQuestion()">
-                ⏹️ Akhiri Waktu & Buka Jawaban
+            <h3>📊 Distribusi Jawaban Siswa (Real-Time)</h3>
+            <div class="flex-row">
+              <button type="button" class="btn btn-outline btn-sm" id="teacherEndEarlyBtn" onclick="hostRevealCurrentQuestion()">
+                ⏹️ Akhiri Timer & Buka Jawaban
               </button>
-              <button class="btn btn-primary" id="mpAdminNextQBtn" style="display: none;" onclick="adminNextMultiplayerQuestion()">
+              <button type="button" class="btn btn-primary" id="teacherNextStepBtn" style="display: none;" onclick="hostAdvanceQuestion()">
                 Pertanyaan Berikutnya →
               </button>
             </div>
           </div>
 
-          <!-- Bar Chart Persentase A, B, C, D -->
-          <div class="stats-bars-grid">
-            <div class="bar-col">
-              <span class="bar-pct" id="pct-A">0%</span>
-              <div class="bar-fill A" id="bar-A" style="height: 8px;"></div>
-              <span class="bar-label" style="background: var(--opt-a);">A</span>
+          <div class="chart-grid">
+            <div class="chart-col">
+              <span class="chart-pct" id="statPct-A">0%</span>
+              <div class="chart-bar A" id="statBar-A" style="height: 8px;"></div>
+              <span class="chart-pill" style="background-color: var(--opt-a);">A</span>
             </div>
-            <div class="bar-col">
-              <span class="bar-pct" id="pct-B">0%</span>
-              <div class="bar-fill B" id="bar-B" style="height: 8px;"></div>
-              <span class="bar-label" style="background: var(--opt-b);">B</span>
+            <div class="chart-col">
+              <span class="chart-pct" id="statPct-B">0%</span>
+              <div class="chart-bar B" id="statBar-B" style="height: 8px;"></div>
+              <span class="chart-pill" style="background-color: var(--opt-b);">B</span>
             </div>
-            <div class="bar-col">
-              <span class="bar-pct" id="pct-C">0%</span>
-              <div class="bar-fill C" id="bar-C" style="height: 8px;"></div>
-              <span class="bar-label" style="background: var(--opt-c);">C</span>
+            <div class="chart-col">
+              <span class="chart-pct" id="statPct-C">0%</span>
+              <div class="chart-bar C" id="statBar-C" style="height: 8px;"></div>
+              <span class="chart-pill" style="background-color: var(--opt-c);">C</span>
             </div>
-            <div class="bar-col">
-              <span class="bar-pct" id="pct-D">0%</span>
-              <div class="bar-fill D" id="bar-D" style="height: 8px;"></div>
-              <span class="bar-label" style="background: var(--opt-d);">D</span>
+            <div class="chart-col">
+              <span class="chart-pct" id="statPct-D">0%</span>
+              <div class="chart-bar D" id="statBar-D" style="height: 8px;"></div>
+              <span class="chart-pill" style="background-color: var(--opt-d);">D</span>
             </div>
           </div>
 
-          <!-- Daftar Penjawab Benar Tercepat pada Soal Ini (Muncul saat waktu habis) -->
-          <div id="mpQuestionWinnersBox" style="display: none; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
-            <h4 class="mb-1">⚡ Urutan Penjawab Benar & Tercepat (Soal Ini):</h4>
-            <div class="leaderboard-list" id="mpQuestionFastestList"></div>
+          <!-- Daftar Penjawab Benar Tercepat pada Soal Ini -->
+          <div id="teacherQuestionResultBox" style="display: none; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+            <h4 class="mb-1">⚡ Siswa dengan Jawaban Benar & Tercepat (Soal Ini):</h4>
+            <div class="rank-list" id="teacherFastestList"></div>
           </div>
         </div>
       </div>
     </section>
 
     <!-- ======================================================================
-         VIEW 8: PODIUM AKHIR MULTIPLAYER (JUARA 1, 2, 3)
+         VIEW 8: PODIUM JUARA 1, 2, 3 & KLASEMEN AKHIR
          ====================================================================== -->
     <section id="view-mp-podium" class="view">
       <div class="card text-center">
-        <span class="badge mb-1">🏆 HASIL AKHIR MABAR</span>
-        <h1 style="font-size: clamp(1.8rem, 4vw, 2.6rem);">Podium Pemenang Kuis!</h1>
+        <span class="badge mb-1">🏆 HASIL AKHIR KUIS KELAS</span>
+        <h1 style="font-size: clamp(1.85rem, 4vw, 2.6rem);">Podium Pemenang</h1>
         <p style="color: var(--text-secondary);">
-          Berdasarkan ketepatan jawaban & akumulasi kecepatan menjawab (detik)
+          Peringkat dihitung berdasarkan jumlah jawaban benar dan kecepatan waktu menjawab (detik)
         </p>
 
-        <!-- Podium Juara 2 - Juara 1 - Juara 3 -->
-        <div class="podium-stage" id="podiumStageContainer">
-          <!-- Diisi oleh JS -->
+        <div class="podium-wrap" id="finalPodiumStage"></div>
+
+        <div style="max-width: 680px; margin: 1.5rem auto; text-align: left;">
+          <h3 class="mb-1">📋 Peringkat Lengkap Seluruh Peserta</h3>
+          <div class="rank-list" id="finalFullRankingList"></div>
         </div>
 
-        <!-- Klasemen Lengkap -->
-        <div style="max-width: 640px; margin: 1.5rem auto; text-align: left;">
-          <h3 class="mb-1">📋 Klasemen Lengkap Pemain</h3>
-          <div class="leaderboard-list" id="fullLeaderboardList"></div>
-        </div>
-
-        <div class="flex-center mt-3">
-          <button class="btn btn-primary btn-lg" onclick="goHome()">🏠 Kembali ke Menu Utama</button>
+        <div class="flex-row mt-3">
+          <button type="button" class="btn btn-primary btn-lg" onclick="goHome()">🏠 Kembali ke Beranda</button>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- TOAST CONTAINER -->
-  <div class="toast-container" id="toastContainer"></div>
+  <!-- MODAL PERBESAR QR CODE (UNTUK PROYEKTOR KELAS) -->
+  <div class="modal-backdrop" id="qrZoomModal" onclick="closeQrZoomModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <span class="badge mb-1">📱 Pindai dari Kamera HP</span>
+      <h3>Gabung Room: <span id="modalRoomCodeText" style="color: var(--brand-baby);">------</span></h3>
+      <div class="qr-zoom-frame" id="qrZoomRenderTarget"></div>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+        Arahkan kamera ponsel siswa ke QR Code di atas untuk langsung masuk ke room kuis.
+      </p>
+      <button type="button" class="btn btn-primary" style="width: 100%;" onclick="closeQrZoomModal()">Tutup</button>
+    </div>
+  </div>
+
+  <!-- TOAST STACK -->
+  <div class="toast-stack" id="toastStack"></div>
 
   <!-- ========================================================================
-       HYBRID REAL-TIME ENGINE (FIREBASE + BROADCASTCHANNEL + STORAGE SYNC)
+       APPLICATION LOGIC & FIREBASE REAL-TIME SYNC
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { 
-      getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection 
+    import {
+      getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, collection
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     /* ------------------------------------------------------------------------
-       1. STATE GLOBAL & HYBRID TRANSPORT (INSTANT + CLOUD)
+       1. INITIALIZATION & REAL-TIME STORAGE ENGINE
        ------------------------------------------------------------------------ */
     let db = null;
     let auth = null;
     let currentUser = null;
-    let cloudReady = false;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'kuis-pintar-default';
-    const localClientId = 'client_' + Math.random().toString(36).slice(2, 10);
+    let isCloudConnected = false;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'kuispintar-school-app';
+    const sessionDeviceId = 'dev_' + Math.random().toString(36).slice(2, 10);
 
-    // Penyimpanan fallback memori + localStorage + BroadcastChannel lintas tab/window
-    const memoryRooms = {};
-    const memoryPlayers = {}; // { [roomCode]: { [playerId]: playerObj } }
-    const roomListeners = {}; // { [roomCode]: Set<fn> }
-    const playersListeners = {}; // { [roomCode]: Set<fn> }
-    const botTimeouts = [];
-
-    const broadcastChannel = (typeof BroadcastChannel !== 'undefined')
-      ? new BroadcastChannel('kuispintar_realtime_v1')
+    // Fallback sync lintas tab jika environment berjalan tanpa konfigurasi Firebase
+    const localChannel = (typeof BroadcastChannel !== 'undefined')
+      ? new BroadcastChannel('kuispintar_school_sync')
       : null;
 
-    function getStorageRoomKey(code) {
-      return `kuispintar_room_${code}`;
-    }
+    const appState = {
+      mode: 'solo', // 'solo' | 'multiplayer'
+      quizTitle: 'Kuis Pengetahuan Umum Sekolah',
+      timerSeconds: 10,
+      questions: [],
 
-    function getStoragePlayersKey(code) {
-      return `kuispintar_players_${code}`;
-    }
+      // Solo Projector State
+      soloIndex: 0,
+      soloRevealed: false,
+      soloTimerId: null,
 
-    function readLocalRoom(code) {
-      if (memoryRooms[code]) return memoryRooms[code];
+      // Multiplayer State
+      role: null, // 'teacher' | 'student'
+      roomCode: null,
+      studentId: null,
+      studentName: null,
+      unsubRoom: null,
+      unsubStudents: null,
+      roomData: null,
+      studentsMap: {},
+      mpTimerId: null,
+      lastRenderedQ: -1,
+      lastRenderedStatus: null,
+      studentChosenOpt: null,
+      studentResponseTimeMs: null,
+      questionShownAtMs: 0,
+      podiumCelebrated: false
+    };
+
+    async function initRealtimeBackend() {
+      const pill = document.getElementById('serverStatusPill');
+      const text = document.getElementById('serverStatusText');
+      const createBtn = document.getElementById('homeCreateRoomBtn');
+      const joinBtn = document.getElementById('homeJoinBtn');
+
+      createBtn.disabled = true;
+      joinBtn.disabled = true;
+
       try {
-        const raw = localStorage.getItem(getStorageRoomKey(code));
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          memoryRooms[code] = parsed;
-          return parsed;
+        if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+          throw new Error('Konfigurasi cloud tidak tersedia di lingkungan ini.');
         }
-      } catch (_) {}
-      return null;
-    }
 
-    function writeLocalRoom(code, data, emit = true) {
-      memoryRooms[code] = data;
-      try {
-        localStorage.setItem(getStorageRoomKey(code), JSON.stringify(data));
-      } catch (_) {}
-      if (broadcastChannel && emit) {
-        broadcastChannel.postMessage({ type: 'room_update', code, data });
-      }
-      notifyRoomListeners(code, data);
-    }
-
-    function readLocalPlayers(code) {
-      if (!memoryPlayers[code]) memoryPlayers[code] = {};
-      try {
-        const raw = localStorage.getItem(getStoragePlayersKey(code));
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          memoryPlayers[code] = { ...memoryPlayers[code], ...parsed };
-        }
-      } catch (_) {}
-      return memoryPlayers[code];
-    }
-
-    function writeLocalPlayer(code, playerId, playerData, emit = true) {
-      if (!memoryPlayers[code]) memoryPlayers[code] = {};
-      memoryPlayers[code][playerId] = playerData;
-      try {
-        localStorage.setItem(getStoragePlayersKey(code), JSON.stringify(memoryPlayers[code]));
-      } catch (_) {}
-      if (broadcastChannel && emit) {
-        broadcastChannel.postMessage({ type: 'players_update', code, playersMap: memoryPlayers[code] });
-      }
-      notifyPlayersListeners(code, { ...memoryPlayers[code] });
-    }
-
-    function notifyRoomListeners(code, data) {
-      if (!roomListeners[code] || !data) return;
-      roomListeners[code].forEach(fn => {
-        try { fn(data); } catch (e) { console.error(e); }
-      });
-    }
-
-    function notifyPlayersListeners(code, playersMap) {
-      if (!playersListeners[code]) return;
-      playersListeners[code].forEach(fn => {
-        try { fn(playersMap); } catch (e) { console.error(e); }
-      });
-    }
-
-    if (broadcastChannel) {
-      broadcastChannel.onmessage = (event) => {
-        const msg = event.data;
-        if (!msg || !msg.code) return;
-        if (msg.type === 'room_update' && msg.data) {
-          memoryRooms[msg.code] = msg.data;
-          try { localStorage.setItem(getStorageRoomKey(msg.code), JSON.stringify(msg.data)); } catch (_) {}
-          notifyRoomListeners(msg.code, msg.data);
-        } else if (msg.type === 'players_update' && msg.playersMap) {
-          memoryPlayers[msg.code] = { ...(memoryPlayers[msg.code] || {}), ...msg.playersMap };
-          try { localStorage.setItem(getStoragePlayersKey(msg.code), JSON.stringify(memoryPlayers[msg.code])); } catch (_) {}
-          notifyPlayersListeners(msg.code, { ...memoryPlayers[msg.code] });
-        }
-      };
-    }
-
-    window.addEventListener('storage', (e) => {
-      if (!e.key || !e.newValue) return;
-      if (e.key.startsWith('kuispintar_room_')) {
-        const code = e.key.replace('kuispintar_room_', '');
-        try {
-          const data = JSON.parse(e.newValue);
-          memoryRooms[code] = data;
-          notifyRoomListeners(code, data);
-        } catch (_) {}
-      } else if (e.key.startsWith('kuispintar_players_')) {
-        const code = e.key.replace('kuispintar_players_', '');
-        try {
-          const map = JSON.parse(e.newValue);
-          memoryPlayers[code] = map;
-          notifyPlayersListeners(code, map);
-        } catch (_) {}
-      }
-    });
-
-    // Inisialisasi Firebase secara non-blocking di latar belakang (tidak pernah memblokir tombol)
-    async function initFirebaseBackground() {
-      const statusEl = document.getElementById('connectionStatus');
-      statusEl.textContent = '● Live Sync Aktif';
-      statusEl.style.color = '#10b981';
-
-      try {
-        if (typeof __firebase_config === 'undefined') return;
         const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         auth = getAuth(app);
@@ -1511,1306 +1531,1155 @@
         } else {
           await signInAnonymously(auth);
         }
+
         currentUser = auth.currentUser;
-        cloudReady = true;
-        statusEl.textContent = '● Cloud + Live Sync';
-        statusEl.style.color = '#10b981';
+        if (!currentUser) {
+          throw new Error('Autentikasi sesi gagal.');
+        }
+
+        isCloudConnected = true;
+        pill.classList.add('connected');
+        text.textContent = 'Server Terhubung';
       } catch (err) {
-        console.warn("Cloud fallback ke Local/Broadcast Sync:", err);
-        cloudReady = false;
-        statusEl.textContent = '● Live Sync Aktif';
-        statusEl.style.color = '#38bdf8';
+        console.warn('Mode sinkronisasi lokal aktif:', err);
+        isCloudConnected = false;
+        pill.classList.add('offline');
+        text.textContent = 'Mode Lokal Aktif';
+      } finally {
+        createBtn.disabled = false;
+        joinBtn.disabled = false;
       }
     }
 
-    // Abstraksi Penyimpanan Room & Pemain (Instan + Cloud jika tersedia)
-    async function saveRoomData(code, roomObj) {
-      writeLocalRoom(code, roomObj, true);
-      if (cloudReady && db && currentUser) {
-        try {
-          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
-          await setDoc(roomRef, roomObj, { merge: true });
-        } catch (err) {
-          console.warn("Firestore saveRoom fallback:", err);
-        }
+    // Operasi Database (Firestore Utama + Fallback Lintas Tab)
+    async function writeRoom(code, payload) {
+      try {
+        localStorage.setItem(`kp_room_${code}`, JSON.stringify(payload));
+        if (localChannel) localChannel.postMessage({ kind: 'room', code, payload });
+      } catch (_) {}
+
+      if (isCloudConnected && db && currentUser) {
+        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+        await setDoc(ref, payload);
       }
     }
 
-    async function patchRoomData(code, patchObj) {
-      const current = readLocalRoom(code) || {};
-      const next = { ...current, ...patchObj };
-      writeLocalRoom(code, next, true);
-      if (cloudReady && db && currentUser) {
-        try {
-          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
-          await updateDoc(roomRef, patchObj);
-        } catch (err) {
-          console.warn("Firestore patchRoom fallback:", err);
-        }
+    async function updateRoom(code, patch) {
+      try {
+        const existing = JSON.parse(localStorage.getItem(`kp_room_${code}`) || '{}');
+        const merged = { ...existing, ...patch };
+        localStorage.setItem(`kp_room_${code}`, JSON.stringify(merged));
+        if (localChannel) localChannel.postMessage({ kind: 'room', code, payload: merged });
+      } catch (_) {}
+
+      if (isCloudConnected && db && currentUser) {
+        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+        await updateDoc(ref, patch);
       }
     }
 
-    async function fetchRoomData(code) {
-      const localData = readLocalRoom(code);
-      if (localData) return localData;
-
-      if (cloudReady && db && currentUser) {
-        try {
-          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
-          const snap = await getDoc(roomRef);
-          if (snap.exists()) {
-            const data = snap.data();
-            writeLocalRoom(code, data, false);
-            return data;
-          }
-        } catch (err) {
-          console.warn("Firestore fetchRoom fallback:", err);
-        }
+    async function readRoom(code) {
+      if (isCloudConnected && db && currentUser) {
+        const ref = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+        const snap = await getDoc(ref);
+        if (snap.exists()) return snap.data();
       }
+      try {
+        const raw = localStorage.getItem(`kp_room_${code}`);
+        if (raw) return JSON.parse(raw);
+      } catch (_) {}
       return null;
     }
 
-    async function savePlayerData(code, playerId, playerObj) {
-      writeLocalPlayer(code, playerId, playerObj, true);
-      if (cloudReady && db && currentUser) {
-        try {
-          const playerRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`, playerId);
-          await setDoc(playerRef, playerObj, { merge: true });
-        } catch (err) {
-          console.warn("Firestore savePlayer fallback:", err);
-        }
+    async function writeStudent(code, studentId, studentData) {
+      try {
+        const map = JSON.parse(localStorage.getItem(`kp_students_${code}`) || '{}');
+        map[studentId] = studentData;
+        localStorage.setItem(`kp_students_${code}`, JSON.stringify(map));
+        if (localChannel) localChannel.postMessage({ kind: 'students', code, map });
+      } catch (_) {}
+
+      if (isCloudConnected && db && currentUser) {
+        const ref = doc(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`, studentId);
+        await setDoc(ref, studentData, { merge: true });
       }
     }
 
-    function watchRoom(code, onData) {
-      if (!roomListeners[code]) roomListeners[code] = new Set();
-      roomListeners[code].add(onData);
+    async function removeStudent(code, studentId) {
+      try {
+        const map = JSON.parse(localStorage.getItem(`kp_students_${code}`) || '{}');
+        delete map[studentId];
+        localStorage.setItem(`kp_students_${code}`, JSON.stringify(map));
+        if (localChannel) localChannel.postMessage({ kind: 'students', code, map });
+      } catch (_) {}
 
-      const existingLocal = readLocalRoom(code);
-      if (existingLocal) onData(existingLocal);
+      if (isCloudConnected && db && currentUser) {
+        const ref = doc(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`, studentId);
+        await deleteDoc(ref);
+      }
+    }
 
-      let fsUnsub = null;
-      if (cloudReady && db && currentUser) {
+    function listenRoomAndStudents(code) {
+      if (appState.unsubRoom) appState.unsubRoom();
+      if (appState.unsubStudents) appState.unsubStudents();
+
+      // Local fallback listener
+      const localHandler = (ev) => {
+        if (!ev.data || ev.data.code !== code) return;
+        if (ev.data.kind === 'room') {
+          appState.roomData = ev.data.payload;
+          onRoomChanged();
+        } else if (ev.data.kind === 'students') {
+          appState.studentsMap = ev.data.map;
+          onStudentsChanged();
+        }
+      };
+      if (localChannel) localChannel.addEventListener('message', localHandler);
+
+      let fsRoomUnsub = null;
+      let fsStudentsUnsub = null;
+
+      if (isCloudConnected && db && currentUser) {
+        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'kuis_rooms', code);
+        fsRoomUnsub = onSnapshot(roomRef, (snap) => {
+          if (snap.exists()) {
+            appState.roomData = snap.data();
+            onRoomChanged();
+          }
+        }, (err) => {
+          console.error('Error listener room:', err);
+          notify('⚠️ Koneksi room terganggu, mencoba menyambungkan ulang...');
+        });
+
+        const studentsCol = collection(db, 'artifacts', appId, 'public', 'data', `kuis_room_${code}_students`);
+        fsStudentsUnsub = onSnapshot(studentsCol, (querySnap) => {
+          const map = {};
+          querySnap.forEach((docSnap) => {
+            map[docSnap.id] = docSnap.data();
+          });
+          appState.studentsMap = map;
+          onStudentsChanged();
+        }, (err) => {
+          console.error('Error listener siswa:', err);
+        });
+      } else {
+        // Hydrate dari localStorage jika offline
         try {
-          const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_rooms', code);
-          fsUnsub = onSnapshot(roomRef, (snap) => {
-            if (snap.exists()) {
-              const data = snap.data();
-              memoryRooms[code] = data;
-              try { localStorage.setItem(getStorageRoomKey(code), JSON.stringify(data)); } catch (_) {}
-              onData(data);
-            }
-          }, (err) => console.warn("Room snapshot fallback:", err));
+          const r = localStorage.getItem(`kp_room_${code}`);
+          if (r) { appState.roomData = JSON.parse(r); onRoomChanged(); }
+          const s = localStorage.getItem(`kp_students_${code}`);
+          if (s) { appState.studentsMap = JSON.parse(s); onStudentsChanged(); }
         } catch (_) {}
       }
 
-      return () => {
-        if (roomListeners[code]) roomListeners[code].delete(onData);
-        if (fsUnsub) fsUnsub();
+      appState.unsubRoom = () => {
+        if (localChannel) localChannel.removeEventListener('message', localHandler);
+        if (fsRoomUnsub) fsRoomUnsub();
       };
-    }
-
-    function watchPlayers(code, onMapUpdate) {
-      if (!playersListeners[code]) playersListeners[code] = new Set();
-      playersListeners[code].add(onMapUpdate);
-
-      onMapUpdate({ ...readLocalPlayers(code) });
-
-      let fsUnsub = null;
-      if (cloudReady && db && currentUser) {
-        try {
-          const playersCol = collection(db, 'artifacts', appId, 'public', 'data', `room_${code}_players`);
-          fsUnsub = onSnapshot(playersCol, (querySnap) => {
-            const map = { ...(memoryPlayers[code] || {}) };
-            querySnap.forEach(docItem => {
-              map[docItem.id] = docItem.data();
-            });
-            memoryPlayers[code] = map;
-            try { localStorage.setItem(getStoragePlayersKey(code), JSON.stringify(map)); } catch (_) {}
-            onMapUpdate({ ...map });
-          }, (err) => console.warn("Players snapshot fallback:", err));
-        } catch (_) {}
-      }
-
-      return () => {
-        if (playersListeners[code]) playersListeners[code].delete(onMapUpdate);
-        if (fsUnsub) fsUnsub();
+      appState.unsubStudents = () => {
+        if (fsStudentsUnsub) fsStudentsUnsub();
       };
-    }
-
-    // Generator QR Code Mandiri Berbasis Canvas (Anti-gagal meskipun CDN blokir)
-    function renderReliableQRCode(containerEl, text) {
-      containerEl.innerHTML = '';
-      const canvas = document.createElement('canvas');
-      const size = 168;
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, size, size);
-
-      const gridCount = 21;
-      const cell = Math.floor(size / gridCount);
-      const offset = Math.floor((size - cell * gridCount) / 2);
-
-      // Hash deterministik dari teks agar pola QR konsisten & bisa dipindai kamera/scanner
-      let hash = 2166136261;
-      for (let i = 0; i < text.length; i++) {
-        hash ^= text.charCodeAt(i);
-        hash = Math.imul(hash, 16777619);
-      }
-
-      function isFinderPattern(r, c) {
-        const topLeft = r < 7 && c < 7;
-        const topRight = r < 7 && c >= gridCount - 7;
-        const bottomLeft = r >= gridCount - 7 && c < 7;
-        return topLeft || topRight || bottomLeft;
-      }
-
-      function drawFinderCell(r, c) {
-        const outer = (r === 0 || r === 6 || c === 0 || c === 6);
-        const inner = (r >= 2 && r <= 4 && c >= 2 && c <= 4);
-        return outer || inner;
-      }
-
-      ctx.fillStyle = '#0a192f';
-      for (let r = 0; r < gridCount; r++) {
-        for (let c = 0; c < gridCount; c++) {
-          let dark = false;
-          if (r < 7 && c < 7) {
-            dark = drawFinderCell(r, c);
-          } else if (r < 7 && c >= gridCount - 7) {
-            dark = drawFinderCell(r, c - (gridCount - 7));
-          } else if (r >= gridCount - 7 && c < 7) {
-            dark = drawFinderCell(r - (gridCount - 7), c);
-          } else if (!isFinderPattern(r, c)) {
-            const bitSeed = (hash ^ Math.imul(r + 1, 73856093) ^ Math.imul(c + 1, 19349663) ^ (r * c + 13)) >>> 0;
-            dark = (bitSeed % 2 === 0);
-          }
-
-          if (dark) {
-            ctx.fillRect(offset + c * cell, offset + r * cell, cell - 0.4, cell - 0.4);
-          }
-        }
-      }
-
-      containerEl.appendChild(canvas);
-    }
-
-    // State Aplikasi
-    const state = {
-      mode: 'solo', // 'solo' | 'multiplayer'
-      quizTitle: 'Kuis Cerdas Cermat Seru',
-      timerSeconds: 10,
-      questions: [],
-      
-      // Solo Game State
-      soloIndex: 0,
-      soloAnswered: false,
-      soloTimerInterval: null,
-      soloTimeLeft: 0,
-
-      // Multiplayer State
-      mpRole: null, // 'admin' | 'player'
-      roomCode: null,
-      playerId: null,
-      playerName: null,
-      roomUnsubscribe: null,
-      playersUnsubscribe: null,
-      mpRoomData: null,
-      mpPlayersMap: {},
-      mpTimerInterval: null,
-      mpLastRenderedQIndex: -1,
-      mpLastRenderedStatus: null,
-      mpPlayerSelectedOpt: null,
-      mpPlayerAnswerTimeSec: null,
-      mpQuestionLocalStartTime: 0,
-      podiumConfettiFired: false,
-      botCounter: 1
-    };
-
-    function clearAllBotTimeouts() {
-      while (botTimeouts.length > 0) {
-        const t = botTimeouts.pop();
-        clearTimeout(t);
-      }
     }
 
     /* ------------------------------------------------------------------------
-       2. UTILITAS UI, TEMA & NAVIGASI
+       2. AUTHENTIC ISO/IEC 18004 QR CODE GENERATOR
+       ------------------------------------------------------------------------ */
+    function renderStandardQRCode(containerEl, urlString, cellSize = 6) {
+      containerEl.innerHTML = '';
+      if (typeof window.qrcode === 'function') {
+        const qr = window.qrcode(0, 'M');
+        qr.addData(urlString);
+        qr.make();
+        // Menghasilkan SVG tajam dengan quiet zone 4 modul sesuai standar ISO/IEC 18004
+        containerEl.innerHTML = qr.createSvgTag({
+          cellSize: cellSize,
+          margin: 4,
+          scalable: true
+        });
+      } else {
+        containerEl.innerHTML = `<p style="color:#0a192f;font-size:0.8rem;padding:1rem;">Gagal memuat library QR. Gunakan kode room di atas.</p>`;
+      }
+    }
+
+    function getJoinUrl(code) {
+      return `${window.location.origin}${window.location.pathname}?room=${encodeURIComponent(code)}`;
+    }
+
+    window.openQrZoomModal = function() {
+      if (!appState.roomCode) return;
+      document.getElementById('modalRoomCodeText').textContent = appState.roomCode;
+      renderStandardQRCode(document.getElementById('qrZoomRenderTarget'), getJoinUrl(appState.roomCode), 8);
+      document.getElementById('qrZoomModal').classList.add('open');
+    };
+
+    window.closeQrZoomModal = function(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('qrZoomModal').classList.remove('open');
+    };
+
+    /* ------------------------------------------------------------------------
+       3. UI HELPERS & NAVIGATION
        ------------------------------------------------------------------------ */
     window.toggleTheme = function() {
       const html = document.documentElement;
-      const current = html.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
-      document.getElementById('themeToggleBtn').textContent = next === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+      document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
     };
 
-    window.showToast = function(msg) {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.textContent = msg;
-      container.appendChild(toast);
+    window.notify = function(message) {
+      const stack = document.getElementById('toastStack');
+      const item = document.createElement('div');
+      item.className = 'toast-msg';
+      item.textContent = message;
+      stack.appendChild(item);
       setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(30px)';
-        toast.style.transition = 'all 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(20px)';
+        item.style.transition = 'all 0.25s ease';
+        setTimeout(() => item.remove(), 250);
+      }, 3200);
     };
 
-    window.switchView = function(viewId) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      const target = document.getElementById(viewId);
+    function showScreen(id) {
+      document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(id);
       if (target) target.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }
 
     window.goHome = function() {
-      clearInterval(state.soloTimerInterval);
-      clearInterval(state.mpTimerInterval);
-      clearAllBotTimeouts();
-      if (state.roomUnsubscribe) { state.roomUnsubscribe(); state.roomUnsubscribe = null; }
-      if (state.playersUnsubscribe) { state.playersUnsubscribe(); state.playersUnsubscribe = null; }
-      
+      clearInterval(appState.soloTimerId);
+      clearInterval(appState.mpTimerId);
+      if (appState.unsubRoom) { appState.unsubRoom(); appState.unsubRoom = null; }
+      if (appState.unsubStudents) { appState.unsubStudents(); appState.unsubStudents = null; }
+
       const url = new URL(window.location.href);
       if (url.searchParams.has('room')) {
         url.searchParams.delete('room');
         window.history.replaceState({}, '', url.toString());
       }
-      switchView('view-home');
+      showScreen('view-home');
     };
 
-    function fireConfetti() {
+    function launchConfetti() {
       if (typeof confetti === 'function') {
-        confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+        confetti({ particleCount: 95, spread: 75, origin: { y: 0.6 } });
         setTimeout(() => {
           confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0 } });
           confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1 } });
-        }, 350);
+        }, 300);
       }
     }
 
-    function formatDuration(sec) {
+    function formatSecondsText(sec) {
       if (sec < 60) return `${sec} detik`;
       const m = Math.floor(sec / 60);
       const s = sec % 60;
       return s === 0 ? `${m} menit` : `${m} menit ${s} detik`;
     }
 
-    function escapeHtml(str) {
+    function escapeHtml(text) {
       const div = document.createElement('div');
-      div.textContent = str;
+      div.textContent = text;
       return div.innerHTML;
     }
 
     /* ------------------------------------------------------------------------
-       3. PEMBUAT SOAL (QUIZ BUILDER)
+       4. QUIZ BUILDER (GURU / ADMIN)
        ------------------------------------------------------------------------ */
-    window.openBuilder = function(mode) {
-      state.mode = mode;
-      const badge = document.getElementById('builderModeBadge');
-      const startBtn = document.getElementById('startQuizSetupBtn');
+    window.openQuizBuilder = function(mode) {
+      appState.mode = mode;
+      const label = document.getElementById('builderModeLabel');
+      const btn = document.getElementById('launchSessionBtn');
 
       if (mode === 'solo') {
-        badge.textContent = '🖥️ Mode 1: Solo / Presentasi Kelas';
-        startBtn.textContent = '🚀 Mulai Presentasi Kuis';
+        label.textContent = '🖥️ Mode Proyektor (Solo Kelas)';
+        btn.textContent = '🚀 Mulai Mode Proyektor';
       } else {
-        badge.textContent = '📡 Mode 2: Mabar / Live Room (Admin)';
-        startBtn.textContent = '🎮 Buat Room & Tampilkan Kode';
+        label.textContent = '📡 Mode Mabar (Live Siswa)';
+        btn.textContent = '🎮 Buat Room & Tampilkan QR';
       }
 
-      if (state.questions.length === 0) {
-        fillSampleQuestions(true);
+      if (appState.questions.length === 0) {
+        loadSampleQuestions(true);
       } else {
-        renderQuestionsBuilder();
+        renderQuestionCards();
       }
-      switchView('view-builder');
+      showScreen('view-builder');
     };
 
-    window.selectTimerPreset = function(seconds) {
-      state.timerSeconds = seconds;
-      document.querySelectorAll('.preset-chip').forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.dataset.sec) === seconds);
+    window.applyTimerPreset = function(seconds) {
+      appState.timerSeconds = seconds;
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.sec, 10) === seconds);
       });
 
       if (seconds >= 60 && seconds % 60 === 0) {
-        document.getElementById('customTimerValue').value = seconds / 60;
-        document.getElementById('customTimerUnit').value = 'min';
+        document.getElementById('customTimeVal').value = seconds / 60;
+        document.getElementById('customTimeUnit').value = 'min';
       } else {
-        document.getElementById('customTimerValue').value = seconds;
-        document.getElementById('customTimerUnit').value = 'sec';
+        document.getElementById('customTimeVal').value = seconds;
+        document.getElementById('customTimeUnit').value = 'sec';
       }
-      document.getElementById('timerSummaryText').textContent = formatDuration(seconds);
+      document.getElementById('timerActiveLabel').textContent = formatSecondsText(seconds);
     };
 
-    window.syncCustomTimer = function() {
-      const val = Math.max(1, parseInt(document.getElementById('customTimerValue').value) || 1);
-      const unit = document.getElementById('customTimerUnit').value;
-      const totalSec = unit === 'min' ? val * 60 : val;
-      state.timerSeconds = totalSec;
+    window.updateCustomTimer = function() {
+      const val = Math.max(1, parseInt(document.getElementById('customTimeVal').value, 10) || 1);
+      const unit = document.getElementById('customTimeUnit').value;
+      const total = unit === 'min' ? val * 60 : val;
+      appState.timerSeconds = total;
 
-      document.querySelectorAll('.preset-chip').forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.dataset.sec) === totalSec);
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.sec, 10) === total);
       });
-      document.getElementById('timerSummaryText').textContent = formatDuration(totalSec);
+      document.getElementById('timerActiveLabel').textContent = formatSecondsText(total);
     };
 
-    window.fillSampleQuestions = function(silent = false) {
-      document.getElementById('quizTitleInput').value = "Kuis Seru Pengetahuan Umum & Sains";
-      state.questions = [
+    window.loadSampleQuestions = function(silent = false) {
+      document.getElementById('quizTitleField').value = 'Kuis Pengetahuan Umum & Sains Dasar';
+      appState.questions = [
         {
-          text: "Apa ibukota negara Jepang?",
-          options: { A: "Seoul", B: "Beijing", C: "Tokyo", D: "Bangkok" },
-          correct: "C"
+          text: 'Planet manakah yang memiliki ukuran paling besar di tata surya kita?',
+          options: { A: 'Saturnus', B: 'Jupiter', C: 'Neptunus', D: 'Uranus' },
+          correct: 'B'
         },
         {
-          text: "Planet manakah yang dijuluki sebagai Planet Merah di tata surya kita?",
-          options: { A: "Venus", B: "Mars", C: "Jupiter", D: "Saturnus" },
-          correct: "B"
+          text: 'Peristiwa perubahan wujud benda dari gas menjadi cair disebut...',
+          options: { A: 'Menguap', B: 'Menyublim', C: 'Mengembun', D: 'Membeku' },
+          correct: 'C'
         },
         {
-          text: "Berapakah hasil dari 12 × 8 + 4?",
-          options: { A: "100", B: "96", C: "104", D: "92" },
-          correct: "A"
-        },
-        {
-          text: "Gas apakah yang paling banyak menyusun atmosfer Bumi?",
-          options: { A: "Oksigen", B: "Karbon Dioksida", C: "Hidrogen", D: "Nitrogen" },
-          correct: "D"
+          text: 'Di kota manakah Proklamasi Kemerdekaan Indonesia dibacakan pada 17 Agustus 1945?',
+          options: { A: 'Jakarta', B: 'Yogyakarta', C: 'Surabaya', D: 'Bandung' },
+          correct: 'A'
         }
       ];
-      renderQuestionsBuilder();
-      if (!silent) showToast("✨ 4 contoh soal berhasil diisi otomatis!");
+      renderQuestionCards();
+      if (!silent) notify('↺ 3 contoh soal sekolah berhasil dimuat.');
     };
 
-    window.addQuestionCard = function() {
-      syncQuestionsFromDOM();
-      state.questions.push({
-        text: "",
-        options: { A: "", B: "", C: "", D: "" },
-        correct: "A"
+    window.addNewQuestion = function() {
+      syncBuilderInputs();
+      appState.questions.push({
+        text: '',
+        options: { A: '', B: '', C: '', D: '' },
+        correct: 'A'
       });
-      renderQuestionsBuilder();
-      showToast("➕ Pertanyaan baru ditambahkan");
+      renderQuestionCards();
+      notify('➕ Pertanyaan baru ditambahkan.');
     };
 
-    window.removeQuestionCard = function(index) {
-      if (state.questions.length <= 1) {
-        showToast("⚠️ Minimal harus ada 1 pertanyaan!");
+    window.deleteQuestion = function(idx) {
+      if (appState.questions.length <= 1) {
+        notify('⚠️ Minimal harus terdapat 1 pertanyaan.');
         return;
       }
-      syncQuestionsFromDOM();
-      state.questions.splice(index, 1);
-      renderQuestionsBuilder();
+      syncBuilderInputs();
+      appState.questions.splice(idx, 1);
+      renderQuestionCards();
     };
 
-    window.setCorrectOption = function(qIdx, letter) {
-      syncQuestionsFromDOM();
-      state.questions[qIdx].correct = letter;
-      renderQuestionsBuilder();
+    window.selectCorrectChoice = function(qIndex, letter) {
+      syncBuilderInputs();
+      appState.questions[qIndex].correct = letter;
+      renderQuestionCards();
     };
 
-    function syncQuestionsFromDOM() {
-      const cards = document.querySelectorAll('.question-item-card');
+    function syncBuilderInputs() {
+      const cards = document.querySelectorAll('.q-builder-card');
       cards.forEach((card, idx) => {
-        if (!state.questions[idx]) return;
-        state.questions[idx].text = card.querySelector('.q-text-input').value;
-        ['A', 'B', 'C', 'D'].forEach(letKey => {
-          state.questions[idx].options[letKey] = card.querySelector(`.opt-val-${letKey}`).value;
+        if (!appState.questions[idx]) return;
+        appState.questions[idx].text = card.querySelector('.q-title-input').value;
+        ['A', 'B', 'C', 'D'].forEach(opt => {
+          appState.questions[idx].options[opt] = card.querySelector(`.q-opt-${opt}`).value;
         });
-        const checkedRadio = card.querySelector(`input[name="correct_${idx}"]:checked`);
-        if (checkedRadio) {
-          state.questions[idx].correct = checkedRadio.value;
-        }
+        const checked = card.querySelector(`input[name="ans_${idx}"]:checked`);
+        if (checked) appState.questions[idx].correct = checked.value;
       });
     }
 
-    function renderQuestionsBuilder() {
-      const container = document.getElementById('questionsListContainer');
-      container.innerHTML = '';
+    function renderQuestionCards() {
+      const wrap = document.getElementById('builderQuestionsContainer');
+      wrap.innerHTML = '';
 
-      state.questions.forEach((q, idx) => {
-        const card = document.createElement('div');
-        card.className = 'question-item-card';
-        card.innerHTML = `
-          <div class="q-item-header">
+      appState.questions.forEach((q, idx) => {
+        const el = document.createElement('div');
+        el.className = 'q-builder-card';
+        el.innerHTML = `
+          <div class="q-builder-top">
             <span class="badge">Pertanyaan #${idx + 1}</span>
-            <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestionCard(${idx})">🗑️ Hapus</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteQuestion(${idx})">🗑️ Hapus</button>
           </div>
           <div class="form-group">
-            <input type="text" class="form-control q-text-input" placeholder="Tulis pertanyaan di sini..." value="${escapeHtml(q.text)}">
+            <input type="text" class="form-control q-title-input" placeholder="Ketik soal pertanyaan di sini..." value="${escapeHtml(q.text)}">
           </div>
-          <small style="color: var(--text-muted); font-weight: 600;">Isi pilihan ganda & centang lingkaran jawaban yang benar:</small>
-          <div class="options-editor-grid">
+          <small style="color: var(--text-muted); font-weight: 600;">Isi opsi jawaban A–D dan klik lingkaran di kanan untuk kunci jawaban benar:</small>
+          <div class="options-grid-editor">
             ${['A', 'B', 'C', 'D'].map(letter => `
-              <div class="opt-input-wrap ${q.correct === letter ? 'is-correct' : ''}">
-                <span class="opt-badge ${letter}">${letter}</span>
-                <input type="text" class="opt-val-${letter}" placeholder="Pilihan ${letter}" value="${escapeHtml(q.options[letter])}">
-                <input type="radio" name="correct_${idx}" value="${letter}" class="radio-correct" 
-                  ${q.correct === letter ? 'checked' : ''} onchange="setCorrectOption(${idx}, '${letter}')" title="Tandai sebagai jawaban benar">
+              <div class="opt-box ${q.correct === letter ? 'is-correct' : ''}">
+                <span class="opt-tag ${letter}">${letter}</span>
+                <input type="text" class="q-opt-${letter}" placeholder="Jawaban ${letter}" value="${escapeHtml(q.options[letter])}">
+                <input type="radio" name="ans_${idx}" value="${letter}" ${q.correct === letter ? 'checked' : ''}
+                  onchange="selectCorrectChoice(${idx}, '${letter}')" title="Kunci Jawaban ${letter}">
               </div>
             `).join('')}
           </div>
         `;
-        container.appendChild(card);
+        wrap.appendChild(el);
       });
     }
 
-    window.launchQuiz = async function() {
-      syncQuestionsFromDOM();
-      const title = document.getElementById('quizTitleInput').value.trim() || 'Kuis Interaktif';
-      state.quizTitle = title;
+    window.startQuizSession = async function() {
+      syncBuilderInputs();
+      const title = document.getElementById('quizTitleField').value.trim() || 'Kuis Kelas';
+      appState.quizTitle = title;
 
-      for (let i = 0; i < state.questions.length; i++) {
-        const q = state.questions[i];
+      for (let i = 0; i < appState.questions.length; i++) {
+        const q = appState.questions[i];
         if (!q.text.trim()) {
-          showToast(`⚠️ Pertanyaan #${i + 1} masih kosong!`);
+          notify(`⚠️ Teks Pertanyaan #${i + 1} belum diisi.`);
           return;
         }
         for (const opt of ['A', 'B', 'C', 'D']) {
           if (!q.options[opt].trim()) {
-            showToast(`⚠️ Pilihan ${opt} pada Pertanyaan #${i + 1} masih kosong!`);
+            notify(`⚠️ Pilihan ${opt} pada Pertanyaan #${i + 1} belum diisi.`);
             return;
           }
         }
       }
 
-      if (state.mode === 'solo') {
-        startSoloGame();
+      if (appState.mode === 'solo') {
+        startSoloProjector();
       } else {
-        await createMultiplayerRoom();
+        await createLiveRoom();
       }
     };
 
     /* ------------------------------------------------------------------------
-       4. GAMEPLAY MODE 1: SOLO / PRESENTASI KELAS
+       5. MODE PROYEKTOR (SOLO KELAS)
        ------------------------------------------------------------------------ */
-    function startSoloGame() {
-      state.soloIndex = 0;
-      switchView('view-solo-game');
-      renderSoloQuestion();
+    function startSoloProjector() {
+      appState.soloIndex = 0;
+      showScreen('view-solo-play');
+      renderSoloSlide();
     }
 
-    window.restartSolo = function() {
-      startSoloGame();
+    window.restartSoloSession = function() {
+      startSoloProjector();
     };
 
-    function renderSoloQuestion() {
-      clearInterval(state.soloTimerInterval);
-      state.soloAnswered = false;
+    function renderSoloSlide() {
+      clearInterval(appState.soloTimerId);
+      appState.soloRevealed = false;
 
-      const q = state.questions[state.soloIndex];
-      const total = state.questions.length;
+      const q = appState.questions[appState.soloIndex];
+      const total = appState.questions.length;
 
-      document.getElementById('soloQuizTitleBadge').textContent = state.quizTitle;
-      document.getElementById('soloProgressText').textContent = `Pertanyaan ${state.soloIndex + 1} dari ${total}`;
-      document.getElementById('soloQuestionText').textContent = q.text;
+      document.getElementById('soloTitleTag').textContent = appState.quizTitle;
+      document.getElementById('soloCounterText').textContent = `Pertanyaan ${appState.soloIndex + 1} dari ${total}`;
+      document.getElementById('soloQuestionDisplay').textContent = q.text;
 
-      document.getElementById('soloStatusMsg').textContent = '⏳ Waktu berjalan! Silakan pilih jawaban atau tunggu waktu habis...';
-      document.getElementById('soloRevealBtn').style.display = 'inline-flex';
-      document.getElementById('soloNextBtn').style.display = 'none';
-      document.getElementById('soloNextBtn').textContent = 
-        (state.soloIndex + 1 === total) ? '🎉 Selesai & Lihat Selebrasi →' : 'Pertanyaan Berikutnya →';
+      document.getElementById('soloHintText').textContent = '⏳ Waktu berjalan! Silakan siswa menjawab sebelum waktu habis...';
+      document.getElementById('soloShowAnswerBtn').style.display = 'inline-flex';
+      document.getElementById('soloNextQuestionBtn').style.display = 'none';
+      document.getElementById('soloNextQuestionBtn').textContent =
+        (appState.soloIndex + 1 === total) ? '🎉 Selesai & Selebrasi →' : 'Pertanyaan Berikutnya →';
 
-      const grid = document.getElementById('soloAnswersGrid');
+      const grid = document.getElementById('soloChoicesGrid');
       grid.innerHTML = '';
       ['A', 'B', 'C', 'D'].forEach(letter => {
         const btn = document.createElement('button');
-        btn.className = `answer-btn opt-${letter}`;
-        btn.id = `solo-opt-${letter}`;
-        btn.innerHTML = `<span class="ans-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
-        btn.onclick = () => handleSoloOptionClick(letter);
+        btn.type = 'button';
+        btn.className = `choice-btn opt-${letter}`;
+        btn.id = `soloChoice-${letter}`;
+        btn.innerHTML = `<span class="choice-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
+        btn.onclick = () => {
+          if (appState.soloRevealed) return;
+          btn.classList.add('chosen');
+          revealSoloQuestion(false, letter);
+        };
         grid.appendChild(btn);
       });
 
-      state.soloTimeLeft = state.timerSeconds;
-      const totalMs = state.timerSeconds * 1000;
-      const startTime = Date.now();
-      const timerDisplay = document.getElementById('soloTimerDisplay');
-      const timerBar = document.getElementById('soloTimerBar');
+      const totalMs = appState.timerSeconds * 1000;
+      const startedAt = Date.now();
+      const pill = document.getElementById('soloTimerPill');
+      const fill = document.getElementById('soloTimerFill');
 
-      timerDisplay.classList.remove('danger');
-      timerBar.classList.remove('danger');
-      timerDisplay.textContent = `${state.timerSeconds}s`;
-      timerBar.style.width = '100%';
+      pill.classList.remove('urgent');
+      fill.classList.remove('urgent');
+      pill.textContent = `${appState.timerSeconds}s`;
+      fill.style.width = '100%';
 
-      state.soloTimerInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        const remainingMs = Math.max(0, totalMs - elapsed);
-        const remainingSec = Math.ceil(remainingMs / 1000);
-        const pct = (remainingMs / totalMs) * 100;
+      appState.soloTimerId = setInterval(() => {
+        const elapsed = Date.now() - startedAt;
+        const leftMs = Math.max(0, totalMs - elapsed);
+        const leftSec = Math.ceil(leftMs / 1000);
+        const ratio = (leftMs / totalMs) * 100;
 
-        timerDisplay.textContent = `${remainingSec}s`;
-        timerBar.style.width = `${pct}%`;
+        pill.textContent = `${leftSec}s`;
+        fill.style.width = `${ratio}%`;
 
-        if (remainingSec <= 3 && remainingMs > 0) {
-          timerDisplay.classList.add('danger');
-          timerBar.classList.add('danger');
+        if (leftSec <= 3 && leftMs > 0) {
+          pill.classList.add('urgent');
+          fill.classList.add('urgent');
         }
 
-        if (remainingMs <= 0) {
-          clearInterval(state.soloTimerInterval);
-          revealSoloAnswer(true);
+        if (leftMs <= 0) {
+          clearInterval(appState.soloTimerId);
+          revealSoloQuestion(true);
         }
       }, 100);
     }
 
-    function handleSoloOptionClick(selectedLetter) {
-      if (state.soloAnswered) return;
-      document.getElementById(`solo-opt-${selectedLetter}`).classList.add('selected');
-      revealSoloAnswer(false, selectedLetter);
-    }
+    window.revealSoloQuestion = function(timeExpired = false, chosenLetter = null) {
+      if (appState.soloRevealed) return;
+      appState.soloRevealed = true;
+      clearInterval(appState.soloTimerId);
 
-    window.revealSoloAnswer = function(isTimeUp = false, chosenLetter = null) {
-      if (state.soloAnswered) return;
-      state.soloAnswered = true;
-      clearInterval(state.soloTimerInterval);
-
-      const q = state.questions[state.soloIndex];
+      const q = appState.questions[appState.soloIndex];
       const correct = q.correct;
 
       ['A', 'B', 'C', 'D'].forEach(letter => {
-        const btn = document.getElementById(`solo-opt-${letter}`);
+        const btn = document.getElementById(`soloChoice-${letter}`);
         btn.disabled = true;
         if (letter === correct) {
-          btn.classList.add('correct-reveal');
+          btn.classList.add('is-right');
         } else {
-          btn.classList.add('dimmed');
+          btn.classList.add('faded');
         }
       });
 
-      const statusMsg = document.getElementById('soloStatusMsg');
-      if (isTimeUp) {
-        statusMsg.innerHTML = `⏰ <strong>Waktu Habis!</strong> Jawaban yang benar adalah <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
+      const hint = document.getElementById('soloHintText');
+      if (timeExpired) {
+        hint.innerHTML = `⏰ <strong>Waktu Habis!</strong> Jawaban benar: <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
       } else if (chosenLetter) {
-        const isRight = chosenLetter === correct;
-        statusMsg.innerHTML = isRight
-          ? `✅ <strong>Benar Sekali!</strong> Jawabannya adalah <strong>${correct}. ${escapeHtml(q.options[correct])}</strong>`
-          : `❌ Kurang tepat! Jawaban yang benar adalah <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
+        hint.innerHTML = chosenLetter === correct
+          ? `✅ <strong>Tepat Sekali!</strong> Jawabannya adalah <strong>${correct}. ${escapeHtml(q.options[correct])}</strong>`
+          : `❌ Kurang tepat. Jawaban benar: <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
       } else {
-        statusMsg.innerHTML = `💡 Jawaban yang benar adalah <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
+        hint.innerHTML = `💡 Kunci Jawaban: <strong style="color: var(--success);">${correct}. ${escapeHtml(q.options[correct])}</strong>`;
       }
 
-      document.getElementById('soloRevealBtn').style.display = 'none';
-      document.getElementById('soloNextBtn').style.display = 'inline-flex';
+      document.getElementById('soloShowAnswerBtn').style.display = 'none';
+      document.getElementById('soloNextQuestionBtn').style.display = 'inline-flex';
     };
 
-    window.nextSoloQuestion = function() {
-      if (state.soloIndex + 1 < state.questions.length) {
-        state.soloIndex++;
-        renderSoloQuestion();
+    window.advanceSoloQuestion = function() {
+      if (appState.soloIndex + 1 < appState.questions.length) {
+        appState.soloIndex++;
+        renderSoloSlide();
       } else {
-        document.getElementById('soloFinishSummary').textContent = 
-          `Hore! Selamat, semua pertanyaan pada kuis "${state.quizTitle}" (${state.questions.length} soal) sudah ditampilkan!`;
-        switchView('view-solo-finish');
-        fireConfetti();
+        document.getElementById('soloCompleteDesc').textContent =
+          `Seluruh ${appState.questions.length} pertanyaan pada "${appState.quizTitle}" telah selesai ditampilkan!`;
+        showScreen('view-solo-complete');
+        launchConfetti();
       }
     };
 
     /* ------------------------------------------------------------------------
-       5. GAMEPLAY MODE 2: MULTIPLAYER / MABAR REAL-TIME (INSTANT + CLOUD)
+       6. MODE MABAR LIVE SISWA (MULTIPLAYER REAL-TIME)
        ------------------------------------------------------------------------ */
-    function generateRoomCode() {
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      let code = '';
+    function generateUniqueRoomCode() {
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let result = '';
       for (let i = 0; i < 6; i++) {
-        code += chars.charAt(Math.floor(Math.random() * chars.length));
+        result += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
       }
-      return code;
+      return result;
     }
 
-    async function createMultiplayerRoom() {
-      const btn = document.getElementById('startQuizSetupBtn');
+    async function createLiveRoom() {
+      const btn = document.getElementById('launchSessionBtn');
       btn.disabled = true;
-      btn.textContent = 'Menyiapkan Room...';
+      btn.textContent = 'Membuat Room...';
 
       try {
-        clearAllBotTimeouts();
-        const code = generateRoomCode();
-        state.mpRole = 'admin';
-        state.roomCode = code;
-        state.mpLastRenderedQIndex = -1;
-        state.mpLastRenderedStatus = null;
-        state.podiumConfettiFired = false;
-        state.botCounter = 1;
+        const code = generateUniqueRoomCode();
+        appState.role = 'teacher';
+        appState.roomCode = code;
+        appState.roomData = null;
+        appState.studentsMap = {};
+        appState.lastRenderedQ = -1;
+        appState.lastRenderedStatus = null;
+        appState.podiumCelebrated = false;
 
-        const roomPayload = {
+        const roomDoc = {
           roomCode: code,
-          hostId: currentUser?.uid || localClientId,
-          quizTitle: state.quizTitle,
-          timerSeconds: state.timerSeconds,
-          questions: state.questions,
+          hostUid: currentUser?.uid || sessionDeviceId,
+          quizTitle: appState.quizTitle,
+          timerSeconds: appState.timerSeconds,
+          questions: appState.questions,
           status: 'lobby', // 'lobby' | 'question' | 'reveal' | 'finished'
           currentQuestionIndex: 0,
           questionStartedAt: 0,
           createdAt: Date.now()
         };
 
-        await saveRoomData(code, roomPayload);
+        await writeRoom(code, roomDoc);
 
-        document.getElementById('lobbyQuizTitle').textContent = state.quizTitle;
-        document.getElementById('lobbyRoomCode').textContent = code;
-        document.getElementById('lobbyTimerInfo').textContent = formatDuration(state.timerSeconds);
-        document.getElementById('lobbyTotalQInfo').textContent = `${state.questions.length} soal`;
+        document.getElementById('lobbyTitleHeading').textContent = appState.quizTitle;
+        document.getElementById('lobbyCodeDisplay').textContent = code;
+        document.getElementById('lobbyTimerMeta').textContent = formatSecondsText(appState.timerSeconds);
+        document.getElementById('lobbyCountMeta').textContent = `${appState.questions.length} soal`;
 
-        const qrContainer = document.getElementById('lobbyQrCode');
-        const inviteUrl = getInviteLink(code);
-        renderReliableQRCode(qrContainer, inviteUrl);
+        renderStandardQRCode(document.getElementById('qrCodeRenderTarget'), getJoinUrl(code), 6);
 
-        subscribeToRoom(code);
-        switchView('view-mp-admin-lobby');
-        showToast(`✅ Room ${code} siap! Bagikan kode, buka tab pemain, atau tambah bot.`);
+        listenRoomAndStudents(code);
+        showScreen('view-mp-lobby');
+        notify(`✅ Room ${code} berhasil dibuat!`);
       } catch (err) {
-        console.error("Create room error:", err);
-        showToast("⚠️ Terjadi kendala kecil, mencoba ulang...");
+        console.error('Gagal membuat room:', err);
+        notify('❌ Gagal membuat room. Periksa koneksi internet dan coba lagi.');
       } finally {
         btn.disabled = false;
-        btn.textContent = '🎮 Buat Room & Tampilkan Kode';
+        btn.textContent = '🎮 Buat Room & Tampilkan QR';
       }
     }
 
-    function getInviteLink(code) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('room', code);
-      return url.toString();
-    }
-
-    window.copyRoomLink = function() {
-      const link = getInviteLink(state.roomCode);
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(link).catch(() => fallbackCopy(link));
-      } else {
-        fallbackCopy(link);
+    window.copyInviteUrl = function() {
+      if (!appState.roomCode) return;
+      const link = getJoinUrl(appState.roomCode);
+      const temp = document.createElement('input');
+      temp.value = link;
+      document.body.appendChild(temp);
+      temp.select();
+      try {
+        document.execCommand('copy');
+        notify('📋 Link undangan room berhasil disalin!');
+      } catch (_) {
+        notify('⚠️ Gagal menyalin otomatis. Salin URL dari address bar.');
       }
-      showToast("📋 Link undangan room berhasil disalin!");
+      document.body.removeChild(temp);
     };
 
-    function fallbackCopy(text) {
-      const tempInput = document.createElement('input');
-      tempInput.value = text;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try { document.execCommand('copy'); } catch (_) {}
-      document.body.removeChild(tempInput);
-    }
-
-    window.openPlayerTabForCurrentRoom = function() {
-      if (!state.roomCode) return;
-      const win = window.open(getInviteLink(state.roomCode), '_blank', 'noopener,noreferrer');
-      if (!win) {
-        openPlayerJoinScreen(state.roomCode);
-      }
+    window.kickStudentFromLobby = async function(studentId, studentName) {
+      if (!appState.roomCode) return;
+      await removeStudent(appState.roomCode, studentId);
+      notify(`Siswa "${studentName}" dikeluarkan dari room.`);
     };
 
-    // Fitur Simulasi Bot Pemain untuk menguji alur mabar, persentase jawaban & podium instan
-    window.addSimulatedBotPlayer = async function() {
-      if (!state.roomCode) return;
-      const botNames = ["Raka", "Sinta", "Dimas", "Nadia", "Bima", "Ayu", "Zaki", "Citra"];
-      const idx = (state.botCounter - 1) % botNames.length;
-      const botName = `${botNames[idx]} (Bot ${state.botCounter})`;
-      const botId = `bot_${state.roomCode}_${state.botCounter}_${Date.now()}`;
-      state.botCounter++;
-
-      const botPlayer = {
-        playerId: botId,
-        name: botName,
-        isBot: true,
-        score: 0,
-        totalTimeSec: 0,
-        answers: {},
-        joinedAt: Date.now()
-      };
-
-      await savePlayerData(state.roomCode, botId, botPlayer);
-      showToast(`🤖 ${botName} masuk ke room!`);
-
-      // Jika game sudah berjalan, bot langsung menjawab soal aktif
-      if (state.mpRoomData?.status === 'question') {
-        scheduleBotAnswerForQuestion(botPlayer, state.mpRoomData.currentQuestionIndex, state.mpRoomData);
-      }
-    };
-
-    function scheduleBotAnswerForQuestion(botPlayer, qIdx, roomData) {
-      if (!roomData || !roomData.questions[qIdx]) return;
-      const maxDelayMs = Math.min(4500, Math.max(900, (roomData.timerSeconds * 1000) * 0.6));
-      const delayMs = Math.round(700 + Math.random() * (maxDelayMs - 700));
-
-      const t = setTimeout(async () => {
-        const latestRoom = readLocalRoom(state.roomCode) || state.mpRoomData;
-        if (!latestRoom || latestRoom.status !== 'question' || latestRoom.currentQuestionIndex !== qIdx) return;
-
-        const q = latestRoom.questions[qIdx];
-        const choices = ['A', 'B', 'C', 'D'];
-        // 70% peluang memilih jawaban benar agar variasi persentase & skor terasa hidup
-        const picked = Math.random() < 0.7
-          ? q.correct
-          : choices[Math.floor(Math.random() * choices.length)];
-
-        const elapsedSec = Math.max(0.25, Math.min(latestRoom.timerSeconds, delayMs / 1000));
-        const isCorrect = picked === q.correct;
-        let pointsEarned = 0;
-        if (isCorrect) {
-          const speedRatio = Math.max(0, (latestRoom.timerSeconds - elapsedSec) / latestRoom.timerSeconds);
-          pointsEarned = Math.round(500 + (speedRatio * 500));
-        }
-
-        const currentMap = readLocalPlayers(state.roomCode);
-        const existingBot = currentMap[botPlayer.playerId] || botPlayer;
-        const updatedAnswers = { ...(existingBot.answers || {}) };
-        updatedAnswers[qIdx] = {
-          option: picked,
-          timeSec: Number(elapsedSec.toFixed(2)),
-          isCorrect,
-          points: pointsEarned
-        };
-
-        let totalScore = 0;
-        let totalTime = 0;
-        Object.values(updatedAnswers).forEach(a => {
-          totalScore += a.points;
-          totalTime += a.timeSec;
-        });
-
-        await savePlayerData(state.roomCode, botPlayer.playerId, {
-          ...existingBot,
-          answers: updatedAnswers,
-          score: totalScore,
-          totalTimeSec: Number(totalTime.toFixed(2))
-        });
-      }, delayMs);
-
-      botTimeouts.push(t);
-    }
-
-    // Navigasi Join Pemain
-    window.handleJoinFromHome = function(e) {
+    // Alur Siswa Bergabung
+    window.handleHomeJoinSubmit = function(e) {
       e.preventDefault();
-      const code = document.getElementById('homeRoomCodeInput').value.trim().toUpperCase();
-      if (code.length < 4) {
-        showToast("⚠️ Masukkan kode room yang valid!");
+      const rawCode = document.getElementById('homeCodeInput').value.trim().toUpperCase();
+      if (rawCode.length < 4) {
+        notify('⚠️ Masukkan 6 karakter Kode Room yang valid.');
         return;
       }
-      openPlayerJoinScreen(code);
+      openStudentJoinView(rawCode);
     };
 
-    function openPlayerJoinScreen(prefillCode = '') {
-      document.getElementById('playerJoinCode').value = prefillCode.toUpperCase();
-      switchView('view-mp-player-join');
+    function openStudentJoinView(prefillCode = '') {
+      document.getElementById('studentCodeField').value = prefillCode.toUpperCase();
+      showScreen('view-student-join');
     }
 
-    window.submitPlayerJoin = async function(e) {
+    window.submitStudentJoinForm = async function(e) {
       e.preventDefault();
-      const code = document.getElementById('playerJoinCode').value.trim().toUpperCase();
-      const name = document.getElementById('playerJoinName').value.trim();
+      const code = document.getElementById('studentCodeField').value.trim().toUpperCase();
+      const name = document.getElementById('studentNameField').value.trim();
       if (!code || !name) return;
 
-      const btn = document.getElementById('btnConfirmJoin');
+      const btn = document.getElementById('confirmStudentJoinBtn');
       btn.disabled = true;
-      btn.textContent = 'Menghubungkan...';
+      btn.textContent = 'Memeriksa Room...';
 
       try {
-        const roomData = await fetchRoomData(code);
-
-        if (!roomData) {
-          showToast("❌ Room tidak ditemukan! Pastikan kode benar atau room dibuat di browser/perangkat ini.");
-          btn.disabled = false;
-          btn.textContent = 'Gabung Sekarang →';
+        const room = await readRoom(code);
+        if (!room) {
+          notify('❌ Room tidak ditemukan! Periksa kembali kode room dari guru.');
+          return;
+        }
+        if (room.status === 'finished') {
+          notify('⚠️ Sesi kuis di room ini telah berakhir.');
           return;
         }
 
-        if (roomData.status === 'finished') {
-          showToast("⚠️ Permainan di room ini sudah selesai.");
-          btn.disabled = false;
-          btn.textContent = 'Gabung Sekarang →';
-          return;
-        }
+        const studentId = (currentUser?.uid || sessionDeviceId) + '_' + Math.random().toString(36).slice(2, 6);
+        appState.role = 'student';
+        appState.roomCode = code;
+        appState.studentId = studentId;
+        appState.studentName = name;
+        appState.lastRenderedQ = -1;
+        appState.lastRenderedStatus = null;
+        appState.podiumCelebrated = false;
 
-        const playerId = (currentUser?.uid || localClientId) + '_' + Math.random().toString(36).slice(2, 6);
-        state.mpRole = 'player';
-        state.roomCode = code;
-        state.playerId = playerId;
-        state.playerName = name;
-        state.mpLastRenderedQIndex = -1;
-        state.mpLastRenderedStatus = null;
-        state.podiumConfettiFired = false;
-
-        const playerObj = {
-          playerId,
+        await writeStudent(code, studentId, {
+          studentId,
           name,
           score: 0,
-          totalTimeSec: 0,
+          correctCount: 0,
+          totalResponseTimeMs: 0,
           answers: {},
           joinedAt: Date.now()
-        };
+        });
 
-        await savePlayerData(code, playerId, playerObj);
-        subscribeToRoom(code);
-        switchView('view-mp-game');
-        showToast(`🎉 Berhasil bergabung ke room ${code}!`);
+        listenRoomAndStudents(code);
+        showScreen('view-mp-stage');
+        notify(`🎉 Berhasil bergabung ke room ${code}!`);
       } catch (err) {
-        console.error("Join error:", err);
-        showToast("⚠️ Gagal masuk, silakan coba lagi.");
+        console.error('Gagal bergabung:', err);
+        notify('❌ Gagal masuk ke room. Silakan coba lagi.');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Gabung Sekarang →';
+        btn.textContent = 'Masuk ke Ruang Tunggu →';
       }
     };
 
     /* ------------------------------------------------------------------------
-       6. SINKRONISASI REAL-TIME (ADMIN & PEMAIN)
+       7. REAL-TIME STATE HANDLERS (GURU & SISWA)
        ------------------------------------------------------------------------ */
-    function subscribeToRoom(code) {
-      if (state.roomUnsubscribe) state.roomUnsubscribe();
-      if (state.playersUnsubscribe) state.playersUnsubscribe();
+    function onStudentsChanged() {
+      const students = Object.values(appState.studentsMap);
 
-      state.roomUnsubscribe = watchRoom(code, (roomData) => {
-        state.mpRoomData = roomData;
-        handleRoomStateUpdate();
-      });
-
-      state.playersUnsubscribe = watchPlayers(code, (playersMap) => {
-        state.mpPlayersMap = playersMap;
-        handlePlayersUpdate();
-      });
-    }
-
-    function handlePlayersUpdate() {
-      const players = Object.values(state.mpPlayersMap);
-
-      if (state.mpRole === 'admin' && state.mpRoomData?.status === 'lobby') {
-        document.getElementById('lobbyPlayerCount').textContent = players.length;
-        const listEl = document.getElementById('lobbyPlayersList');
-        if (players.length === 0) {
-          listEl.innerHTML = `<p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">Belum ada pemain yang masuk. Bagikan kode, buka tab pemain baru, atau klik "+ Tambah Bot Uji Coba"!</p>`;
-        } else {
-          listEl.innerHTML = players
-            .sort((a, b) => a.joinedAt - b.joinedAt)
-            .map(p => `<div class="player-chip">${p.isBot ? '🤖' : '👤'} ${escapeHtml(p.name)}</div>`)
-            .join('');
+      // Jika siswa dikeluarkan guru saat di lobi
+      if (appState.role === 'student' && appState.studentId && appState.roomData?.status === 'lobby') {
+        if (Object.keys(appState.studentsMap).length > 0 && !appState.studentsMap[appState.studentId]) {
+          notify('⚠️ Kamu telah dikeluarkan dari ruang tunggu oleh guru.');
+          goHome();
+          return;
         }
       }
 
-      if (state.mpRoomData && (state.mpRoomData.status === 'question' || state.mpRoomData.status === 'reveal')) {
-        updateLiveAnswerAnalytics();
+      if (appState.role === 'teacher' && appState.roomData?.status === 'lobby') {
+        document.getElementById('lobbyStudentTotal').textContent = students.length;
+        const listEl = document.getElementById('lobbyStudentList');
+        if (students.length === 0) {
+          listEl.innerHTML = `<p style="color: var(--text-muted); font-style: italic; margin-top: 1rem;">Belum ada siswa yang bergabung. Silakan minta siswa memindai QR Code atau memasukkan kode room di perangkat masing-masing.</p>`;
+        } else {
+          listEl.innerHTML = students
+            .sort((a, b) => a.joinedAt - b.joinedAt)
+            .map(s => `
+              <div class="student-tag">
+                <span>👤 ${escapeHtml(s.name)}</span>
+                <button type="button" class="kick-btn" onclick="kickStudentFromLobby('${s.studentId}', '${escapeHtml(s.name)}')" title="Keluarkan siswa">×</button>
+              </div>
+            `).join('');
+        }
       }
 
-      if (state.mpRoomData?.status === 'finished') {
-        renderMultiplayerPodium();
+      if (appState.roomData && (appState.roomData.status === 'question' || appState.roomData.status === 'reveal')) {
+        refreshLiveAnalytics();
+      }
+
+      if (appState.roomData?.status === 'finished') {
+        renderFinalPodium();
       }
     }
 
-    function handleRoomStateUpdate() {
-      const room = state.mpRoomData;
+    function onRoomChanged() {
+      const room = appState.roomData;
       if (!room) return;
 
-      const isPlayer = state.mpRole === 'player';
+      const isStudent = appState.role === 'student';
       const qIdx = room.currentQuestionIndex;
       const status = room.status;
 
       if (status === 'lobby') {
-        if (isPlayer) {
-          switchView('view-mp-game');
-          document.getElementById('mpRoleBadge').textContent = `👤 Pemain: ${state.playerName}`;
-          document.getElementById('mpQuestionCounter').textContent = room.quizTitle;
-          document.getElementById('mpTimerDisplay').textContent = '⏳';
-          document.getElementById('mpPlayerWaitingBox').style.display = 'block';
-          document.getElementById('mpPlayerWelcomeName').textContent = state.playerName;
-          document.getElementById('mpActiveStage').style.display = 'none';
+        if (isStudent) {
+          showScreen('view-mp-stage');
+          document.getElementById('mpActorBadge').textContent = `🎓 Siswa: ${appState.studentName}`;
+          document.getElementById('mpQuestionNumber').textContent = room.quizTitle;
+          document.getElementById('mpStageTimerPill').textContent = '⏳';
+          document.getElementById('studentLobbyWaitCard').style.display = 'block';
+          document.getElementById('studentWaitDisplayName').textContent = appState.studentName;
+          document.getElementById('mpQuestionLiveArea').style.display = 'none';
         }
         return;
       }
 
       if (status === 'finished') {
-        clearInterval(state.mpTimerInterval);
-        switchView('view-mp-podium');
-        renderMultiplayerPodium();
-        if (!state.podiumConfettiFired) {
-          state.podiumConfettiFired = true;
-          fireConfetti();
+        clearInterval(appState.mpTimerId);
+        showScreen('view-mp-podium');
+        renderFinalPodium();
+        if (!appState.podiumCelebrated) {
+          appState.podiumCelebrated = true;
+          launchConfetti();
         }
         return;
       }
 
-      switchView('view-mp-game');
-      document.getElementById('mpPlayerWaitingBox').style.display = 'none';
-      document.getElementById('mpActiveStage').style.display = 'block';
+      // Status: 'question' atau 'reveal'
+      showScreen('view-mp-stage');
+      document.getElementById('studentLobbyWaitCard').style.display = 'none';
+      document.getElementById('mpQuestionLiveArea').style.display = 'block';
 
       const currentQ = room.questions[qIdx];
       const totalQ = room.questions.length;
 
-      document.getElementById('mpRoleBadge').textContent = isPlayer
-        ? `👤 Pemain: ${state.playerName}`
-        : `📡 Admin Room: ${room.roomCode}`;
-      document.getElementById('mpQuestionCounter').textContent = `Pertanyaan ${qIdx + 1} dari ${totalQ}`;
-      document.getElementById('mpQuestionText').textContent = currentQ.text;
+      document.getElementById('mpActorBadge').textContent = isStudent
+        ? `🎓 Siswa: ${appState.studentName}`
+        : `📡 Layar Guru • Room ${room.roomCode}`;
+      document.getElementById('mpQuestionNumber').textContent = `Pertanyaan ${qIdx + 1} dari ${totalQ}`;
+      document.getElementById('mpLiveQuestionText').textContent = currentQ.text;
 
-      const isNewQuestion = (state.mpLastRenderedQIndex !== qIdx || (state.mpLastRenderedStatus !== 'question' && status === 'question'));
-      if (isNewQuestion) {
-        state.mpLastRenderedQIndex = qIdx;
-        state.mpPlayerSelectedOpt = null;
-        state.mpPlayerAnswerTimeSec = null;
-        state.mpQuestionLocalStartTime = Date.now();
+      const isFreshQuestion = (appState.lastRenderedQ !== qIdx || (appState.lastRenderedStatus !== 'question' && status === 'question'));
+      if (isFreshQuestion) {
+        appState.lastRenderedQ = qIdx;
+        appState.studentChosenOpt = null;
+        appState.studentResponseTimeMs = null;
+        appState.questionShownAtMs = Date.now();
 
-        if (isPlayer && state.mpPlayersMap[state.playerId]?.answers?.[qIdx]) {
-          const prevAns = state.mpPlayersMap[state.playerId].answers[qIdx];
-          state.mpPlayerSelectedOpt = prevAns.option;
-          state.mpPlayerAnswerTimeSec = prevAns.timeSec;
+        const existingAns = isStudent ? appState.studentsMap[appState.studentId]?.answers?.[qIdx] : null;
+        if (existingAns) {
+          appState.studentChosenOpt = existingAns.option;
+          appState.studentResponseTimeMs = existingAns.responseTimeMs;
         }
 
-        renderMultiplayerOptions(currentQ, isPlayer);
+        renderLiveChoices(currentQ, isStudent);
         if (status === 'question') {
-          startMultiplayerCountdown(room);
-        }
-
-        // Jadwalkan bot pemain untuk menjawab soal ini jika ada bot di room
-        if (!isPlayer && status === 'question') {
-          Object.values(state.mpPlayersMap).forEach(p => {
-            if (p.isBot) scheduleBotAnswerForQuestion(p, qIdx, room);
-          });
+          runMultiplayerTimer(room);
         }
       }
 
-      state.mpLastRenderedStatus = status;
+      appState.lastRenderedStatus = status;
 
-      if (!isPlayer) {
-        document.getElementById('mpAdminAnalytics').style.display = 'block';
-        document.getElementById('mpPlayerFeedback').style.display = 'none';
+      if (!isStudent) {
+        // Layar Guru / Proyektor
+        document.getElementById('teacherAnalyticsCard').style.display = 'block';
+        document.getElementById('studentFeedbackCard').style.display = 'none';
 
         if (status === 'question') {
-          document.getElementById('mpAdminForceEndBtn').style.display = 'inline-flex';
-          document.getElementById('mpAdminNextQBtn').style.display = 'none';
-          document.getElementById('mpQuestionWinnersBox').style.display = 'none';
+          document.getElementById('teacherEndEarlyBtn').style.display = 'inline-flex';
+          document.getElementById('teacherNextStepBtn').style.display = 'none';
+          document.getElementById('teacherQuestionResultBox').style.display = 'none';
         } else if (status === 'reveal') {
-          clearInterval(state.mpTimerInterval);
-          document.getElementById('mpTimerDisplay').textContent = '0s';
-          document.getElementById('mpTimerBar').style.width = '0%';
-          document.getElementById('mpAdminForceEndBtn').style.display = 'none';
-          document.getElementById('mpAdminNextQBtn').style.display = 'inline-flex';
-          document.getElementById('mpAdminNextQBtn').textContent = 
+          clearInterval(appState.mpTimerId);
+          document.getElementById('mpStageTimerPill').textContent = '0s';
+          document.getElementById('mpStageTimerFill').style.width = '0%';
+          document.getElementById('teacherEndEarlyBtn').style.display = 'none';
+          document.getElementById('teacherNextStepBtn').style.display = 'inline-flex';
+          document.getElementById('teacherNextStepBtn').textContent =
             (qIdx + 1 === totalQ) ? '🏆 Tampilkan Podium Juara →' : 'Pertanyaan Berikutnya →';
-          
-          revealMultiplayerOptionColors(currentQ.correct);
-          document.getElementById('mpQuestionWinnersBox').style.display = 'block';
+
+          highlightCorrectChoice(currentQ.correct);
+          document.getElementById('teacherQuestionResultBox').style.display = 'block';
         }
       } else {
-        document.getElementById('mpAdminAnalytics').style.display = 'none';
+        // Layar Siswa
+        document.getElementById('teacherAnalyticsCard').style.display = 'none';
         if (status === 'reveal') {
-          clearInterval(state.mpTimerInterval);
-          document.getElementById('mpTimerDisplay').textContent = '0s';
-          document.getElementById('mpTimerBar').style.width = '0%';
-          revealMultiplayerOptionColors(currentQ.correct);
+          clearInterval(appState.mpTimerId);
+          document.getElementById('mpStageTimerPill').textContent = '0s';
+          document.getElementById('mpStageTimerFill').style.width = '0%';
+          highlightCorrectChoice(currentQ.correct);
 
-          const fbBox = document.getElementById('mpPlayerFeedback');
-          fbBox.style.display = 'block';
-          const myAns = state.mpPlayersMap[state.playerId]?.answers?.[qIdx];
+          const fb = document.getElementById('studentFeedbackCard');
+          fb.style.display = 'block';
+          const myAns = appState.studentsMap[appState.studentId]?.answers?.[qIdx];
           if (myAns && myAns.isCorrect) {
-            document.getElementById('mpPlayerFeedbackTitle').innerHTML = `✅ Jawaban Benar! (+${myAns.points} Poin)`;
-            document.getElementById('mpPlayerFeedbackSub').textContent = `Kecepatan jawabmu: ${myAns.timeSec.toFixed(2)} detik`;
+            const secStr = (myAns.responseTimeMs / 1000).toFixed(2);
+            document.getElementById('studentFeedbackHeading').innerHTML = `✅ Jawaban Benar! (+${myAns.points} Poin)`;
+            document.getElementById('studentFeedbackDetail').textContent = `Waktu menjawabmu: ${secStr} detik`;
           } else if (myAns) {
-            document.getElementById('mpPlayerFeedbackTitle').innerHTML = `❌ Jawaban Kurang Tepat`;
-            document.getElementById('mpPlayerFeedbackSub').textContent = `Jawaban yang benar adalah ${currentQ.correct}. ${currentQ.options[currentQ.correct]}`;
+            document.getElementById('studentFeedbackHeading').innerHTML = `❌ Jawaban Belum Tepat`;
+            document.getElementById('studentFeedbackDetail').textContent = `Jawaban benar: ${currentQ.correct}. ${currentQ.options[currentQ.correct]}`;
           } else {
-            document.getElementById('mpPlayerFeedbackTitle').innerHTML = `⏰ Waktu Habis!`;
-            document.getElementById('mpPlayerFeedbackSub').textContent = `Kamu belum sempat memilih. Jawaban benar: ${currentQ.correct}. ${currentQ.options[currentQ.correct]}`;
+            document.getElementById('studentFeedbackHeading').innerHTML = `⏰ Waktu Habis!`;
+            document.getElementById('studentFeedbackDetail').textContent = `Kamu belum sempat memilih. Jawaban benar: ${currentQ.correct}. ${currentQ.options[currentQ.correct]}`;
           }
         }
       }
 
-      updateLiveAnswerAnalytics();
+      refreshLiveAnalytics();
     }
 
-    function renderMultiplayerOptions(q, isPlayer) {
-      const grid = document.getElementById('mpAnswersGrid');
+    function renderLiveChoices(q, isStudent) {
+      const grid = document.getElementById('mpLiveChoicesGrid');
       grid.innerHTML = '';
-      document.getElementById('mpPlayerFeedback').style.display = 'none';
+      document.getElementById('studentFeedbackCard').style.display = 'none';
 
       ['A', 'B', 'C', 'D'].forEach(letter => {
         const btn = document.createElement('button');
-        btn.className = `answer-btn opt-${letter}`;
-        btn.id = `mp-opt-${letter}`;
-        btn.innerHTML = `<span class="ans-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
+        btn.type = 'button';
+        btn.className = `choice-btn opt-${letter}`;
+        btn.id = `mpChoice-${letter}`;
+        btn.innerHTML = `<span class="choice-letter">${letter}</span><span>${escapeHtml(q.options[letter])}</span>`;
 
-        if (!isPlayer) {
+        if (!isStudent) {
           btn.disabled = true;
+        } else if (appState.studentChosenOpt) {
+          btn.disabled = true;
+          if (appState.studentChosenOpt === letter) btn.classList.add('chosen');
+          else btn.classList.add('faded');
         } else {
-          if (state.mpPlayerSelectedOpt) {
-            btn.disabled = true;
-            if (state.mpPlayerSelectedOpt === letter) btn.classList.add('selected');
-            else btn.classList.add('dimmed');
-          } else {
-            btn.onclick = () => submitPlayerAnswer(letter);
-          }
+          btn.onclick = () => submitStudentChoice(letter);
         }
+
         grid.appendChild(btn);
       });
 
-      if (isPlayer && state.mpPlayerSelectedOpt) {
-        document.getElementById('mpPlayerFeedback').style.display = 'block';
-        document.getElementById('mpPlayerFeedbackTitle').textContent = `🔒 Pilihan ${state.mpPlayerSelectedOpt} Terkunci!`;
-        document.getElementById('mpPlayerFeedbackSub').textContent = `Waktu jawab: ${state.mpPlayerAnswerTimeSec.toFixed(2)} detik. Menunggu waktu habis...`;
+      if (isStudent && appState.studentChosenOpt) {
+        const secStr = ((appState.studentResponseTimeMs || 0) / 1000).toFixed(2);
+        document.getElementById('studentFeedbackCard').style.display = 'block';
+        document.getElementById('studentFeedbackHeading').textContent = `🔒 Jawaban ${appState.studentChosenOpt} Terkunci!`;
+        document.getElementById('studentFeedbackDetail').textContent = `Waktu menjawab: ${secStr} detik. Menunggu waktu soal selesai...`;
       }
     }
 
-    function revealMultiplayerOptionColors(correctLetter) {
+    function highlightCorrectChoice(correctLetter) {
       ['A', 'B', 'C', 'D'].forEach(letter => {
-        const btn = document.getElementById(`mp-opt-${letter}`);
+        const btn = document.getElementById(`mpChoice-${letter}`);
         if (!btn) return;
         btn.disabled = true;
         if (letter === correctLetter) {
-          btn.classList.remove('dimmed');
-          btn.classList.add('correct-reveal');
+          btn.classList.remove('faded');
+          btn.classList.add('is-right');
         } else {
-          btn.classList.add('dimmed');
+          btn.classList.add('faded');
         }
       });
     }
 
-    function startMultiplayerCountdown(room) {
-      clearInterval(state.mpTimerInterval);
-      const durationSec = room.timerSeconds;
-      const totalMs = durationSec * 1000;
+    function runMultiplayerTimer(room) {
+      clearInterval(appState.mpTimerId);
+      const totalMs = room.timerSeconds * 1000;
       const startTime = Date.now();
 
-      const timerDisplay = document.getElementById('mpTimerDisplay');
-      const timerBar = document.getElementById('mpTimerBar');
-      timerDisplay.classList.remove('danger');
-      timerBar.classList.remove('danger');
+      const pill = document.getElementById('mpStageTimerPill');
+      const fill = document.getElementById('mpStageTimerFill');
+      pill.classList.remove('urgent');
+      fill.classList.remove('urgent');
 
-      state.mpTimerInterval = setInterval(async () => {
-        if (!state.mpRoomData || state.mpRoomData.status !== 'question') {
-          clearInterval(state.mpTimerInterval);
+      appState.mpTimerId = setInterval(async () => {
+        if (!appState.roomData || appState.roomData.status !== 'question') {
+          clearInterval(appState.mpTimerId);
           return;
         }
 
         const elapsed = Date.now() - startTime;
-        const remainingMs = Math.max(0, totalMs - elapsed);
-        const remainingSec = Math.ceil(remainingMs / 1000);
-        const pct = (remainingMs / totalMs) * 100;
+        const leftMs = Math.max(0, totalMs - elapsed);
+        const leftSec = Math.ceil(leftMs / 1000);
+        const pct = (leftMs / totalMs) * 100;
 
-        timerDisplay.textContent = `${remainingSec}s`;
-        timerBar.style.width = `${pct}%`;
+        pill.textContent = `${leftSec}s`;
+        fill.style.width = `${pct}%`;
 
-        if (remainingSec <= 3 && remainingMs > 0) {
-          timerDisplay.classList.add('danger');
-          timerBar.classList.add('danger');
+        if (leftSec <= 3 && leftMs > 0) {
+          pill.classList.add('urgent');
+          fill.classList.add('urgent');
         }
 
-        if (remainingMs <= 0) {
-          clearInterval(state.mpTimerInterval);
-          if (state.mpRole === 'admin') {
-            await adminForceRevealQuestion();
+        if (leftMs <= 0) {
+          clearInterval(appState.mpTimerId);
+          if (appState.role === 'teacher') {
+            await hostRevealCurrentQuestion();
           }
         }
       }, 100);
     }
 
-    window.adminStartMultiplayerGame = async function() {
-      if (state.mpRole !== 'admin' || !state.roomCode) return;
-      await patchRoomData(state.roomCode, {
+    window.hostStartMultiplayer = async function() {
+      if (appState.role !== 'teacher' || !appState.roomCode) return;
+      const studentCount = Object.keys(appState.studentsMap).length;
+      if (studentCount === 0) {
+        notify('⚠️ Belum ada siswa di dalam room. Tunggu minimal 1 siswa bergabung.');
+        return;
+      }
+
+      await updateRoom(appState.roomCode, {
         status: 'question',
         currentQuestionIndex: 0,
         questionStartedAt: Date.now()
       });
     };
 
-    window.adminForceRevealQuestion = async function() {
-      if (state.mpRole !== 'admin' || !state.roomCode) return;
-      if (state.mpRoomData?.status === 'reveal') return;
-      await patchRoomData(state.roomCode, {
-        status: 'reveal'
-      });
+    window.hostRevealCurrentQuestion = async function() {
+      if (appState.role !== 'teacher' || !appState.roomCode) return;
+      if (appState.roomData?.status === 'reveal') return;
+      await updateRoom(appState.roomCode, { status: 'reveal' });
     };
 
-    window.adminNextMultiplayerQuestion = async function() {
-      if (state.mpRole !== 'admin' || !state.roomCode) return;
-      const nextIdx = state.mpRoomData.currentQuestionIndex + 1;
+    window.hostAdvanceQuestion = async function() {
+      if (appState.role !== 'teacher' || !appState.roomCode) return;
+      const nextIdx = appState.roomData.currentQuestionIndex + 1;
 
-      if (nextIdx < state.mpRoomData.questions.length) {
-        await patchRoomData(state.roomCode, {
+      if (nextIdx < appState.roomData.questions.length) {
+        await updateRoom(appState.roomCode, {
           status: 'question',
           currentQuestionIndex: nextIdx,
           questionStartedAt: Date.now()
         });
       } else {
-        await patchRoomData(state.roomCode, {
-          status: 'finished'
-        });
+        await updateRoom(appState.roomCode, { status: 'finished' });
       }
     };
 
-    async function submitPlayerAnswer(selectedLetter) {
-      if (state.mpRole !== 'player') return;
-      if (state.mpRoomData?.status !== 'question') return;
-      if (state.mpPlayerSelectedOpt) return;
+    async function submitStudentChoice(selectedLetter) {
+      if (appState.role !== 'student') return;
+      if (appState.roomData?.status !== 'question') return;
+      if (appState.studentChosenOpt) return;
 
-      const room = state.mpRoomData;
+      const room = appState.roomData;
       const qIdx = room.currentQuestionIndex;
       const currentQ = room.questions[qIdx];
+      const totalMs = room.timerSeconds * 1000;
 
-      const elapsedSec = Math.max(0.10, Math.min(room.timerSeconds, (Date.now() - state.mpQuestionLocalStartTime) / 1000));
+      const rawElapsedMs = Date.now() - appState.questionShownAtMs;
+      const responseTimeMs = Math.max(100, Math.min(totalMs, Math.round(rawElapsedMs)));
+      const remainingMs = Math.max(0, totalMs - responseTimeMs);
+
       const isCorrect = selectedLetter === currentQ.correct;
+      const points = isCorrect ? Math.round(500 + ((remainingMs / totalMs) * 500)) : 0;
 
-      let pointsEarned = 0;
-      if (isCorrect) {
-        const speedRatio = Math.max(0, (room.timerSeconds - elapsedSec) / room.timerSeconds);
-        pointsEarned = Math.round(500 + (speedRatio * 500));
-      }
-
-      state.mpPlayerSelectedOpt = selectedLetter;
-      state.mpPlayerAnswerTimeSec = elapsedSec;
+      appState.studentChosenOpt = selectedLetter;
+      appState.studentResponseTimeMs = responseTimeMs;
 
       ['A', 'B', 'C', 'D'].forEach(letter => {
-        const btn = document.getElementById(`mp-opt-${letter}`);
+        const btn = document.getElementById(`mpChoice-${letter}`);
         btn.disabled = true;
-        if (letter === selectedLetter) btn.classList.add('selected');
-        else btn.classList.add('dimmed');
+        if (letter === selectedLetter) btn.classList.add('chosen');
+        else btn.classList.add('faded');
       });
 
-      document.getElementById('mpPlayerFeedback').style.display = 'block';
-      document.getElementById('mpPlayerFeedbackTitle').textContent = `🔒 Pilihan ${selectedLetter} Terkunci!`;
-      document.getElementById('mpPlayerFeedbackSub').textContent = `Kecepatan jawab: ${elapsedSec.toFixed(2)} detik. Menunggu hasil...`;
+      const secDisplay = (responseTimeMs / 1000).toFixed(2);
+      document.getElementById('studentFeedbackCard').style.display = 'block';
+      document.getElementById('studentFeedbackHeading').textContent = `🔒 Pilihan ${selectedLetter} Terkunci!`;
+      document.getElementById('studentFeedbackDetail').textContent = `Waktu menjawab: ${secDisplay} detik. Menunggu waktu habis...`;
 
-      const currentPlayerData = state.mpPlayersMap[state.playerId] || {
-        playerId: state.playerId,
-        name: state.playerName,
+      const existingStudent = appState.studentsMap[appState.studentId] || {
+        studentId: appState.studentId,
+        name: appState.studentName,
         score: 0,
-        totalTimeSec: 0,
+        correctCount: 0,
+        totalResponseTimeMs: 0,
         answers: {},
         joinedAt: Date.now()
       };
-      const updatedAnswers = { ...(currentPlayerData.answers || {}) };
-      updatedAnswers[qIdx] = {
+
+      const nextAnswers = { ...(existingStudent.answers || {}) };
+      nextAnswers[qIdx] = {
         option: selectedLetter,
-        timeSec: Number(elapsedSec.toFixed(2)),
-        isCorrect: isCorrect,
-        points: pointsEarned
+        responseTimeMs,
+        isCorrect,
+        points
       };
 
       let totalScore = 0;
-      let totalTime = 0;
-      Object.values(updatedAnswers).forEach(ans => {
-        totalScore += ans.points;
-        totalTime += ans.timeSec;
+      let totalCorrect = 0;
+      let cumulativeMs = 0;
+      Object.values(nextAnswers).forEach(item => {
+        totalScore += item.points;
+        if (item.isCorrect) totalCorrect++;
+        cumulativeMs += item.responseTimeMs;
       });
 
-      await savePlayerData(state.roomCode, state.playerId, {
-        ...currentPlayerData,
-        answers: updatedAnswers,
+      await writeStudent(appState.roomCode, appState.studentId, {
+        ...existingStudent,
+        answers: nextAnswers,
         score: totalScore,
-        totalTimeSec: Number(totalTime.toFixed(2))
+        correctCount: totalCorrect,
+        totalResponseTimeMs: cumulativeMs
       });
     }
 
-    function updateLiveAnswerAnalytics() {
-      const room = state.mpRoomData;
+    function refreshLiveAnalytics() {
+      const room = appState.roomData;
       if (!room) return;
       const qIdx = room.currentQuestionIndex;
-      const players = Object.values(state.mpPlayersMap);
-      const totalPlayers = players.length;
+      const students = Object.values(appState.studentsMap);
+      const totalStudents = students.length;
 
-      const counts = { A: 0, B: 0, C: 0, D: 0 };
-      let answeredCount = 0;
-      const correctResponders = [];
+      const tally = { A: 0, B: 0, C: 0, D: 0 };
+      let answeredTotal = 0;
+      const fastCorrectStudents = [];
 
-      players.forEach(p => {
-        const ans = p.answers?.[qIdx];
-        if (ans && counts[ans.option] !== undefined) {
-          counts[ans.option]++;
-          answeredCount++;
+      students.forEach(s => {
+        const ans = s.answers?.[qIdx];
+        if (ans && tally[ans.option] !== undefined) {
+          tally[ans.option]++;
+          answeredTotal++;
           if (ans.isCorrect) {
-            correctResponders.push({
-              name: p.name,
-              timeSec: ans.timeSec,
+            fastCorrectStudents.push({
+              name: s.name,
+              responseTimeMs: ans.responseTimeMs,
               points: ans.points
             });
           }
         }
       });
 
-      document.getElementById('mpAnswerCountBadge').textContent = `Jawaban masuk: ${answeredCount}/${totalPlayers}`;
+      document.getElementById('mpAnsweredRatioBadge').textContent = `${answeredTotal} / ${totalStudents} Siswa Menjawab`;
 
       ['A', 'B', 'C', 'D'].forEach(letter => {
-        const pct = answeredCount > 0 ? Math.round((counts[letter] / answeredCount) * 100) : 0;
-        const pctEl = document.getElementById(`pct-${letter}`);
-        const barEl = document.getElementById(`bar-${letter}`);
-        if (pctEl) pctEl.textContent = `${pct}% (${counts[letter]})`;
-        if (barEl) barEl.style.height = `${Math.max(8, pct * 1.25)}px`;
+        const pct = answeredTotal > 0 ? Math.round((tally[letter] / answeredTotal) * 100) : 0;
+        const pctNode = document.getElementById(`statPct-${letter}`);
+        const barNode = document.getElementById(`statBar-${letter}`);
+        if (pctNode) pctNode.textContent = `${pct}% (${tally[letter]})`;
+        if (barNode) barNode.style.height = `${Math.max(8, pct * 1.25)}px`;
       });
 
-      const listEl = document.getElementById('mpQuestionFastestList');
-      if (listEl) {
-        if (correctResponders.length === 0) {
-          listEl.innerHTML = `<p style="color: var(--text-muted);">Belum ada pemain yang menjawab benar pada soal ini.</p>`;
+      const fastestListNode = document.getElementById('teacherFastestList');
+      if (fastestListNode) {
+        if (fastCorrectStudents.length === 0) {
+          fastestListNode.innerHTML = `<p style="color: var(--text-muted);">Belum ada siswa yang menjawab benar pada pertanyaan ini.</p>`;
         } else {
-          correctResponders.sort((a, b) => a.timeSec - b.timeSec);
-          listEl.innerHTML = correctResponders.map((r, idx) => `
-            <div class="lb-row ${idx === 0 ? 'top-1' : ''}">
-              <span>#${idx + 1} <strong>${escapeHtml(r.name)}</strong></span>
-              <span>⚡ ${r.timeSec.toFixed(2)} detik • <strong style="color: var(--success);">+${r.points} poin</strong></span>
+          fastCorrectStudents.sort((a, b) => a.responseTimeMs - b.responseTimeMs);
+          fastestListNode.innerHTML = fastCorrectStudents.map((item, idx) => `
+            <div class="rank-item ${idx === 0 ? 'gold' : ''}">
+              <span>#${idx + 1} <strong>${escapeHtml(item.name)}</strong></span>
+              <span>⚡ ${(item.responseTimeMs / 1000).toFixed(2)} detik • <strong style="color: var(--success);">+${item.points} poin</strong></span>
             </div>
           `).join('');
         }
       }
     }
 
-    function renderMultiplayerPodium() {
-      const players = Object.values(state.mpPlayersMap);
+    function renderFinalPodium() {
+      const students = Object.values(appState.studentsMap);
 
-      players.sort((a, b) => {
+      students.sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
-        return (a.totalTimeSec || 9999) - (b.totalTimeSec || 9999);
+        return (a.totalResponseTimeMs || 999999) - (b.totalResponseTimeMs || 999999);
       });
 
-      const p1 = players[0] || null;
-      const p2 = players[1] || null;
-      const p3 = players[2] || null;
+      const s1 = students[0] || null;
+      const s2 = students[1] || null;
+      const s3 = students[2] || null;
 
-      const stage = document.getElementById('podiumStageContainer');
-      stage.innerHTML = `
-        <div class="podium-place place-2">
-          <div class="podium-avatar">🥈</div>
-          <div class="podium-name">${p2 ? escapeHtml(p2.name) : '-'}</div>
-          <div class="podium-meta">${p2 ? `${p2.score} pts • ${p2.totalTimeSec.toFixed(2)}s` : ''}</div>
-          <div class="podium-block">
-            <span style="font-size: 1.5rem;">JUARA 2</span>
-          </div>
+      const formatSec = (ms) => ((ms || 0) / 1000).toFixed(2);
+
+      document.getElementById('finalPodiumStage').innerHTML = `
+        <div class="podium-col">
+          <div class="podium-medal">🥈</div>
+          <div class="podium-player">${s2 ? escapeHtml(s2.name) : '-'}</div>
+          <div class="podium-stats">${s2 ? `${s2.score} poin • ${formatSec(s2.totalResponseTimeMs)}s` : ''}</div>
+          <div class="podium-step step-2">JUARA 2</div>
         </div>
 
-        <div class="podium-place place-1">
-          <div class="podium-avatar" style="border-color: #fbbf24; transform: scale(1.12);">👑</div>
-          <div class="podium-name" style="font-size: 1.2rem;">${p1 ? escapeHtml(p1.name) : '-'}</div>
-          <div class="podium-meta">${p1 ? `<strong>${p1.score} pts</strong> • ${p1.totalTimeSec.toFixed(2)}s` : ''}</div>
-          <div class="podium-block">
-            <span style="font-size: 1.75rem;">JUARA 1</span>
-          </div>
+        <div class="podium-col">
+          <div class="podium-medal" style="border-color: #fbbf24; transform: scale(1.12);">👑</div>
+          <div class="podium-player" style="font-size: 1.18rem;">${s1 ? escapeHtml(s1.name) : '-'}</div>
+          <div class="podium-stats">${s1 ? `<strong>${s1.score} poin</strong> • ${formatSec(s1.totalResponseTimeMs)}s` : ''}</div>
+          <div class="podium-step step-1">JUARA 1</div>
         </div>
 
-        <div class="podium-place place-3">
-          <div class="podium-avatar">🥉</div>
-          <div class="podium-name">${p3 ? escapeHtml(p3.name) : '-'}</div>
-          <div class="podium-meta">${p3 ? `${p3.score} pts • ${p3.totalTimeSec.toFixed(2)}s` : ''}</div>
-          <div class="podium-block">
-            <span style="font-size: 1.35rem;">JUARA 3</span>
-          </div>
+        <div class="podium-col">
+          <div class="podium-medal">🥉</div>
+          <div class="podium-player">${s3 ? escapeHtml(s3.name) : '-'}</div>
+          <div class="podium-stats">${s3 ? `${s3.score} poin • ${formatSec(s3.totalResponseTimeMs)}s` : ''}</div>
+          <div class="podium-step step-3">JUARA 3</div>
         </div>
       `;
 
-      const fullList = document.getElementById('fullLeaderboardList');
-      if (players.length === 0) {
-        fullList.innerHTML = `<p style="color: var(--text-muted);">Tidak ada data pemain.</p>`;
+      const totalQuestions = appState.roomData?.questions?.length || 0;
+      const rankList = document.getElementById('finalFullRankingList');
+
+      if (students.length === 0) {
+        rankList.innerHTML = `<p style="color: var(--text-muted);">Belum ada data peserta.</p>`;
       } else {
-        fullList.innerHTML = players.map((p, idx) => `
-          <div class="lb-row ${idx === 0 ? 'top-1' : ''}">
+        rankList.innerHTML = students.map((s, idx) => `
+          <div class="rank-item ${idx === 0 ? 'gold' : ''}">
             <span>
-              <strong>#${idx + 1}</strong> ${escapeHtml(p.name)}
+              <strong>#${idx + 1}</strong> ${escapeHtml(s.name)}
+              <small style="color: var(--text-muted); margin-left: 0.4rem;">(${s.correctCount || 0}/${totalQuestions} benar)</small>
             </span>
             <span>
-              ⏱️ ${Number(p.totalTimeSec || 0).toFixed(2)} detik • 
-              <strong style="color: var(--brand-accent);">${p.score} poin</strong>
+              ⏱️ ${formatSec(s.totalResponseTimeMs)} detik •
+              <strong style="color: var(--brand-baby);">${s.score} poin</strong>
             </span>
           </div>
         `).join('');
@@ -2818,15 +2687,15 @@
     }
 
     /* ------------------------------------------------------------------------
-       7. BOOTSTRAP & DETEKSI PARAMETER URL (?room=KODE)
+       8. BOOTSTRAP
        ------------------------------------------------------------------------ */
-    window.addEventListener('DOMContentLoaded', () => {
-      initFirebaseBackground();
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initRealtimeBackend();
 
-      const params = new URLSearchParams(window.location.search);
-      const roomParam = params.get('room');
-      if (roomParam) {
-        openPlayerJoinScreen(roomParam);
+      const urlParams = new URLSearchParams(window.location.search);
+      const roomCodeParam = urlParams.get('room');
+      if (roomCodeParam) {
+        openStudentJoinView(roomCodeParam);
       }
     });
   </script>
